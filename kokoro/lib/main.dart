@@ -1,31 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:kokoro/ui/views/global_view.dart';
+import 'package:kokoro/core/routes/locations.dart';
+import 'package:kokoro/ui/shared/top_bar.dart';
+import 'package:beamer/beamer.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final List<BeamLocation> beamLocations = [
+    GlobalViewLocation(),
+    MakePostLocation(),
+  ];
+
+  final _beamerKey = GlobalKey<BeamerState>();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+      home: Scaffold(
+        appBar: TopBar(
+          beamerKey: _beamerKey,
+          toolbarHeight: 60.0,
+          backgroundColor: Colors.orange,
+        ),
+        body: Beamer(
+          key: _beamerKey,
+          routerDelegate:
+              BeamerRouterDelegate(initialLocation: GlobalViewLocation()),
+          routeInformationParser: BeamerRouteInformationParser(
+            beamLocations: beamLocations,
+          ),
+        ),
       ),
-      home: GlobalView(),
     );
   }
 }
-
-
