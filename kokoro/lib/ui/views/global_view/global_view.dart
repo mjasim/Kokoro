@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kokoro/ui/smart_widgets/global_map/global_map_view.dart';
 import 'package:kokoro/ui/smart_widgets/top_navigation_bar/top_navigation_bar.dart';
 import 'package:kokoro/ui/views/global_view/global_viewmodel.dart';
 import 'package:kokoro/ui/widgets/side_navigation_widget.dart';
@@ -13,20 +14,11 @@ class GlobalView extends StatelessWidget {
     print('Global View');
     return ViewModelBuilder<GlobalViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
-        appBar: TopBar(
-          toolbarHeight: 60.0,
-          backgroundColor: Colors.orange,
-        ),
+        appBar: TopBar(),
         body: Stack(
           children: [
             SideNavigation(),
-            Center(
-              child: Container(
-                height: 30.0,
-                width: 30.0,
-                color: Colors.red,
-              ),
-            )
+            GlobalMapView()
           ],
         ),
       ),

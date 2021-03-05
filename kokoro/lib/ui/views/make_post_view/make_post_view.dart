@@ -11,15 +11,12 @@ class _MakePostViewState extends State<MakePostView> {
   Widget build(BuildContext context) {
     print('Make Post View');
     return Scaffold(
-      appBar: TopBar(
-        toolbarHeight: 60.0,
-        backgroundColor: Colors.orange,
-      ),
+      appBar: TopBar(),
       body: Container(
         height: 30.0,
         width: 30.0,
         color: Colors.blueGrey,
-      )
+      ),
     );
   }
 }

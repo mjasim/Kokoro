@@ -22,8 +22,8 @@ class SignInViewModel extends BaseViewModel {
     return _authService.hasUser;
   }
 
-  void signInButtonPressed() {
-    _authService.loginWithEmail(email: 'test@real.com', password: '123456hd');
+  void signInButtonPressed() async {
+    await _authService.loginWithEmail(email: 'test@real.com', password: '123456hd');
     if (isLoggedIn()) {
       _nagivationService.navigateTo(Routes.globalView);
     }

@@ -4,8 +4,8 @@ import 'package:stacked/stacked.dart';
 
 class TopBar extends StatefulWidget implements PreferredSizeWidget {
   TopBar({
-    this.backgroundColor,
-    this.toolbarHeight,
+    this.backgroundColor=Colors.black38,
+    this.toolbarHeight=60.0,
     this.bottom,
   }) : preferredSize = Size.fromHeight(toolbarHeight ??
             kToolbarHeight + (bottom.preferredSize.height ?? 0.0));
@@ -14,7 +14,6 @@ class TopBar extends StatefulWidget implements PreferredSizeWidget {
   final Size preferredSize;
 
   final double toolbarHeight;
-  final List<IconData> actions = [Icons.public, Icons.add_box];
 
   final Color backgroundColor;
   final PreferredSizeWidget bottom;
@@ -24,7 +23,7 @@ class TopBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _TopBarState extends State<TopBar> {
-  final icons = [Icons.public, Icons.add_box];
+  final icons = [Icons.add_box, Icons.home, Icons.public, Icons.access_time];
 
   @override
   void initState() {

@@ -4,6 +4,8 @@ import 'package:kokoro/core/services/navigation_bar_service.dart';
 import 'package:kokoro/ui/auth/sign_in/signin_view.dart';
 import 'package:kokoro/ui/auth/sign_up/signup_view.dart';
 import 'package:kokoro/ui/views/global_view/global_view.dart';
+import 'package:kokoro/ui/views/history_view/history_view.dart';
+import 'package:kokoro/ui/views/home_view/home_view.dart';
 import 'package:kokoro/ui/views/make_post_view/make_post_view.dart';
 import 'package:kokoro/ui/views/planet_view/planet_view.dart';
 import 'package:stacked/stacked_annotations.dart';
@@ -14,6 +16,8 @@ import 'package:stacked_services/stacked_services.dart';
     CustomRoute(page: PlanetView, durationInMilliseconds: 0),
     CustomRoute(page: GlobalView, durationInMilliseconds: 0),
     CustomRoute(page: MakePostView, durationInMilliseconds: 0),
+    CustomRoute(page: HomeView, durationInMilliseconds: 0),
+    CustomRoute(page: HistoryView, durationInMilliseconds: 0),
     MaterialRoute(page: SignInView, initial: true),
     MaterialRoute(page: SignUpView),
   ],

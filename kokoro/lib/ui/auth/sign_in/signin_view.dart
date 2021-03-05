@@ -14,7 +14,7 @@ class SignInView extends StatelessWidget {
             child: Column(
           children: [
             MaterialButton(
-              child: Text('Press to Sign In'),
+              child: Text('Press to Log in Button'),
               onPressed: () {
                 model.signInButtonPressed();
               },

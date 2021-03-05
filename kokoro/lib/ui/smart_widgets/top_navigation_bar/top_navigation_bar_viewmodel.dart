@@ -13,7 +13,7 @@ class TopNavigationBarViewModel extends BaseViewModel {
   final _navigationBarService = locator<NavigationBarService>();
   final _authService = locator<MockAuthService>();
 
-  final locations = [Routes.globalView, Routes.makePostView];
+  final locations = [Routes.makePostView, Routes.homeView, Routes.globalView, Routes.historyView];
 
   int currentIndex() {
     return _navigationBarService.currentIndex;
