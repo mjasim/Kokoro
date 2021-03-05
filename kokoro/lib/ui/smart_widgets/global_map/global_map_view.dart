@@ -15,9 +15,12 @@ class GlobalMapView extends StatefulWidget {
 class _GlobalMapViewState extends State<GlobalMapView> {
   MapController mapController;
 
-
   int flags = InteractiveFlag.all;
   double zoom = 1.0;
+  double x = 0.0;
+  double y = 0.0;
+  CustomPoint leftCorner;
+  final Epsg3857 projection = Epsg3857();
 
   List<Marker> markers;
   StreamSubscription<MapEvent> subscription;
@@ -50,42 +53,84 @@ class _GlobalMapViewState extends State<GlobalMapView> {
     }
   }
 
+  void _updateMousePosition(PointerHoverEvent event) {}
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<GlobalMapViewModel>.reactive(
       builder: (context, model, child) => Listener(
+        onPointerHover: (pointerHover) {
+          if (pointerHover is PointerHoverEvent) {
+            x = pointerHover.position.dx;
+            y = pointerHover.position.dy;
+          }
+        },
         onPointerSignal: (pointerSignal) {
           if (pointerSignal is PointerScrollEvent) {
             if (pointerSignal.scrollDelta.dy < 0 && 15 > mapController.zoom) {
+              RenderBox getBox = context.findRenderObject();
+              var local = getBox.globalToLocal(Offset(x, y));
+              var localPoint = CustomPoint(local.dx, local.dy);
+              var width = getBox.size.width;
+              var height = getBox.size.height;
+              var localPointCenterDistance = CustomPoint(
+                  (width / 2) - localPoint.x, (height / 2) - localPoint.y);
+
+              var mapCenter =
+                  projection.latLngToPoint(mapController.center, zoom + 1);
+              var point = mapCenter - localPointCenterDistance;
+              var projected = projection.pointToLatLng(point, zoom + 1);
+
+              mapController.move(projected, mapController.zoom + 1);
               setState(() {
                 zoom = mapController.zoom;
                 markers = getMarkers(zoom);
               });
-              print('Zoom: ${zoom}');
-              mapController.move(mapController.center, mapController.zoom + 1);
-            } else if (pointerSignal.scrollDelta.dy > 0) {
+            } else if (pointerSignal.scrollDelta.dy > 0 &&
+                mapController.zoom > 1) {
+              RenderBox getBox = context.findRenderObject();
+              var local = getBox.globalToLocal(Offset(x, y));
+              var localPoint = CustomPoint(local.dx, local.dy);
+              var width = getBox.size.width;
+              var height = getBox.size.height;
+              var localPointCenterDistance = CustomPoint(
+                  (width / 2) - localPoint.x, (height / 2) - localPoint.y);
+
+              var mapCenter =
+                  projection.latLngToPoint(mapController.center, zoom);
+              var point = mapCenter - localPointCenterDistance;
+              var projected = projection.pointToLatLng(point, zoom);
+
+              mapController.move(projected, mapController.zoom - 1);
               setState(() {
                 zoom = mapController.zoom;
                 markers = getMarkers(zoom);
               });
-              print('Zoom: ${zoom}');
-              print((16.0 - zoom) / 15);
-              mapController.move(mapController.center, mapController.zoom - 1);
             }
           }
         },
         child: FlutterMap(
           mapController: mapController,
           options: MapOptions(
+            onPositionChanged: (MapPosition position, bool text) {
+              leftCorner =
+                  projection.latLngToPoint(position.bounds.northWest, zoom);
+              print(
+                  'MapPosition ${projection.latLngToPoint(position.bounds.northWest, zoom)}');
+            },
             center: LatLng(51.5, -0.09),
             zoom: 1.0,
             interactiveFlags: flags,
           ),
           layers: [
             TileLayerOptions(
-                urlTemplate:
-                    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
-                subdomains: ['a', 'b', 'c']),
+              updateInterval: 0,
+              keepBuffer: 100,
+              backgroundColor: Color.fromRGBO(38, 38, 38, 255),
+              urlTemplate:
+                  "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+              subdomains: ['a', 'b', 'c'],
+            ),
             MarkerLayerOptions(
               markers: markers,
             ),
@@ -97,7 +142,7 @@ class _GlobalMapViewState extends State<GlobalMapView> {
   }
 
   List<Marker> getMarkers(double zoom) {
-    if (zoom <= 7) {
+    if (zoom <= 4) {
       return [
         Marker(
           width: (1 - ((16.0 - zoom) / 15)) * 80.0,

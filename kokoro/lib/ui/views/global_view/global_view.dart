@@ -15,9 +15,10 @@ class GlobalView extends StatelessWidget {
     return ViewModelBuilder<GlobalViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
         appBar: TopBar(),
+        backgroundColor: Color.fromRGBO(38,38,38,255),
         body: Stack(
           children: [
-            SideNavigation(),
+//            SideNavigation(),
             GlobalMapView()
           ],
         ),
