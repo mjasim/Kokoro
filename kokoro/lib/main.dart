@@ -1,9 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:kokoro/core/routes/locations.dart';
-import 'package:kokoro/ui/shared/top_bar.dart';
-import 'package:beamer/beamer.dart';
+import 'package:stacked_services/stacked_services.dart';
 
-void main() {
+import 'app/app.locator.dart';
+import 'app/app.router.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  setupLocator();
+
   runApp(MyApp());
 }
 
@@ -13,31 +19,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final List<BeamLocation> beamLocations = [
-    GlobalViewLocation(),
-    MakePostLocation(),
-  ];
-
-  final _beamerKey = GlobalKey<BeamerState>();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: TopBar(
-          beamerKey: _beamerKey,
-          toolbarHeight: 60.0,
-          backgroundColor: Colors.orange,
-        ),
-        body: Beamer(
-          key: _beamerKey,
-          routerDelegate:
-              BeamerRouterDelegate(initialLocation: GlobalViewLocation()),
-          routeInformationParser: BeamerRouteInformationParser(
-            beamLocations: beamLocations,
-          ),
-        ),
-      ),
+      navigatorKey: StackedService.navigatorKey,
+      onGenerateRoute: StackedRouter().onGenerateRoute,
     );
   }
 }
