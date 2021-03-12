@@ -91,13 +91,13 @@ class StackedRouter extends RouterBase {
     },
     SignInView: (data) {
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const SignInView(),
+        builder: (context) => SignInView(),
         settings: data,
       );
     },
     SignUpView: (data) {
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const SignUpView(),
+        builder: (context) => SignUpView(),
         settings: data,
       );
     },
