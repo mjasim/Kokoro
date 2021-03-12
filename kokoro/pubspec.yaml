@@ -25,6 +25,7 @@ dependencies:
   firebase_auth: ^1.0.0
   firebase_core: ^1.0.0
   flutter_map: ^0.11.0
+  vector_math: ^2.1.0
   stacked_services:
   flutter:
     sdk: flutter
