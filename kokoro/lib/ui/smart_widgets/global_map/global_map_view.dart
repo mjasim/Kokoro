@@ -12,7 +12,7 @@ class GlobalMapView extends StatefulWidget {
   _GlobalMapViewState createState() => _GlobalMapViewState();
 }
 
-class _GlobalMapViewState extends State<GlobalMapView> {
+class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveClientMixin {
   MapController mapController;
 
   int flags = InteractiveFlag.all;
@@ -25,6 +25,9 @@ class _GlobalMapViewState extends State<GlobalMapView> {
 
   List<Marker> markers;
   StreamSubscription<MapEvent> subscription;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
