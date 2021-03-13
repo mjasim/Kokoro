@@ -6,9 +6,13 @@ import 'package:kokoro/ui/widgets/side_navigation_widget.dart';
 
 import 'package:stacked/stacked.dart';
 
-class GlobalView extends StatelessWidget {
-  const GlobalView({Key key}) : super(key: key);
 
+class GlobalView extends StatefulWidget {
+  @override
+  _GlobalViewState createState() => _GlobalViewState();
+}
+
+class _GlobalViewState extends State<GlobalView> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     print('Global View');
@@ -18,12 +22,18 @@ class GlobalView extends StatelessWidget {
         backgroundColor: Color.fromRGBO(38,38,38,255),
         body: Stack(
           children: [
-//            SideNavigation(),
-            GlobalMapView()
+            GlobalMapView(),
+            SideNavigation(),
           ],
         ),
       ),
       viewModelBuilder: () => GlobalViewModel(),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
+
+
+
