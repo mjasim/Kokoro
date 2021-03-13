@@ -11,19 +11,13 @@ class SignInViewModel extends BaseViewModel {
   final _nagivationService = locator<NavigationService>();
   final _authService = locator<FirebaseAuthService>();
 
-  @override
-  void setOnModelReadyCalled(ready) {
-    print('Model Ready');
-    isLoggedIn();
-  }
-
   bool isLoggedIn() {
     print('isLoggedIn ${_authService.hasUser}');
     return _authService.hasUser;
   }
 
-  void signInButtonPressed() async {
-    await _authService.loginWithEmail(email: 'test@real.com', password: '123456hd');
+  void signInButtonPressed(email, password) async {
+    await _authService.loginWithEmail(email: email, password: password);
     if (isLoggedIn()) {
       _nagivationService.navigateTo(Routes.globalView);
     }
