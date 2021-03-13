@@ -3,6 +3,9 @@ import 'package:flutter/painting.dart';
 import 'package:kokoro/ui/auth/sign_up/signup_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class SignUpView extends StatefulWidget {
   @override
@@ -32,9 +35,9 @@ class _SignUpViewState extends State<SignUpView> {
     super.dispose();
   }
 
+  // Gets date for birthday input
   DateTime selectedDate = DateTime.now();
   TextEditingController _date = new TextEditingController();
-
   Future<Null> _selectDate(BuildContext context) async {
     DateFormat formatter = DateFormat('MM/dd/yyyy');//specifies month/day/year format
 
@@ -48,6 +51,94 @@ class _SignUpViewState extends State<SignUpView> {
         selectedDate = picked;
         _date.value = TextEditingValue(text: formatter.format(picked));//Use formatter to format selected date and assign to text field
       });
+  }
+
+  // Get image for profile picture
+  PickedFile _imageFile;
+  dynamic _pickImageError;
+  String _retrieveDataError;
+
+  final ImagePicker _picker = ImagePicker();
+  final TextEditingController maxWidthController = TextEditingController();
+  final TextEditingController maxHeightController = TextEditingController();
+  final TextEditingController qualityController = TextEditingController();
+
+  void _onImageButtonPressed(ImageSource source, {BuildContext context}) async {
+
+      await _displayPickImageDialog(context, (double maxWidth, double maxHeight, int quality) async {
+            try {
+              final pickedFile = await _picker.getImage(
+                source: source,
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                imageQuality: quality,
+              );
+              setState(() {
+                _imageFile = pickedFile;
+              });
+            } catch (e) {
+              setState(() {
+                _pickImageError = e;
+              });
+            }
+          });
+
+  }
+
+  Future<void> _displayPickImageDialog(
+      BuildContext context, OnPickImageCallback onPick) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Add optional parameters'),
+            content: Column(
+              children: <Widget>[
+                TextField(
+                  controller: maxWidthController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  decoration:
+                  InputDecoration(hintText: "Enter maxWidth if desired"),
+                ),
+                TextField(
+                  controller: maxHeightController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  decoration:
+                  InputDecoration(hintText: "Enter maxHeight if desired"),
+                ),
+                TextField(
+                  controller: qualityController,
+                  keyboardType: TextInputType.number,
+                  decoration:
+                  InputDecoration(hintText: "Enter quality if desired"),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('CANCEL'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                  child: const Text('PICK'),
+                  onPressed: () {
+                    double width = maxWidthController.text.isNotEmpty
+                        ? double.parse(maxWidthController.text)
+                        : null;
+                    double height = maxHeightController.text.isNotEmpty
+                        ? double.parse(maxHeightController.text)
+                        : null;
+                    int quality = qualityController.text.isNotEmpty
+                        ? int.parse(qualityController.text)
+                        : null;
+                    onPick(width, height, quality);
+                    Navigator.of(context).pop();
+                  }),
+            ],
+          );
+        });
   }
 
   String genderDropdownValue = 'Choose';
@@ -453,9 +544,25 @@ class _SignUpViewState extends State<SignUpView> {
                           SizedBox(
                             height: 80,
                           ),
-                          Icon(Icons.account_circle, size: 170, color: Colors.blue),
+                          CircleAvatar(
+                            radius: 80,
+                            child: Icon(Icons.account_circle, size: 150, color: Colors.blue),
+                          ),
                           SizedBox(
-                            height: 210,
+                            height: 20,
+                          ),
+                          MaterialButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            color: Colors.blue,
+                            onPressed: () {
+                              _onImageButtonPressed(ImageSource.gallery, context: context);
+                            },
+                            child: Icon(Icons.open_in_browser),
+                          ),
+                          SizedBox(
+                            height: 150,
                           ),
                           MaterialButton( // Sign up button after submitting information
                             shape: RoundedRectangleBorder(
@@ -500,6 +607,9 @@ class _SignUpViewState extends State<SignUpView> {
     );
   }
 }
+
+typedef void OnPickImageCallback(
+    double maxWidth, double maxHeight, int quality);
 
 //class SignUpView extends StatelessWidget {
 //    const SignUpView({Key key}) : super(key: key);
