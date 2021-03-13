@@ -1,4 +1,5 @@
 import 'package:kokoro/core/services/firebase_auth_service.dart';
+import 'package:kokoro/core/services/global_map_service.dart';
 import 'package:kokoro/core/services/mock_auth_service.dart';
 import 'package:kokoro/core/services/navigation_bar_service.dart';
 import 'package:kokoro/ui/auth/sign_in/signin_view.dart';
@@ -26,6 +27,7 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: MockAuthService),
     LazySingleton(classType: NavigationBarService),
     LazySingleton(classType: FirebaseAuthService),
+    LazySingleton(classType: GlobalMapService),
   ],
 )
 class AppSetup {

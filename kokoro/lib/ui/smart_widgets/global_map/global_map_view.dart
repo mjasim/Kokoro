@@ -12,13 +12,14 @@ class GlobalMapView extends StatefulWidget {
   _GlobalMapViewState createState() => _GlobalMapViewState();
 }
 
-class _GlobalMapViewState extends State<GlobalMapView> {
+class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveClientMixin {
   MapController mapController;
 
   int flags = InteractiveFlag.all;
-  double zoom = 1.0;
+  double zoom = 2.4;
   double x = 0.0;
   double y = 0.0;
+  LatLng center = LatLng(0.0, -30.0);
   CustomPoint leftCorner;
   final Epsg3857 projection = Epsg3857();
 
@@ -26,11 +27,14 @@ class _GlobalMapViewState extends State<GlobalMapView> {
   StreamSubscription<MapEvent> subscription;
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   void initState() {
     super.initState();
     mapController = MapController();
     subscription = mapController.mapEventStream.listen(onMapEvent);
-    markers = getMarkers(zoom);
+    markers = [];
   }
 
   @override
@@ -58,128 +62,110 @@ class _GlobalMapViewState extends State<GlobalMapView> {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<GlobalMapViewModel>.reactive(
-      builder: (context, model, child) => Listener(
-        onPointerHover: (pointerHover) {
-          if (pointerHover is PointerHoverEvent) {
-            x = pointerHover.position.dx;
-            y = pointerHover.position.dy;
-          }
-        },
-        onPointerSignal: (pointerSignal) {
-          if (pointerSignal is PointerScrollEvent) {
-            if (pointerSignal.scrollDelta.dy < 0 && 15 > mapController.zoom) {
-              RenderBox getBox = context.findRenderObject();
-              var local = getBox.globalToLocal(Offset(x, y));
-              var localPoint = CustomPoint(local.dx, local.dy);
-              var width = getBox.size.width;
-              var height = getBox.size.height;
-              var localPointCenterDistance = CustomPoint(
-                  (width / 2) - localPoint.x, (height / 2) - localPoint.y);
-
-              var mapCenter =
-                  projection.latLngToPoint(mapController.center, zoom + 1);
-              var point = mapCenter - localPointCenterDistance;
-              var projected = projection.pointToLatLng(point, zoom + 1);
-
-              mapController.move(projected, mapController.zoom + 1);
-              setState(() {
-                zoom = mapController.zoom;
-                markers = getMarkers(zoom);
-              });
-            } else if (pointerSignal.scrollDelta.dy > 0 &&
-                mapController.zoom > 1) {
-              RenderBox getBox = context.findRenderObject();
-              var local = getBox.globalToLocal(Offset(x, y));
-              var localPoint = CustomPoint(local.dx, local.dy);
-              var width = getBox.size.width;
-              var height = getBox.size.height;
-              var localPointCenterDistance = CustomPoint(
-                  (width / 2) - localPoint.x, (height / 2) - localPoint.y);
-
-              var mapCenter =
-                  projection.latLngToPoint(mapController.center, zoom);
-              var point = mapCenter - localPointCenterDistance;
-              var projected = projection.pointToLatLng(point, zoom);
-
-              mapController.move(projected, mapController.zoom - 1);
-              setState(() {
-                zoom = mapController.zoom;
-                markers = getMarkers(zoom);
-              });
+      builder: (context, model, child) {
+        markers = getMarkers(model.getData(zoom), zoom, model);
+        return Listener(
+          onPointerHover: (pointerHover) {
+            if (pointerHover is PointerHoverEvent) {
+              x = pointerHover.position.dx;
+              y = pointerHover.position.dy;
             }
-          }
-        },
-        child: FlutterMap(
-          mapController: mapController,
-          options: MapOptions(
-            onPositionChanged: (MapPosition position, bool text) {
-              leftCorner =
-                  projection.latLngToPoint(position.bounds.northWest, zoom);
-              print(
-                  'MapPosition ${projection.latLngToPoint(position.bounds.northWest, zoom)}');
-            },
-            center: LatLng(51.5, -0.09),
-            zoom: 1.0,
-            interactiveFlags: flags,
+          },
+          onPointerSignal: (pointerSignal) {
+            if (pointerSignal is PointerScrollEvent) {
+              if (pointerSignal.scrollDelta.dy < 0 && 15 > mapController.zoom) {
+                RenderBox getBox = context.findRenderObject();
+                var local = getBox.globalToLocal(Offset(x, y));
+                var localPoint = CustomPoint(local.dx, local.dy);
+                var width = getBox.size.width;
+                var height = getBox.size.height;
+                var localPointCenterDistance = CustomPoint(
+                    (width / 2) - localPoint.x, (height / 2) - localPoint.y);
+
+                var mapCenter =
+                projection.latLngToPoint(mapController.center, zoom + 1);
+                var point = mapCenter - localPointCenterDistance;
+                var projected = projection.pointToLatLng(point, zoom + 1);
+
+                mapController.move(projected, mapController.zoom + .4);
+                setState(() {
+                  zoom = mapController.zoom;
+                  markers = getMarkers(model.getData(zoom), zoom, model);
+                });
+              } else if (pointerSignal.scrollDelta.dy > 0 &&
+                  mapController.zoom > 1) {
+                RenderBox getBox = context.findRenderObject();
+                var local = getBox.globalToLocal(Offset(x, y));
+                var localPoint = CustomPoint(local.dx, local.dy);
+                var width = getBox.size.width;
+                var height = getBox.size.height;
+                var localPointCenterDistance = CustomPoint(
+                    (width / 2) - localPoint.x, (height / 2) - localPoint.y);
+
+                var mapCenter =
+                projection.latLngToPoint(mapController.center, zoom);
+                var point = mapCenter - localPointCenterDistance;
+                var projected = projection.pointToLatLng(point, zoom);
+
+                mapController.move(projected, mapController.zoom - .4);
+                setState(() {
+                  zoom = mapController.zoom;
+                  markers = getMarkers(model.getData(zoom), zoom, model);
+                });
+              }
+            }
+          },
+          child: FlutterMap(
+            mapController: mapController,
+            options: MapOptions(
+              center: center,
+              zoom: zoom,
+              interactiveFlags: flags,
+            ),
+            layers: [
+              TileLayerOptions(
+                updateInterval: 0,
+                keepBuffer: 100,
+                backgroundColor: Color.fromRGBO(38, 38, 38, 255),
+                urlTemplate:
+                "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+                subdomains: ['a', 'b', 'c'],
+              ),
+              MarkerLayerOptions(
+                markers: markers,
+              ),
+            ],
           ),
-          layers: [
-            TileLayerOptions(
-              updateInterval: 0,
-              keepBuffer: 100,
-              backgroundColor: Color.fromRGBO(38, 38, 38, 255),
-              urlTemplate:
-                  "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
-              subdomains: ['a', 'b', 'c'],
-            ),
-            MarkerLayerOptions(
-              markers: markers,
-            ),
-          ],
-        ),
-      ),
+        );
+      },
       viewModelBuilder: () => GlobalMapViewModel(),
     );
   }
 
-  List<Marker> getMarkers(double zoom) {
-    if (zoom <= 4) {
-      return [
-        Marker(
-          width: (1 - ((16.0 - zoom) / 15)) * 80.0,
-          height: (1 - ((16.0 - zoom) / 15)) * 80.0,
-          point: LatLng(51.5, -0.09),
-          builder: (ctx) => Container(
-            child: GlobalLocationItemView(),
+  List<Marker> getMarkers(data, _zoom, model) {
+    return data.map<Marker>((element) {
+      LatLng point = LatLng(element['lat'], element['lon']);
+      print(point);
+      print(element['location']);
+      return Marker(
+        width: 500.0,
+        height: 500.0,
+        point: point,
+        builder: (ctx) => Container(
+          child: GlobalLocationItemView(
+            intensity: element['activity'],
+            zoom: _zoom,
+            location: element['location'],
+            mapCallback: () {
+              print(element['location']);
+              setState(() {
+                zoom = 5;
+                mapController.move(point, 5);
+              });
+            },
           ),
         ),
-      ];
-    } else {
-      return [
-        Marker(
-          width: (1 - ((16.0 - zoom) / 15)) * 80.0,
-          height: (1 - ((16.0 - zoom) / 15)) * 80.0,
-          point: LatLng(51.8, -0.03),
-          builder: (ctx) => Container(
-            child: GlobalLocationItemView(),
-          ),
-        ),
-        Marker(
-          width: (1 - ((16.0 - zoom) / 15)) * 80.0,
-          height: (1 - ((16.0 - zoom) / 15)) * 80.0,
-          point: LatLng(51.0, -0.14),
-          builder: (ctx) => Container(
-            child: GlobalLocationItemView(),
-          ),
-        ),
-        Marker(
-          width: (1 - ((16.0 - zoom) / 15)) * 80.0,
-          height: (1 - ((16.0 - zoom) / 15)) * 80.0,
-          point: LatLng(51.3, -0.16),
-          builder: (ctx) => Container(
-            child: GlobalLocationItemView(),
-          ),
-        ),
-      ];
-    }
+      );
+    }).toList();
   }
 }

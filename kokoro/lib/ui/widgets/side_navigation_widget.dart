@@ -1,44 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:kokoro/ui/views/global_view/global_viewmodel.dart';
+import 'package:stacked/stacked.dart';
 
-class SideNavigation extends StatefulWidget {
+class SideNavigation extends ViewModelWidget<GlobalViewModel>  {
 
 
   final List<IconData> actions = [Icons.link, Icons.group_work];
 
-
   @override
-  _SideNavigationState createState() => _SideNavigationState();
-}
-
-class _SideNavigationState extends State<SideNavigation> {
-  int _currentIndex = 0;
-  List<Widget> children = [];
-
-  @override
-  Widget build(BuildContext context) {
-//    _updateChildren(context);
+  Widget build(BuildContext context, GlobalViewModel model) {
     return Column(
-      children: children,
+      children: <Widget>[
+        GestureDetector(
+          child: Icon(
+            Icons.group_work,
+            color: Colors.blue,
+            size: 44.0,
+            semanticLabel: 'Text to announce in accessibility modes',
+          ),
+          onTap: () {
+            model.buttonPressed(0);
+          },
+        ),
+        GestureDetector(
+          child: Icon(
+            Icons.link,
+            color: Colors.blue,
+            size: 44.0,
+            semanticLabel: 'Text to announce in accessibility modes',
+          ),
+          onTap: () {
+            model.buttonPressed(1);
+          },
+        ),
+      ],
     );
   }
-
-
-//  void _updateChildren(BuildContext context) {
-//    children = [];
-//    for (var i = 0; i < widget.locations.length; i++) {
-//      children.add(
-//        GestureDetector(
-//          child: Icon(
-//            widget.actions[i],
-//            color: i == _currentIndex ? Colors.blue : Colors.black,
-//            size: 44.0,
-//            semanticLabel: 'Text to announce in accessibility modes',
-//          ),
-//          onTap: () {
-//            context.beamTo(widget.locations[i]);
-//          },
-//        ),
-////      );
-//    }
-//  }
 }

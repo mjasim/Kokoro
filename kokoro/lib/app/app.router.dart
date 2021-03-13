@@ -60,8 +60,7 @@ class StackedRouter extends RouterBase {
     },
     GlobalView: (data) {
       return PageRouteBuilder<dynamic>(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const GlobalView(),
+        pageBuilder: (context, animation, secondaryAnimation) => GlobalView(),
         settings: data,
         transitionDuration: const Duration(milliseconds: 0),
       );
