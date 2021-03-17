@@ -16,7 +16,7 @@ class GlobalLocationItemView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('In location zoom: ${zoom} ${(1 - ((16.0 - zoom) / 15)) * 300.0}');
+//    print('In location zoom: ${zoom} ${(1 - ((16.0 - zoom) / 15)) * 300.0}');
     return ViewModelBuilder<GlobalLocationItemViewModel>.reactive(
       builder: (context, model, child) {
         if (zoom < 5 && model.isClicked) {

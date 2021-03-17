@@ -12,7 +12,8 @@ class GlobalMapView extends StatefulWidget {
   _GlobalMapViewState createState() => _GlobalMapViewState();
 }
 
-class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveClientMixin {
+class _GlobalMapViewState extends State<GlobalMapView>
+    with AutomaticKeepAliveClientMixin {
   MapController mapController;
 
   int flags = InteractiveFlag.all;
@@ -20,6 +21,8 @@ class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveCl
   double x = 0.0;
   double y = 0.0;
   LatLng center = LatLng(0.0, -30.0);
+  LatLng prevCenter = LatLng(0.0, -30.0);
+
   CustomPoint leftCorner;
   final Epsg3857 projection = Epsg3857();
 
@@ -45,7 +48,7 @@ class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveCl
 
   void onMapEvent(MapEvent mapEvent) {
     if (mapEvent is! MapEventMove && mapEvent is! MapEventRotate) {
-      print(mapEvent);
+//      print(mapEvent);
     }
   }
 
@@ -63,7 +66,7 @@ class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveCl
   Widget build(BuildContext context) {
     return ViewModelBuilder<GlobalMapViewModel>.reactive(
       builder: (context, model, child) {
-        markers = getMarkers(model.getData(zoom), zoom, model);
+//        markers = getMarkers(model.getData(zoom), zoom, model);
         return Listener(
           onPointerHover: (pointerHover) {
             if (pointerHover is PointerHoverEvent) {
@@ -75,27 +78,51 @@ class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveCl
             if (pointerSignal is PointerScrollEvent) {
               if (pointerSignal.scrollDelta.dy < 0 && 15 > mapController.zoom) {
                 RenderBox getBox = context.findRenderObject();
+                print("$x, $y");
                 var local = getBox.globalToLocal(Offset(x, y));
+                print(local);
                 var localPoint = CustomPoint(local.dx, local.dy);
                 var width = getBox.size.width;
                 var height = getBox.size.height;
+                print("width: $width, height: $height");
                 var localPointCenterDistance = CustomPoint(
                     (width / 2) - localPoint.x, (height / 2) - localPoint.y);
 
                 var mapCenter =
-                projection.latLngToPoint(mapController.center, zoom + 1);
+                    projection.latLngToPoint(mapController.center, zoom);
                 var point = mapCenter - localPointCenterDistance;
-                var projected = projection.pointToLatLng(point, zoom + 1);
+                var projected = projection.pointToLatLng(point, zoom);
+
+                print('Prev center: ${mapController.center}, Prev Zoom: ${mapController.zoom}');
+
 
                 mapController.move(projected, mapController.zoom + .4);
+                print('center: ${mapController.center}, Zoom: ${mapController.zoom}');
                 setState(() {
                   zoom = mapController.zoom;
-                  markers = getMarkers(model.getData(zoom), zoom, model);
+                  var _markers = getMarkers(model.getData(zoom), zoom, model);
+//                  print(_markers);
+//                  _markers.add(
+//                    Marker(
+//                      width: 100.0,
+//                      height: 100.0,
+//                      point: projected,
+//                      builder: (ctx) => Container(
+//                        height: 10.0,
+//                        width: 10.0,
+//                        color: Colors.orange,
+//                      ),
+//                    ),
+//                  );
+//                  markers = _markers;
+//                  print(markers);
                 });
               } else if (pointerSignal.scrollDelta.dy > 0 &&
                   mapController.zoom > 1) {
                 RenderBox getBox = context.findRenderObject();
+                print("$x, $y");
                 var local = getBox.globalToLocal(Offset(x, y));
+                print(local);
                 var localPoint = CustomPoint(local.dx, local.dy);
                 var width = getBox.size.width;
                 var height = getBox.size.height;
@@ -103,14 +130,27 @@ class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveCl
                     (width / 2) - localPoint.x, (height / 2) - localPoint.y);
 
                 var mapCenter =
-                projection.latLngToPoint(mapController.center, zoom);
+                    projection.latLngToPoint(mapController.center, zoom);
                 var point = mapCenter - localPointCenterDistance;
                 var projected = projection.pointToLatLng(point, zoom);
 
                 mapController.move(projected, mapController.zoom - .4);
                 setState(() {
                   zoom = mapController.zoom;
-                  markers = getMarkers(model.getData(zoom), zoom, model);
+                  var _markers = getMarkers(model.getData(zoom), zoom, model);
+//                  _markers.add(
+//                    Marker(
+//                      width: 100.0,
+//                      height: 100.0,
+//                      point: projected,
+//                      builder: (ctx) => Container(
+//                        height: 10.0,
+//                        width: 10.0,
+//                        color: Colors.orange,
+//                      ),
+//                    ),
+//                  );
+                  markers = _markers;
                 });
               }
             }
@@ -128,7 +168,7 @@ class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveCl
                 keepBuffer: 100,
                 backgroundColor: Color.fromRGBO(38, 38, 38, 255),
                 urlTemplate:
-                "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+                    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
                 subdomains: ['a', 'b', 'c'],
               ),
               MarkerLayerOptions(
@@ -145,8 +185,8 @@ class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveCl
   List<Marker> getMarkers(data, _zoom, model) {
     return data.map<Marker>((element) {
       LatLng point = LatLng(element['lat'], element['lon']);
-      print(point);
-      print(element['location']);
+//      print(point);
+//      print(element['location']);
       return Marker(
         width: 500.0,
         height: 500.0,
@@ -157,7 +197,7 @@ class _GlobalMapViewState extends State<GlobalMapView> with AutomaticKeepAliveCl
             zoom: _zoom,
             location: element['location'],
             mapCallback: () {
-              print(element['location']);
+//              print(element['location']);
               setState(() {
                 zoom = 5;
                 mapController.move(point, 5);
