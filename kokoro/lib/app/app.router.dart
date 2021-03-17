@@ -53,7 +53,8 @@ class StackedRouter extends RouterBase {
   final _pagesMap = <Type, StackedRouteFactory>{
     PlanetView: (data) {
       return PageRouteBuilder<dynamic>(
-        pageBuilder: (context, animation, secondaryAnimation) => PlanetView(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const PlanetView(),
         settings: data,
         transitionDuration: const Duration(milliseconds: 0),
       );

@@ -10,6 +10,8 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../core/services/firebase_auth_service.dart';
+import '../core/services/firebase_database_service.dart';
+import '../core/services/firebase_storage_service.dart';
 import '../core/services/global_map_service.dart';
 import '../core/services/mock_auth_service.dart';
 import '../core/services/navigation_bar_service.dart';
@@ -22,4 +24,6 @@ void setupLocator() {
   locator.registerLazySingleton(() => NavigationBarService());
   locator.registerLazySingleton(() => FirebaseAuthService());
   locator.registerLazySingleton(() => GlobalMapService());
+  locator.registerLazySingleton(() => FirebaseDatabaseService());
+  locator.registerLazySingleton(() => FirebaseStorageService());
 }
