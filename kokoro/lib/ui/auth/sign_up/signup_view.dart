@@ -18,6 +18,7 @@ class _SignUpViewState extends State<SignUpView> {
   TextEditingController _passwordController;
   TextEditingController _locationController;
   TextEditingController _nameController;
+  TextEditingController _otherGenderController;
 
   void initState() {
     super.initState();
@@ -25,6 +26,7 @@ class _SignUpViewState extends State<SignUpView> {
     _passwordController = TextEditingController();
     _locationController = TextEditingController();
     _nameController = TextEditingController();
+    _otherGenderController = TextEditingController();
   }
 
   void dispose() {
@@ -32,6 +34,7 @@ class _SignUpViewState extends State<SignUpView> {
     _passwordController.dispose();
     _locationController.dispose();
     _nameController.dispose();
+    _otherGenderController.dispose();
     super.dispose();
   }
 
@@ -148,465 +151,576 @@ class _SignUpViewState extends State<SignUpView> {
     return ViewModelBuilder<SignUpViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
         backgroundColor: Colors.black,
-        body: Column(
-            children: [
-              AppBar(
-                title: Text('KOKORO',
-                    style: TextStyle(color: Colors.black, fontSize: 20.0)),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container( // Creating a box
-                height: 550.0,
-                width: 1100.0,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.blue,
-                    width: 8,
+        body: ListView(
+          padding: const EdgeInsets.all(8),
+          children: [
+            Column(
+                children: [
+                  AppBar(
+                    title: Text('KOKORO',
+                        style: TextStyle(color: Colors.black, fontSize: 20.0)),
                   ),
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 7, // 70%
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text('Create a new account', // Title
-                              textAlign: TextAlign.left,
-                              style: TextStyle(color: Colors.blue, fontSize: 25.0)
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row( // Username
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container( // Creating a box
+                    height: 800.0,
+                    width: 1100.0,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.blue,
+                        width: 8,
+                      ),
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 7, // 70%
+                          child: Column(
                             children: [
-                              Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                      children: [
-                                        Text('Email *',
-                                          style: TextStyle(color: Colors.blue, fontSize: 17.0),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ]
-                                  )
+                              SizedBox(
+                                height: 20,
                               ),
-                              Expanded(
-                                  flex: 8,
-                                  child: Column(
-                                      children: [
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Container( // Type in Username
-                                            width: 400,
+                              Text('Create a new account', // Title
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(color: Colors.blue, fontSize: 25.0)
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row( // Username
+                                children: [
+                                  Expanded(
+                                      flex: 2,
+                                      child: Column(
+                                          children: [
+                                            Text('Email *',
+                                              style: TextStyle(color: Colors.blue, fontSize: 17.0),
+                                              textAlign: TextAlign.left,
+                                            ),
+                                          ]
+                                      )
+                                  ),
+                                  Expanded(
+                                      flex: 8,
+                                      child: Column(
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Container( // Type in Username
+                                                width: 400,
 
-                                            child: TextField(
-                                                controller: _emailController,
-                                                style: TextStyle(color: Colors.white, fontSize: 17.0),
-                                                decoration: InputDecoration(
-                                                  fillColor: Colors.black,
-                                                  filled: true,
-                                                  focusedBorder: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors.blue,
-                                                          style: BorderStyle.solid,
-                                                          width: 2.5)
-                                                  ),
-                                                  enabledBorder: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors.blue,
-                                                          style: BorderStyle.solid,
-                                                          width: 3
+                                                child: TextField(
+                                                    controller: _emailController,
+                                                    style: TextStyle(color: Colors.white, fontSize: 17.0),
+                                                    decoration: InputDecoration(
+                                                      fillColor: Colors.black,
+                                                      filled: true,
+                                                      focusedBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 2.5)
+                                                      ),
+                                                      enabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 3
+                                                          )
+                                                      ),
+                                                    )
+                                                ),
+                                              ),
+                                            )
+                                          ]
+                                      )
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row( // Password
+                                  children: [
+                                    Expanded(
+                                        flex: 2,
+                                        child: Column(
+                                            children: [
+                                              Text('Password *',
+                                                style: TextStyle(color: Colors.blue, fontSize: 17.0),
+                                              ),
+                                            ]
+                                        )
+                                    ),
+                                    Expanded(
+                                        flex: 8,
+                                        child: Column(
+                                            children: [
+                                              Container(
+                                                alignment: Alignment.centerLeft,
+                                                child: Container( // Type in Username
+                                                  width: 400,
+                                                  child: TextField(
+                                                      controller: _passwordController,
+                                                      style: TextStyle(color: Colors.white, fontSize: 17.0),
+                                                      obscureText: true,
+                                                      decoration: InputDecoration(
+                                                        fillColor: Colors.black,
+                                                        filled: true,
+                                                        focusedBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(8.0),
+                                                            borderSide: BorderSide(
+                                                                color: Colors.blue,
+                                                                style: BorderStyle.solid,
+                                                                width: 2.5)
+                                                        ),
+                                                        enabledBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(8.0),
+                                                            borderSide: BorderSide(
+                                                                color: Colors.blue,
+                                                                style: BorderStyle.solid,
+                                                                width: 3
+                                                            )
+                                                        ),
                                                       )
                                                   ),
-                                                )
-                                            ),
-                                          ),
+                                                ),
+                                              )
+                                            ]
                                         )
-                                      ]
-                                  )
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row( // Password
-                              children: [
-                                Expanded(
-                                    flex: 2,
-                                    child: Column(
-                                        children: [
-                                          Text('Password *',
-                                            style: TextStyle(color: Colors.blue, fontSize: 17.0),
-                                          ),
-                                        ]
                                     )
-                                ),
-                                Expanded(
-                                    flex: 8,
-                                    child: Column(
-                                        children: [
-                                          Container(
-                                            alignment: Alignment.centerLeft,
-                                            child: Container( // Type in Username
-                                              width: 400,
-                                              child: TextField(
-                                                  controller: _passwordController,
+                                  ]
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row( // Location
+                                children: [
+                                  Expanded(
+                                      flex: 2,
+                                      child: Column(
+                                          children: [
+                                            Text('Location *',
+                                              style:
+                                              TextStyle(color: Colors.blue, fontSize: 17.0),
+                                            ),
+                                          ]
+                                      )
+                                  ),
+                                  Expanded(
+                                      flex: 8,
+                                      child: Column(
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Container( // Type in Location
+                                                width: 400,
+                                                child: TextField(
+                                                    style: TextStyle(color: Colors.white, fontSize: 17.0),
+                                                    controller: _locationController,
+                                                    decoration: InputDecoration(
+                                                      fillColor: Colors.black,
+                                                      filled: true,
+                                                      focusedBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 2.5)
+                                                      ),
+                                                      enabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 3
+                                                          )
+                                                      ),
+                                                    )
+                                                ),
+                                              ),
+                                            )
+                                          ]
+                                      )
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 120,
+                                  ),
+                                  Image.asset('images/information-icon.png',
+                                    height: 25,
+                                    width: 25,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text('All information except the password will be public',
+                                    style: TextStyle(color: Colors.blue, fontSize: 17.0),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row( // Name
+                                children: [
+                                  Expanded(
+                                      flex: 2,
+                                      child: Column(
+                                          children: [
+                                            Text('Name',
+                                              style:
+                                              TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 17.0
+                                              ),
+                                            ),
+                                          ]
+                                      )
+                                  ),
+                                  Expanded(
+                                      flex: 8,
+                                      child: Column(
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Container( // Type in Username
+                                                width: 400,
+                                                child: TextField(
+                                                    style: TextStyle(color: Colors.white, fontSize: 17.0),
+                                                    controller: _nameController,
+                                                    decoration: InputDecoration(
+                                                      fillColor: Colors.black,
+                                                      filled: true,
+                                                      focusedBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 2.5)
+                                                      ),
+                                                      enabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 3
+                                                          )
+                                                      ),
+                                                    )
+                                                ),
+                                              ),
+                                            )
+                                          ]
+                                      )
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row( // Birthday
+                                children: [
+                                  Expanded(
+                                      flex: 2,
+                                      child: Column(
+                                          children: [
+                                            Text('Birthday',
+                                              style:
+                                              TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 17.0
+                                              ),
+                                            ),
+                                          ]
+                                      )
+                                  ),
+                                  Expanded(
+                                      flex: 8,
+                                      child: Column(
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Container( // Type in Birthday
+                                                width: 400,
+                                                child: TextField(
+                                                  onTap: () => _selectDate(context),
+                                                  controller: _date,
+                                                  keyboardType: TextInputType.datetime,
                                                   style: TextStyle(color: Colors.white, fontSize: 17.0),
-                                                  obscureText: true,
                                                   decoration: InputDecoration(
+                                                    isDense: true,
                                                     fillColor: Colors.black,
                                                     filled: true,
-                                                    focusedBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(8.0),
-                                                        borderSide: BorderSide(
-                                                            color: Colors.blue,
-                                                            style: BorderStyle.solid,
-                                                            width: 2.5)
-                                                    ),
                                                     enabledBorder: OutlineInputBorder(
                                                         borderRadius: BorderRadius.circular(8.0),
                                                         borderSide: BorderSide(
                                                             color: Colors.blue,
                                                             style: BorderStyle.solid,
-                                                            width: 3
+                                                            width: 2.5
                                                         )
                                                     ),
-                                                  )
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ]
+                                      )
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+//                              Row( // Location
+//                                children: [
+//                                  Expanded(
+//                                    flex: 2,
+//                                  ),
+//                                  Expanded(
+//                                      flex: 8,
+//                                      child: Column(
+//                                          children: [
+//                                            Container(
+//                                              alignment: Alignment.centerLeft,
+//                                              child: Container( // Type in Other Gender
+//                                                width: 400,
+//                                                child: TextField(
+//                                                    style: TextStyle(color: Colors.white, fontSize: 17.0),
+//                                                    controller: _otherGenderController,
+//                                                    decoration: InputDecoration(
+//                                                      fillColor: Colors.black,
+//                                                      filled: true,
+//                                                      focusedBorder: OutlineInputBorder(
+//                                                          borderRadius: BorderRadius.circular(8.0),
+//                                                          borderSide: BorderSide(
+//                                                              color: Colors.blue,
+//                                                              style: BorderStyle.solid,
+//                                                              width: 2.5)
+//                                                      ),
+//                                                      enabledBorder: OutlineInputBorder(
+//                                                          borderRadius: BorderRadius.circular(8.0),
+//                                                          borderSide: BorderSide(
+//                                                              color: Colors.blue,
+//                                                              style: BorderStyle.solid,
+//                                                              width: 3
+//                                                          )
+//                                                      ),
+//                                                    )
+//                                                ),
+//                                              ),
+//                                            )
+//                                          ]
+//                                      )
+//                                  )
+//                                ],
+//                              ),
+                              Row( // Gender
+                                children: [
+                                  Expanded(
+                                      flex: 2,
+                                      child: Column(
+                                          children: [
+                                            Text('Gender',
+                                              style:
+                                              TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 17.0
                                               ),
                                             ),
-                                          )
-                                        ]
-                                    )
-                                )
-                              ]
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row( // Location
-                            children: [
-                              Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                      children: [
-                                        Text('Location *',
-                                          style:
-                                          TextStyle(color: Colors.blue, fontSize: 17.0),
-                                        ),
-                                      ]
-                                  )
-                              ),
-                              Expanded(
-                                  flex: 8,
-                                  child: Column(
-                                      children: [
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Container( // Type in Username
-                                            width: 400,
-                                            child: TextField(
-                                                style: TextStyle(color: Colors.white, fontSize: 17.0),
-                                                controller: _locationController,
-                                                decoration: InputDecoration(
-                                                  fillColor: Colors.black,
-                                                  filled: true,
-                                                  focusedBorder: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors.blue,
-                                                          style: BorderStyle.solid,
-                                                          width: 2.5)
+                                          ]
+                                      )
+                                  ),
+                                  Expanded(
+                                      flex: 8,
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.centerLeft,
+                                            child: Container( // Type in Gender
+                                                width: 400,
+                                                child: DropdownButton<String>(
+                                                  value: genderDropdownValue,
+                                                  icon: Icon(Icons.arrow_downward, color: Colors.blue,),
+                                                  iconSize: 28,
+                                                  elevation: 16,
+                                                  style: TextStyle(color: Colors.blue),
+                                                  underline: Container(
+                                                    height: 2,
+                                                    color: Colors.blue,
                                                   ),
-                                                  enabledBorder: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors.blue,
-                                                          style: BorderStyle.solid,
-                                                          width: 3
-                                                      )
-                                                  ),
+                                                  onChanged: (String newValue) {
+                                                    setState(() {
+                                                      genderDropdownValue = newValue;
+                                                    });
+                                                  },
+                                                  items: <String>['Choose', 'Male', 'Female', 'Other']
+                                                      .map<DropdownMenuItem<String>>((String value) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: value,
+                                                      child: Text(value),
+                                                    );
+                                                  }).toList(),
                                                 )
                                             ),
                                           ),
-                                        )
-                                      ]
+                                        ],
+                                      )
                                   )
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 120,
-                              ),
-                              Image.asset('images/information-icon.png',
-                                height: 25,
-                                width: 25,
+                                ],
                               ),
                               SizedBox(
-                                width: 10,
-                              ),
-                              Text('All information except the password will be public',
-                                style: TextStyle(color: Colors.blue, fontSize: 17.0),
+                                height: 20,
                               ),
                             ],
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row( // Name
+                        ),
+                        Expanded(
+                          flex: 3, // 30%
+                          child: Column(
                             children: [
-                              Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                      children: [
-                                        Text('Name',
-                                          style:
-                                          TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 17.0
-                                          ),
-                                        ),
-                                      ]
-                                  )
+                              SizedBox(
+                                height: 80,
                               ),
-                              Expanded(
-                                  flex: 8,
-                                  child: Column(
-                                      children: [
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Container( // Type in Username
-                                            width: 400,
-                                            child: TextField(
-                                                style: TextStyle(color: Colors.white, fontSize: 17.0),
-                                                controller: _nameController,
-                                                decoration: InputDecoration(
-                                                  fillColor: Colors.black,
-                                                  filled: true,
-                                                  focusedBorder: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors.blue,
-                                                          style: BorderStyle.solid,
-                                                          width: 2.5)
-                                                  ),
-                                                  enabledBorder: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors.blue,
-                                                          style: BorderStyle.solid,
-                                                          width: 3
-                                                      )
-                                                  ),
-                                                )
-                                            ),
-                                          ),
-                                        )
-                                      ]
-                                  )
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row( // Birthday
-                            children: [
-                              Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                      children: [
-                                        Text('Birthday',
-                                          style:
-                                          TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 17.0
-                                          ),
-                                        ),
-                                      ]
-                                  )
+                              CircleAvatar(
+                                radius: 80,
+                                child: Icon(Icons.account_circle, size: 150, color: Colors.blue),
                               ),
-                              Expanded(
-                                  flex: 8,
-                                  child: Column(
-                                      children: [
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Container( // Type in Birthday
-                                            width: 400,
-                                            child: TextField(
-                                                onTap: () => _selectDate(context),
-                                                controller: _date,
-                                                keyboardType: TextInputType.datetime,
-                                                style: TextStyle(color: Colors.white, fontSize: 17.0),
-                                                decoration: InputDecoration(
-                                                  isDense: true,
-                                                  fillColor: Colors.black,
-                                                  filled: true,
-                                                  enabledBorder: OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(8.0),
-                                                    borderSide: BorderSide(
-                                                        color: Colors.blue,
-                                                        style: BorderStyle.solid,
-                                                        width: 2.5
-                                                    )
-                                                  ),
-                                                ),
-                                            ),
-                                          ),
-                                        )
-                                      ]
-                                  )
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row( // Gender
-                            children: [
-                              Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                      children: [
-                                        Text('Gender',
-                                          style:
-                                          TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 17.0
-                                          ),
-                                        ),
-                                      ]
-                                  )
+                              SizedBox(
+                                height: 20,
                               ),
-                              Expanded(
-                                  flex: 8,
-                                  child: Column(
-                                      children: [
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Container( // Type in Gender
-                                              width: 400,
-                                              child: DropdownButton<String>(
-                                                value: genderDropdownValue,
-                                                icon: Icon(Icons.arrow_downward, color: Colors.blue,),
-                                                iconSize: 28,
-                                                elevation: 16,
-                                                style: TextStyle(color: Colors.blue),
-                                                underline: Container(
-                                                  height: 2,
-                                                  color: Colors.blue,
-                                                ),
-                                                onChanged: (String newValue) {
-                                                  setState(() {
-                                                    genderDropdownValue = newValue;
-                                                  });
-                                                },
-                                                items: <String>['Choose', 'Male', 'Female', 'Other']
-                                                    .map<DropdownMenuItem<String>>((String value) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Text(value),
-                                                  );
-                                                }).toList(),
-                                              )
-                                          ),
-                                        )
-                                      ]
-                                  )
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3, // 30%
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 80,
-                          ),
-                          CircleAvatar(
-                            radius: 80,
-                            child: Icon(Icons.account_circle, size: 150, color: Colors.blue),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          MaterialButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            color: Colors.blue,
-                            onPressed: () {
-                              _onImageButtonPressed(ImageSource.gallery, context: context);
-                            },
-                            child: Icon(Icons.open_in_browser),
-                          ),
-                          SizedBox(
-                            height: 150,
-                          ),
-                          MaterialButton( // Sign up button after submitting information
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            color: Colors.blue,
-                            child: Align(
-                              alignment: Alignment.center,
-                              widthFactor: 1.7,
-                              heightFactor: 1.2,
-                              child: Text('Sign Up',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 17.0,
-                                  height: 1.7,
+                              MaterialButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
                                 ),
+                                color: Colors.blue,
+                                onPressed: () {
+                                  _onImageButtonPressed(ImageSource.gallery, context: context);
+                                },
+                                child: Icon(Icons.open_in_browser),
                               ),
-                            ),
-                            onPressed: () {
-                              String username = _emailController.text;
-                              String password = _passwordController.text;
-                              String location = _locationController.text;
-                              String name = _nameController.text;
-                              String birthday = _date.text;
-                              String gender = genderDropdownValue;
+                              SizedBox(
+                                height: 150,
+                              ),
+                              MaterialButton( // Sign up button after submitting information
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                color: Colors.blue,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  widthFactor: 1.7,
+                                  heightFactor: 1.2,
+                                  child: Text('Sign Up',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 17.0,
+                                      height: 1.7,
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  String username = _emailController.text;
+                                  String password = _passwordController.text;
+                                  String location = _locationController.text;
+                                  String name = _nameController.text;
+                                  String birthday = _date.text;
+                                  String gender = genderDropdownValue + _otherGenderController.text;
 
-                              model.makeAccount(username, password, location,
-                                  name, birthday, gender);
-                            },
+                                  model.makeAccount(username, password, location,
+                                      name, birthday, gender);
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ]
+                  ),
+                ]
+            ),
+          ],
         ),
+
       ),
       viewModelBuilder: () => SignUpViewModel(),
     );
   }
 }
+
+class customTextInput extends StatelessWidget {
+  customTextInput({label, controller});
+  var label;
+  var controller;
+  @override
+  Widget build(BuildContext context) {
+    return Row( // Username
+      children: [
+        Expanded(
+            flex: 2,
+            child: Column(
+                children: [
+                  Text('Email *',
+                    style: TextStyle(color: Colors.blue, fontSize: 17.0),
+                    textAlign: TextAlign.left,
+                  ),
+                ]
+            )
+        ),
+        Expanded(
+            flex: 8,
+            child: Column(
+                children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    child: Container( // Type in Username
+                      width: 400,
+
+                      child: TextField(
+                          controller: controller,
+                          style: TextStyle(color: Colors.white, fontSize: 17.0),
+                          decoration: InputDecoration(
+                            fillColor: Colors.black,
+                            filled: true,
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide(
+                                    color: Colors.blue,
+                                    style: BorderStyle.solid,
+                                    width: 2.5)
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide(
+                                    color: Colors.blue,
+                                    style: BorderStyle.solid,
+                                    width: 3
+                                )
+                            ),
+                          )
+                      ),
+                    ),
+                  )
+                ]
+            )
+        ),
+      ],
+    );
+  }
+}
+
 
 typedef void OnPickImageCallback(
     double maxWidth, double maxHeight, int quality);

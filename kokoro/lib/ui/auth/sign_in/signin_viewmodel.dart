@@ -26,5 +26,9 @@ class SignInViewModel extends BaseViewModel {
   void makeAccount() {
     _nagivationService.navigateTo(Routes.signUpView);
   }
+
+  void navigateToGlobalView() {
+    _nagivationService.navigateTo(Routes.globalView);
+  }
   
 }

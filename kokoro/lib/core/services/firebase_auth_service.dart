@@ -21,6 +21,10 @@ class FirebaseAuthService {
     return _firebaseAuth.currentUser?.getIdToken();
   }
 
+  String get userUid {
+    return _firebaseAuth.currentUser?.uid;
+  }
+
   /// Returns true when a user has logged in or signed on this device
   bool get hasUser {
     return _firebaseAuth?.currentUser != null;
