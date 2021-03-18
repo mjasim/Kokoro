@@ -18,7 +18,9 @@ class _SignUpViewState extends State<SignUpView> {
   TextEditingController _passwordController;
   TextEditingController _locationController;
   TextEditingController _nameController;
+  TextEditingController _userNameController;
   TextEditingController _otherGenderController;
+  TextEditingController _aboutMeController;
 
   void initState() {
     super.initState();
@@ -26,7 +28,9 @@ class _SignUpViewState extends State<SignUpView> {
     _passwordController = TextEditingController();
     _locationController = TextEditingController();
     _nameController = TextEditingController();
+    _userNameController = TextEditingController();
     _otherGenderController = TextEditingController();
+    _aboutMeController = TextEditingController();
   }
 
   void dispose() {
@@ -34,7 +38,9 @@ class _SignUpViewState extends State<SignUpView> {
     _passwordController.dispose();
     _locationController.dispose();
     _nameController.dispose();
+    _userNameController.dispose();
     _otherGenderController.dispose();
+    _aboutMeController.dispose();
     super.dispose();
   }
 
@@ -144,7 +150,10 @@ class _SignUpViewState extends State<SignUpView> {
         });
   }
 
-  String genderDropdownValue = 'Choose';
+  String genderDropdownValue = 'Choose';  // Gets choice of gender
+  String genderTextFieldHint = ' ';       // Shows/Hides text field hints for Gender input
+  var otherTextFieldEnabled = false;      // Enable/Disable text field for Gender input
+  Color genderInputColor = Colors.white;  // Shows/Hides typed input for "Other" Gender
 
   @override
   Widget build(BuildContext context) {
@@ -430,6 +439,63 @@ class _SignUpViewState extends State<SignUpView> {
                               SizedBox(
                                 height: 15,
                               ),
+                              Row( // Name
+                                children: [
+                                  Expanded(
+                                      flex: 2,
+                                      child: Column(
+                                          children: [
+                                            Text('Username *',
+                                              style:
+                                              TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 17.0
+                                              ),
+                                            ),
+                                          ]
+                                      )
+                                  ),
+                                  Expanded(
+                                      flex: 8,
+                                      child: Column(
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Container( // Type in Username
+                                                width: 400,
+                                                child: TextField(
+                                                    style: TextStyle(color: Colors.white, fontSize: 17.0),
+                                                    controller: _userNameController,
+                                                    decoration: InputDecoration(
+                                                      fillColor: Colors.black,
+                                                      filled: true,
+                                                      focusedBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 2.5)
+                                                      ),
+                                                      enabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 3
+                                                          )
+                                                      ),
+                                                    )
+                                                ),
+                                              ),
+                                            )
+                                          ]
+                                      )
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
                               Row( // Birthday
                                 children: [
                                   Expanded(
@@ -483,49 +549,6 @@ class _SignUpViewState extends State<SignUpView> {
                               SizedBox(
                                 height: 15,
                               ),
-//                              Row( // Location
-//                                children: [
-//                                  Expanded(
-//                                    flex: 2,
-//                                  ),
-//                                  Expanded(
-//                                      flex: 8,
-//                                      child: Column(
-//                                          children: [
-//                                            Container(
-//                                              alignment: Alignment.centerLeft,
-//                                              child: Container( // Type in Other Gender
-//                                                width: 400,
-//                                                child: TextField(
-//                                                    style: TextStyle(color: Colors.white, fontSize: 17.0),
-//                                                    controller: _otherGenderController,
-//                                                    decoration: InputDecoration(
-//                                                      fillColor: Colors.black,
-//                                                      filled: true,
-//                                                      focusedBorder: OutlineInputBorder(
-//                                                          borderRadius: BorderRadius.circular(8.0),
-//                                                          borderSide: BorderSide(
-//                                                              color: Colors.blue,
-//                                                              style: BorderStyle.solid,
-//                                                              width: 2.5)
-//                                                      ),
-//                                                      enabledBorder: OutlineInputBorder(
-//                                                          borderRadius: BorderRadius.circular(8.0),
-//                                                          borderSide: BorderSide(
-//                                                              color: Colors.blue,
-//                                                              style: BorderStyle.solid,
-//                                                              width: 3
-//                                                          )
-//                                                      ),
-//                                                    )
-//                                                ),
-//                                              ),
-//                                            )
-//                                          ]
-//                                      )
-//                                  )
-//                                ],
-//                              ),
                               Row( // Gender
                                 children: [
                                   Expanded(
@@ -552,7 +575,7 @@ class _SignUpViewState extends State<SignUpView> {
                                                 width: 400,
                                                 child: DropdownButton<String>(
                                                   value: genderDropdownValue,
-                                                  icon: Icon(Icons.arrow_downward, color: Colors.blue,),
+                                                  icon: Icon(Icons.arrow_downward, color: Colors.blue),
                                                   iconSize: 28,
                                                   elevation: 16,
                                                   style: TextStyle(color: Colors.blue),
@@ -564,6 +587,17 @@ class _SignUpViewState extends State<SignUpView> {
                                                     setState(() {
                                                       genderDropdownValue = newValue;
                                                     });
+
+                                                    // Enable or disable "Other" gender input
+                                                    if (newValue == 'Other') {
+                                                      otherTextFieldEnabled = true;
+                                                      genderTextFieldHint = 'Please type in your gender';
+                                                      genderInputColor = Colors.white;
+                                                    } else {
+                                                      otherTextFieldEnabled = false;
+                                                      genderTextFieldHint = ' ';
+                                                      genderInputColor = Colors.black;
+                                                    }
                                                   },
                                                   items: <String>['Choose', 'Male', 'Female', 'Other']
                                                       .map<DropdownMenuItem<String>>((String value) {
@@ -582,6 +616,118 @@ class _SignUpViewState extends State<SignUpView> {
                               ),
                               SizedBox(
                                 height: 20,
+                              ),
+                              Row( // Input Gender for "Other"
+                                children: [
+                                  Expanded(
+                                      flex: 2,
+                                      child: Column(
+                                          children: [
+                                            Text(' ',
+                                              style:
+                                              TextStyle(color: Colors.blue, fontSize: 17.0),
+                                            ),
+                                          ]
+                                      )
+                                  ),
+                                  Expanded(
+                                      flex: 8,
+                                      child: Column(
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Container( // Type in Other Gender
+                                                width: 400,
+                                                child: TextField(
+                                                    enabled: otherTextFieldEnabled,
+                                                    style: TextStyle(color: genderInputColor, fontSize: 17.0),
+                                                    controller: _otherGenderController,
+                                                    decoration: InputDecoration(
+                                                      hintText: genderTextFieldHint,
+                                                      hintStyle: TextStyle(color: Colors.blue, fontSize: 17.0),
+                                                      fillColor: Colors.black,
+                                                      filled: true,
+                                                      focusedBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 2.5)
+                                                      ),
+                                                      enabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 3
+                                                          )
+                                                      ),
+                                                    )
+                                                ),
+                                              ),
+                                            )
+                                          ]
+                                      )
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row( // Location
+                                children: [
+                                  Expanded(
+                                      flex: 2,
+                                      child: Column(
+                                          children: [
+                                            Text('About Me',
+                                              style:
+                                              TextStyle(color: Colors.blue, fontSize: 17.0),
+                                            ),
+                                          ]
+                                      )
+                                  ),
+                                  Expanded(
+                                      flex: 8,
+                                      child: Column(
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Container( // Type in Other Gender
+                                                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                                width: 400,
+                                                height: 100,
+                                                child: TextField(
+                                                    minLines: 50,
+                                                    maxLines: 100,
+                                                    style: TextStyle(color: Colors.white, fontSize: 17.0),
+                                                    controller: _aboutMeController,
+                                                    decoration: InputDecoration(
+                                                      fillColor: Colors.black,
+                                                      filled: true,
+                                                      focusedBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 2.5)
+                                                      ),
+                                                      enabledBorder: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          borderSide: BorderSide(
+                                                              color: Colors.blue,
+                                                              style: BorderStyle.solid,
+                                                              width: 3
+                                                          )
+                                                      ),
+                                                    )
+                                                ),
+                                              ),
+                                            )
+                                          ]
+                                      )
+                                  )
+                                ],
                               ),
                             ],
                           ),
@@ -611,7 +757,10 @@ class _SignUpViewState extends State<SignUpView> {
                                 child: Icon(Icons.open_in_browser),
                               ),
                               SizedBox(
-                                height: 150,
+                                height: 210,
+                              ),
+                              SizedBox(
+                                height: 20,
                               ),
                               MaterialButton( // Sign up button after submitting information
                                 shape: RoundedRectangleBorder(
@@ -632,15 +781,20 @@ class _SignUpViewState extends State<SignUpView> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  String username = _emailController.text;
+                                  String email = _emailController.text;
                                   String password = _passwordController.text;
                                   String location = _locationController.text;
                                   String name = _nameController.text;
+                                  String username = _userNameController.text;
                                   String birthday = _date.text;
-                                  String gender = genderDropdownValue + _otherGenderController.text;
+                                  String gender = genderDropdownValue;
+                                  if (genderDropdownValue == 'Other') {
+                                    gender = _otherGenderController.text;
+                                  }
+                                  String aboutMe = _aboutMeController.text;
 
-                                  model.makeAccount(username, password, location,
-                                      name, birthday, gender);
+                                  model.makeAccount(email, password, location,
+                                      name, username, birthday, gender, aboutMe);
                                 },
                               ),
                             ],

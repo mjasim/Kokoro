@@ -14,13 +14,18 @@ class SignUpViewModel extends BaseViewModel {
   final _databaseService = locator<FirebaseDatabaseService>();
 
   void makeAccount(String email, String password, String location,
-                   String name, String birthday, String gender) async {
+                   String name, String username, String birthday,
+                   String gender, String aboutMe) async {
+
     print("Email:    ${email}");
     print("Password: ${password}");
     print("Location: ${location}");
     print("Name:     ${name}");
+    print("Username: ${username}");
     print("Birthday: ${birthday}");
     print("Gender:   ${gender}");
+    print("About Me: ${aboutMe}");
+
     FirebaseAuthenticationResult authResult = await _authService.createAccountWithEmail(email: email, password: password);
     if (!authResult .hasError) {
       String uid = authResult.uid;
