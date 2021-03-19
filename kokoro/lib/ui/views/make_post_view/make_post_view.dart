@@ -25,6 +25,7 @@ class _MakePostViewState extends State<MakePostView> {
   Widget build(BuildContext context) {
     return ViewModelBuilder<MakePostViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
+        backgroundColor: Color(0xFF192841),
         appBar: TopBar(),
         body: Column(
           children: [
@@ -38,26 +39,28 @@ class _MakePostViewState extends State<MakePostView> {
                   controller: _postTextController,
                   minLines: 50,
                   maxLines: 100,
-//                  expands: true,
                   style: TextStyle(color: Colors.white, fontSize: 17.0),
                   decoration: InputDecoration(
                     hintText: "Post Text",
                     hintStyle: TextStyle(color: Theme.of(context).backgroundColor, fontSize: 17.0),
-                    fillColor: Colors.black,
+                    fillColor: Color(0xFF192841),
                     filled: true,
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(
-                          color: Colors.blue, style: BorderStyle.solid, width: 3),
+                          color: Color(0xFF969696), style: BorderStyle.solid, width: 3),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(
-                          color: Colors.blue, style: BorderStyle.solid, width: 4),
+                          color: Color(0xFFb3b3b3), style: BorderStyle.solid, width: 4),
                     ),
                   ),
                 ),
               ),
+            ),
+            SizedBox(
+              height: 15,
             ),
             MaterialButton(
                 shape: RoundedRectangleBorder(
