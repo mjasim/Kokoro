@@ -7,6 +7,9 @@ import 'package:kokoro/ui/widgets/side_navigation_widget.dart';
 import 'package:stacked/stacked.dart';
 
 
+import 'package:flutter/material.dart';
+import 'package:stacked/stacked.dart';
+
 class GlobalView extends StatefulWidget {
   @override
   _GlobalViewState createState() => _GlobalViewState();

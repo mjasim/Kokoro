@@ -28,6 +28,7 @@ class _SignInViewState extends State<SignInView> {
   Widget build(BuildContext context) {
     print('Sign in view');
     return ViewModelBuilder<SignInViewModel>.reactive(
+
       builder: (context, model, child) => Scaffold(
         backgroundColor: Colors.black,
         body: Center(
@@ -146,7 +147,7 @@ class _SignInViewState extends State<SignInView> {
                           String password = _passwordController.text;
                           print("Username: ${username} Password: ${password}");
 //                          model.signInButtonPressed(username, password);
-
+                          model.signInButtonPressed('test@real.com', '123456hd');
                           model.navigateToGlobalView();
                         }
                     ),

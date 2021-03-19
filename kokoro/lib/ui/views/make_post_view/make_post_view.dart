@@ -25,7 +25,7 @@ class _MakePostViewState extends State<MakePostView> {
   Widget build(BuildContext context) {
     return ViewModelBuilder<MakePostViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
-        backgroundColor: Color(0xFF192841),
+        backgroundColor: Theme.of(context).backgroundColor,
         appBar: TopBar(),
         body: Column(
           children: [
