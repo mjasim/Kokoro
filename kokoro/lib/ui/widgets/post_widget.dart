@@ -18,46 +18,91 @@ class PostWidget extends ViewModelWidget<HomeViewModel> {
         constraints:
             BoxConstraints(maxWidth: 800.0, minWidth: 100.0, minHeight: 400.0),
         decoration: BoxDecoration(
-          color: Colors.orange,
+          border: Border.all(
+            color: Colors.blue,
+            width: 8,
+          ),
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            SizedBox(
+              width: 0.5,
+            ),
             Column(
               children: [
                 CircleAvatar(
-                  child: Image.network(post.authorProfilePhotoUrl),
+                  radius: 80,
+                  backgroundColor: Colors.blue,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(80.0),
+                      topRight: Radius.circular(80.0),
+                      bottomLeft: Radius.circular(80.0),
+                      bottomRight: Radius.circular(80.0),
+                    ),
+                    child: Image.network(post.authorProfilePhotoUrl, width: 150, height: 150, fit: BoxFit.fill,),
+                  ),
+                ),
+
+
+                SizedBox(
+                  height: 10,
                 ),
                 Text(post.authorUsername)
               ],
             ),
+
             Column(
-              children: [
-                Text(post.postText),
-                Divider(),
-                Row(
                   children: [
-                    Icon(Icons.thumb_down),
-                    Slider(
-                        value: post.userReactionAmount,
-                        max: 100,
-                        min: 0,
-                        onChanged: (details) {
-                          model.updateUserSliderReaction(index, details);
-                        }),
-                    Icon(Icons.thumb_up),
-                    Text("${post.reactionCount}"),
-                    Icon(Icons.comment),
-                    Text("${post.commentCount}"),
-                    Icon(
-                      Icons.circle,
-                      color: Color(int.parse(
-                          post.reactionColor.replaceAll('#', '0xff'))),
-                    )
+                    Text(post.postText),
+                    Divider(),
+                    Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.thumb_down),
+                            Slider(
+                                value: post.userReactionAmount,
+                                max: 100,
+                                min: 0,
+                                onChanged: (details) {
+                                  model.updateUserSliderReaction(index, details);
+                                }),
+                            Icon(Icons.thumb_up),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("${post.reactionCount}"),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Icon(Icons.comment),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("${post.commentCount}"),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Icon(
+                              Icons.circle,
+                              color: Color(int.parse(
+                                  post.reactionColor.replaceAll('#', '0xff'))),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+//                              Text("${post.dateCreated}"), // Something to fix for later
+                          ],
+                        )
+                    ),
                   ],
                 )
-              ],
-            )
+
           ],
         ),
       ),

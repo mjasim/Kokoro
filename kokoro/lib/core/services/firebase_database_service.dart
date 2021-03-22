@@ -34,7 +34,7 @@ class FirebaseDatabaseService {
 
   Future<List<PostModel>> getPosts() async {
     QuerySnapshot postSnapshot = await posts.limit(10)
-        .orderBy('dateCreated')
+        .orderBy('dateCreated', descending: true)
         .get();
 
     var random = Random();

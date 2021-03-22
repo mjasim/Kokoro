@@ -152,9 +152,7 @@ class _SignUpViewState extends State<SignUpView> {
   }
 
   String genderDropdownValue = 'Choose'; // Gets choice of gender
-  String genderTextFieldHint = ' '; // Shows/Hides text field hints for Gender input
   bool otherTextFieldEnabled = false; // Enable/Disable text field for Gender input
-  Color genderInputColor = Colors.white; // Shows/Hides typed input for "Other" Gender
 
   @override
   Widget build(BuildContext context) {

@@ -43,17 +43,17 @@ class _MakePostViewState extends State<MakePostView> {
                   decoration: InputDecoration(
                     hintText: "Post Text",
                     hintStyle: TextStyle(color: Theme.of(context).backgroundColor, fontSize: 17.0),
-                    fillColor: Color(0xFF192841),
+                    fillColor: Theme.of(context).backgroundColor,
                     filled: true,
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(
-                          color: Color(0xFF969696), style: BorderStyle.solid, width: 3),
+                          color: Theme.of(context).indicatorColor, style: BorderStyle.solid, width: 3),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(
-                          color: Color(0xFFb3b3b3), style: BorderStyle.solid, width: 4),
+                          color: Theme.of(context).focusColor, style: BorderStyle.solid, width: 4),
                     ),
                   ),
                 ),
