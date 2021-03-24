@@ -33,6 +33,7 @@ class _MyAppState extends State<MyApp> {
         textTheme: TextTheme(
           headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
           headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+          headline3: TextStyle(fontSize: 24.0, color: Color(0xFFb3b3b3)),
           bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
         ),
       ),

@@ -22,12 +22,13 @@ class FirebaseDatabaseService {
   }
 
   Future createPost({@required uid, @required username,
-                     @required contentType, @required content}) {
+                     @required contentType, @required postText, contentUrl}) {
     return posts.doc().set({
       'authorUid': uid,
       'authorUsername': username,
       'contentType': contentType,
-      'content': content,
+      'contentUrl': contentUrl,
+      'postText': postText,
       'dateCreated': FieldValue.serverTimestamp(),
     });
   }
@@ -43,7 +44,7 @@ class FirebaseDatabaseService {
       return PostModel(
         authorUid: element['authorUid'],
         authorUsername: element['authorUsername'],
-        postText: element['content'],
+        postText: element['postText'],
         dateCreated: element['dateCreated'],
         reactionAverage: random.nextDouble() * 100,
         commentCount: random.nextInt(100),
