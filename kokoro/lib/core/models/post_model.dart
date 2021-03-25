@@ -5,6 +5,8 @@ class PostModel {
     this.authorUsername,
     this.dateCreated,
     this.postText,
+    this.contentType,
+    this.contentUrl,
     this.reactionAverage,
     this.reactionColor,
     this.reactionCount,
@@ -18,6 +20,8 @@ class PostModel {
   final authorProfilePhotoUrl;
   final dateCreated;
   final postText;
+  final contentType;
+  final contentUrl;
   String reactionColor;
   int reactionCount;
   String userSelectedColor;

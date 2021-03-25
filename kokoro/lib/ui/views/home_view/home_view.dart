@@ -21,6 +21,7 @@ class HomeView extends StatelessWidget {
         ),
       ),
       viewModelBuilder: () => HomeViewModel(),
+      onDispose: (model) => model.disposeVideoControllers(),
       onModelReady: (model) => model.getPosts(),
     );
   }

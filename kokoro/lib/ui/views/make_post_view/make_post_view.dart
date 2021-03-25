@@ -36,10 +36,8 @@ class _MakePostViewState extends State<MakePostView> {
             children: [
               Center(
                 child: Container(
-                  // Type in Post
                   margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
                   width: 500,
-//                  height: 600,
                   child: Column(
                     children: [
                       Align(
@@ -99,11 +97,21 @@ class _MakePostViewState extends State<MakePostView> {
                           ],
                         ),
                       ),
-                      model.imageFile != null ? Image.network(model.imageFile.path, width: 100.0,) : Container(),
-                      model.videoFile != null ? AspectRatio(
-                        aspectRatio: model.controller.value.aspectRatio,
-                        child: VideoPlayer(model.controller),
-                      ) : Container(),
+                      model.imageFile != null
+                          ? Image.network(
+                              model.imageFile.path,
+                              width: 100.0,
+                            )
+                          : Container(),
+                      model.videoFile != null
+                          ? Container(
+                              width: 100.0,
+                              height: 100.0,
+                              child: AspectRatio(
+                                aspectRatio: model.controller.value.aspectRatio,
+                                child: VideoPlayer(model.controller),
+                              ))
+                          : Container(),
                       Align(
                         alignment: Alignment.centerRight,
                         child: MaterialButton(

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:kokoro/core/models/post_model.dart';
 import 'package:kokoro/ui/views/home_view/home_viewmodel.dart';
 import 'package:stacked/stacked.dart';
+import 'package:video_player/video_player.dart';
 
 class PostWidget extends ViewModelWidget<HomeViewModel> {
   PostWidget({this.index});
 
   final index;
+  VideoPlayerController controller;
 
   @override
   Widget build(BuildContext context, HomeViewModel model) {
@@ -34,7 +36,7 @@ class PostWidget extends ViewModelWidget<HomeViewModel> {
             Column(
               children: [
                 CircleAvatar(
-                  radius: 80,
+                  radius: MediaQuery.of(context).size.width < 700 ? 50.0 : 80.0,
                   backgroundColor: Theme.of(context).indicatorColor,
                   child: ClipRRect(
                     borderRadius: BorderRadius.only(
@@ -59,21 +61,74 @@ class PostWidget extends ViewModelWidget<HomeViewModel> {
             ),
             Column(
               children: [
-                Text(post.postText),
-                Divider(),
+                    Container(
+                      width: MediaQuery.of(context).size.width < 700 ? 300.0 : 500.0,
+//                    widthFactor: .7,
+                      child: RichText(
+                        text: TextSpan(
+                          style: DefaultTextStyle.of(context).style,
+                          children: [
+                            WidgetSpan(
+                              child: Container(
+                                padding: EdgeInsets.all(10.0),
+                                child: model.photoUrl(index) != null
+                                    ? Image.network(
+                                        model.photoUrl(index),
+                                      )
+                                    : Container(),
+                              ),
+                            ),
+                            WidgetSpan(
+                              child: Container(
+                                padding: EdgeInsets.all(10.0),
+                                child: model.hasVideo(index)
+                                    ? Container(
+                                        child: AspectRatio(
+                                          aspectRatio: model
+                                              .getController(index)
+                                              .value
+                                              .aspectRatio,
+                                          child: VideoPlayer(
+                                              model.getController(index)),
+                                        ),
+                                      )
+                                    : Container(),
+                              ),
+                            ),
+                            TextSpan(
+                              text: post.postText,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                Divider(
+                  color: Theme.of(context).indicatorColor,
+                  height: 2.0,
+                  thickness: 2.0,
+                  indent: 20,
+                  endIndent: 20,
+                ),
                 Align(
                   alignment: Alignment.bottomLeft,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.thumb_down),
-                      Slider(
-                          value: post.userReactionAmount,
-                          max: 100,
-                          min: 0,
-                          onChanged: (details) {
-                            model.updateUserSliderReaction(index, details);
-                          }),
+                      SliderTheme(
+                        data: SliderThemeData(
+                          activeTrackColor: Theme.of(context).indicatorColor,
+                          inactiveTrackColor: Theme.of(context).indicatorColor,
+                        ),
+                        child: Slider(
+                            value: post.userReactionAmount,
+                            max: 100,
+                            min: 0,
+                            onChanged: (details) {
+                              model.updateUserSliderReaction(index, details);
+                            }),
+                      ),
+
                       Icon(Icons.thumb_up),
                       SizedBox(
                         width: 10,

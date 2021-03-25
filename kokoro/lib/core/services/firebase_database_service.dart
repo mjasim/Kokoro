@@ -46,6 +46,8 @@ class FirebaseDatabaseService {
         authorUsername: element['authorUsername'],
         postText: element['postText'],
         dateCreated: element['dateCreated'],
+        contentType: element['contentType'],
+        contentUrl: element['contentUrl'],
         reactionAverage: random.nextDouble() * 100,
         commentCount: random.nextInt(100),
         reactionColor: generateRandomHexColor(random),
