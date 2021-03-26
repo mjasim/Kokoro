@@ -10,10 +10,11 @@ class PlanetView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<PlanetViewModel>.reactive(
-      builder: (context, model, child) => Scaffold(
-        appBar: TopBar(),
-        body: PlanetsWidget(),
-      ),
+      builder: (context, model, child) {
+        var scrSize = MediaQuery.of(context).size;
+        model.setSize(scrSize);
+        return Scaffold(appBar: TopBar(), body: PlanetsWidget());
+      },
       viewModelBuilder: () => PlanetViewModel(),
       onModelReady: (model) => model.init(),
     );

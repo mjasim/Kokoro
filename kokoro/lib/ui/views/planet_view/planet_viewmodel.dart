@@ -15,36 +15,93 @@ class PlanetViewModel extends BaseViewModel {
 //  ];
   List<Map> planetInfo = [];
   void init() {
-    List<String> names = ['Cat', 'Dog', 'HCI', 'Web Design', 'Travel', 'Coffee', 'Nissan', 'Viola', 'Bridgerton', 'Drones'];
+    List<String> names = [
+      'Cat',
+      'Dog',
+      'HCI',
+      'Web Design',
+      'Travel',
+      'Coffee',
+      'Nissan',
+      'Viola',
+      'Bridgerton',
+      'Drones',
+    ];
     planetInfo = makeMockPlanetData(names);
   }
 
+  double scrWidth = 500;
+  double scrHeight = 500;
+
+  void setSize(size) {
+    scrWidth = size.width;
+    scrHeight = size.height;
+  }
 
   List<Map> makeMockPlanetData(List<String> names) {
     List<Map> _planetInfo = [];
     var i = 1;
-    double alpha = 134.0;
-    double c = 3.0;
+    // double alpha = 134.0;
+    // double c = 3.0;r
+
+    // jasim - get from screen using MediaQuery
+    int width = 500;
+    int height = 500;
+
+    print(scrHeight.toString() + " " + scrWidth.toString());
+
+    // jasim - get from width, height, and population range conversion
+    int planetMinSize = 50;
+    int planetMaxSize = 200;
+    int protect = 10000;
+
     names.forEach((element) {
-      double rad = c * sqrt(i);
-      double angle = i * alpha;
+      // double rad = c * sqrt(i);
+      // double angle = i * alpha;
 
-      double x = degrees(cos(radians(angle))) * rad + 500;
-      double y = degrees(sin(radians(angle))) * rad + 800;
+      // double x = degrees(cos(radians(angle))) * rad + 500;
+      // double y = degrees(sin(radians(angle))) * rad + 800;
 
-      int size = Random().nextInt(250);
-      while(size < 50) {
-        size = Random().nextInt(250);
+      bool coordInserted = false;
+      int cnt = 0;
+      double dist = 0;
+      while (coordInserted == false && cnt < protect) {
+        cnt++;
+
+        int size = Random().nextInt(200);
+        while (size < planetMinSize) {
+          size = Random().nextInt(200);
+        }
+
+        bool overlap = false;
+
+        Random random = new Random();
+        int xCandidate = planetMaxSize + random.nextInt(height);
+        int yCandidate = planetMaxSize + random.nextInt(width);
+
+        for (int k = 0; k < _planetInfo.length; k++) {
+          dist = sqrt(pow(xCandidate - _planetInfo[k]["top"], 2) +
+              pow(yCandidate - _planetInfo[k]["left"], 2));
+
+          if (dist < ((size / 2) + (_planetInfo[k]["size"] / 2) + 50)) {
+            overlap = true;
+            break;
+          }
+        }
+
+        if (overlap == false) {
+          // print(size);
+          _planetInfo.add({
+            'imageUrl': 'images/circle-cropped($i).png',
+            'top': xCandidate,
+            'left': yCandidate,
+            'size': size,
+            'name': element,
+          });
+          i++;
+          coordInserted = true;
+        }
       }
-
-      _planetInfo.add({
-        'imageUrl': 'images/circle-cropped($i).png',
-        'top': x,
-        'left': y,
-        'size': size,
-        'name': element,
-      });
-      i++;
     });
     return _planetInfo;
   }
