@@ -12,7 +12,7 @@ class GlobalViewModel extends BaseViewModel {
     if(index == 0) {
       _navigationService.navigateTo(Routes.planetView);
     } else if(index == 1) {
-
+      _navigationService.navigateTo(Routes.personalView);
     }
   }
 

@@ -15,6 +15,7 @@ import '../ui/views/global_view/global_view.dart';
 import '../ui/views/history_view/history_view.dart';
 import '../ui/views/home_view/home_view.dart';
 import '../ui/views/make_post_view/make_post_view.dart';
+import '../ui/views/personal_view/personal_view.dart';
 import '../ui/views/planet_view/planet_view.dart';
 
 class Routes {
@@ -23,6 +24,7 @@ class Routes {
   static const String makePostView = '/make-post-view';
   static const String homeView = '/home-view';
   static const String historyView = '/history-view';
+  static const String personalView = '/personal-view';
   static const String signInView = '/';
   static const String signUpView = '/sign-up-view';
   static const all = <String>{
@@ -31,6 +33,7 @@ class Routes {
     makePostView,
     homeView,
     historyView,
+    personalView,
     signInView,
     signUpView,
   };
@@ -45,6 +48,7 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.makePostView, page: MakePostView),
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.historyView, page: HistoryView),
+    RouteDef(Routes.personalView, page: PersonalView),
     RouteDef(Routes.signInView, page: SignInView),
     RouteDef(Routes.signUpView, page: SignUpView),
   ];
@@ -85,6 +89,14 @@ class StackedRouter extends RouterBase {
       return PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const HistoryView(),
+        settings: data,
+        transitionDuration: const Duration(milliseconds: 0),
+      );
+    },
+    PersonalView: (data) {
+      return PageRouteBuilder<dynamic>(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const PersonalView(),
         settings: data,
         transitionDuration: const Duration(milliseconds: 0),
       );
