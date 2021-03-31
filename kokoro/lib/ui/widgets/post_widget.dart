@@ -96,7 +96,7 @@ class PostWidget extends ViewModelWidget<HomeViewModel> {
                             SizedBox(
                               width: 10,
                             ),
-//                              Text("${post.dateCreated}"), // Something to fix for later
+//                            Text("${post.dateCreated}"), // Something to fix for later
                           ],
                         )
                     ),
