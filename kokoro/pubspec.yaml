@@ -34,6 +34,8 @@ dependencies:
   image_picker: ^0.7.3
   logger:
   stacked_services:
+  stacked_hooks:
+  flutter_hooks:
   flutter:
     sdk: flutter
 

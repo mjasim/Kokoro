@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kokoro/ui/smart_widgets/post/post_widget.dart';
 import 'package:kokoro/ui/smart_widgets/top_navigation_bar/top_navigation_bar.dart';
 import 'package:kokoro/ui/views/home_view/home_viewmodel.dart';
-import 'package:kokoro/ui/widgets/post_widget.dart';
+//import 'package:kokoro/ui/widgets/post_widget.dart';
 import 'package:stacked/stacked.dart';
 
 class HomeView extends StatelessWidget {
@@ -16,7 +17,7 @@ class HomeView extends StatelessWidget {
         body: ListView.builder(
           itemCount: model.posts.length,
           itemBuilder: (_context, index) => PostWidget(
-            index: index,
+            post: model.posts[index],
           )
         ),
       ),
