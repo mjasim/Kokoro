@@ -36,6 +36,7 @@ dependencies:
   stacked_services:
   stacked_hooks:
   flutter_hooks:
+  flutter_colorpicker: ^0.4.0
   flutter:
     sdk: flutter
 

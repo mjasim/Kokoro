@@ -12,6 +12,8 @@ class FirebaseDatabaseService {
       FirebaseFirestore.instance.collection('comments');
   CollectionReference sliderReact =
       FirebaseFirestore.instance.collection('slider-reactions');
+  CollectionReference colorReact =
+      FirebaseFirestore.instance.collection('color-reactions');
 
   Future createUser(
       {@required uid,
@@ -108,6 +110,35 @@ class FirebaseDatabaseService {
     });
   }
 
+  Future createColorReact({
+    @required uid,
+    @required postUid,
+    @required postAuthorUid,
+    @required hueValue,
+    @required saturationValue,
+    @required lightnessValue,
+    @required postType,
+    alphaValue,
+  }) {
+    posts.doc(postUid).update({'colorReactionCount': FieldValue.increment(1)});
+    posts.doc(postUid).update({
+      'sumOfHueColorValue': FieldValue.increment(hueValue),
+      'sumOfSaturationColorValue': FieldValue.increment(saturationValue),
+      'sumOfLightnessColorValue': FieldValue.increment(lightnessValue),
+    });
+
+    return sliderReact.doc().set({
+      'reactorUid': uid,
+      'postUid': postUid,
+      'postAuthorUid': postAuthorUid,
+      'postType': postType,
+      'hueValue': hueValue,
+      'saturationValue': saturationValue,
+      'lightnessValue': lightnessValue,
+      'dateCreated': FieldValue.serverTimestamp(),
+    });
+  }
+
   Future updateSliderReact({
     @required uid,
     @required postUid,
@@ -135,6 +166,42 @@ class FirebaseDatabaseService {
     });
   }
 
+  Future updateColorReact({
+    @required uid,
+    @required postUid,
+    @required hueValue,
+    @required saturationValue,
+    @required lightnessValue,
+  }) async {
+    QuerySnapshot sliderSnapshot = await sliderReact
+        .limit(1)
+        .where('postUid', isEqualTo: postUid)
+        .where('reactorUid', isEqualTo: uid)
+        .get();
+
+    if (sliderSnapshot.docs.isEmpty) {
+      return null;
+    }
+
+    double previousHueValue =
+    sliderSnapshot.docs.first.data()['hueValue'];
+    double previousSaturationValue =
+    sliderSnapshot.docs.first.data()['saturationValue'];
+    double previousLightnessValue =
+    sliderSnapshot.docs.first.data()['lightnessValue'];
+    posts.doc(postUid).update({
+      'sumOfHueColorValue': FieldValue.increment(hueValue - previousHueValue),
+      'sumOfSaturationColorValue': FieldValue.increment(saturationValue - previousSaturationValue),
+      'sumOfLightnessColorValue': FieldValue.increment(lightnessValue - previousLightnessValue),
+    });
+
+    return sliderReact.doc(sliderSnapshot.docs.first.id).update({
+      'hueValue': hueValue,
+      'saturationValue': saturationValue,
+      'lightnessValue': lightnessValue,
+    });
+  }
+
   Future<double> getUserSliderReactionAmount(
       {@required postUid, @required reactorUid}) async {
     QuerySnapshot sliderSnapshot = await sliderReact
@@ -149,6 +216,28 @@ class FirebaseDatabaseService {
 
     QueryDocumentSnapshot docSnapshot = sliderSnapshot.docs.first;
     return docSnapshot.data()['sliderValue'];
+  }
+
+  Future<dynamic> getUserColorReactionValue(
+      {@required postUid, @required reactorUid}) async {
+    QuerySnapshot colorSnapshot = await colorReact
+        .limit(1)
+        .where('postUid', isEqualTo: postUid)
+        .where('reactorUid', isEqualTo: reactorUid)
+        .get();
+
+    if (colorSnapshot.docs.isEmpty) {
+      return null;
+    }
+
+    QueryDocumentSnapshot docSnapshot = colorSnapshot.docs.first;
+    Map data = docSnapshot.data();
+    return {
+      'hue': data['hue'],
+      'lightness': data['lightness'],
+      'saturation': data['saturation'],
+      'alpha': data['alpha'],
+    };
   }
 
   Future<List<PostModel>> getPosts() async {

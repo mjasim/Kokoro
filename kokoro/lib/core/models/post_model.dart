@@ -42,7 +42,7 @@ class PostModel {
   double sumOfSliderReactions;
   int sliderReactionCount;
   List<dynamic> planets;
-  String userSelectedColor;
+  Color userSelectedColor;
   double userReactionAmount;
   int commentCount;
   bool commentsOpen;
@@ -54,19 +54,33 @@ class PostModel {
     sliderAverage = sumOfSliderReactions / sliderReactionCount;
   }
 
-  void updateReactColorAverage() {
+  void updateReactColorAverage({userHueChange: 0, userSaturationChange: 0, userLightnessChange: 0, userAlphaChange: 0, colorCountChange: 0}) {
     double avgHue = 360;
     double avgSat = 0;
     double avgValue = 360;
     if (colorReactionCount > 0) {
-      avgHue = sumOfHueColorValue / colorReactionCount;
-      avgSat = sumOfSaturationColorValue / colorReactionCount;
-      avgValue = sumOfLightnessColorValue / colorReactionCount;
+      avgHue = (sumOfHueColorValue + userHueChange) / (colorReactionCount + colorCountChange);
+      avgSat = (sumOfSaturationColorValue + userSaturationChange) / (colorReactionCount + colorCountChange);
+      avgValue = (sumOfLightnessColorValue + userLightnessChange) / (colorReactionCount + colorCountChange);
     }
 
     print(avgValue);
     print(avgSat);
     print(avgHue);
-//    reactionColor = HSVColor.fromAHSV(1.0, avgHue, avgSat, avgValue).toColor();
+    reactionColor = HSVColor.fromAHSV(1.0, avgHue, avgSat, avgValue / 360).toColor();
+  }
+
+  void updateUserReactColor(Map data) {
+    double hue = 360;
+    double saturation = 0;
+    double value = 360;
+
+
+    if (data != null) {
+      hue = data['hue'];
+      saturation = data['saturation'];
+      value = data['lightness'];
+    }
+    userSelectedColor = HSVColor.fromAHSV(1.0, hue, saturation, value / 360).toColor();
   }
 }

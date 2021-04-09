@@ -12,12 +12,27 @@ class PostWidgetModel extends BaseViewModel {
   PostModel post;
   List<CommentModel> comments = [];
   String comment;
+  Map userPickedColorValues;
   bool userHasInteractedWithSlider = false;
+  bool userHasInteractedWithColor = false;
 
   void init(PostModel _post) async {
     post = _post;
 
-    post.userReactionAmount = await _databaseService.getUserSliderReactionAmount(postUid: post.postUid, reactorUid: _authService.userUid);
+    post.userReactionAmount =
+        await _databaseService.getUserSliderReactionAmount(
+            postUid: post.postUid, reactorUid: _authService.userUid);
+    Map colorData = await _databaseService.getUserColorReactionValue(
+        postUid: post.postUid, reactorUid: _authService.userUid);
+
+    if (colorData == null) {
+      userHasInteractedWithColor = false;
+    } else {
+      userHasInteractedWithColor = true;
+    }
+
+    post.updateUserReactColor(colorData);
+
     print('postuserReactionAmount ${post.userReactionAmount}');
     if (post.userReactionAmount == null) {
       userHasInteractedWithSlider = false;
@@ -40,6 +55,38 @@ class PostWidgetModel extends BaseViewModel {
 
   void updateUserSliderReaction(value) {
     post.userReactionAmount = value;
+    notifyListeners();
+  }
+
+  void updateUserColorReaction({hue, saturation, lightness, alpha}) async {
+    print('updateUserColor $hue, $saturation, $lightness');
+    userPickedColorValues = {'hue': hue, 'saturation': saturation, 'lightness': lightness * 360};
+    post.updateUserReactColor(userPickedColorValues);
+    notifyListeners();
+  }
+
+  void updateUserColorReactionFinal() async {
+    if (!userHasInteractedWithColor) {
+      post.colorReactionCount += 1;
+      await _databaseService.createColorReact(
+        uid: _authService.userUid,
+        postUid: post.postUid,
+        postAuthorUid: post.authorUid,
+        hueValue: userPickedColorValues['hue'],
+        saturationValue: userPickedColorValues['saturation'],
+        lightnessValue: userPickedColorValues['lightness'] * 360,
+        postType: post.contentType,
+      );
+    } else {
+      await _databaseService.updateColorReact(
+        uid: _authService.userUid,
+        postUid: post.postUid,
+        hueValue: userPickedColorValues['hue'],
+        saturationValue: userPickedColorValues['saturation'],
+        lightnessValue: userPickedColorValues['lightness'] * 360,
+      );
+    }
+    userHasInteractedWithColor = true;
     notifyListeners();
   }
 

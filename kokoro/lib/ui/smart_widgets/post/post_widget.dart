@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:kokoro/core/models/post_model.dart';
 import 'package:kokoro/ui/smart_widgets/post/post_widget_viewmodel.dart';
 import 'package:kokoro/ui/widgets/comment_widget.dart';
@@ -16,6 +17,7 @@ class PostWidget extends StatefulWidget {
 
 class _PostWidgetState extends State<PostWidget> {
   TextEditingController _commentTextController;
+  bool colorPickerOpen = false;
 
   @override
   void initState() {
@@ -158,8 +160,10 @@ class _PostWidgetState extends State<PostWidget> {
                                       inactiveTrackColor:
                                           Theme.of(context).indicatorColor,
                                       overlayColor: Colors.transparent,
-                                      thumbColor: model.userHasInteractedWithSlider ?
-                                          Theme.of(context).primaryColor : Theme.of(context).indicatorColor,
+                                      thumbColor: model
+                                              .userHasInteractedWithSlider
+                                          ? Theme.of(context).primaryColor
+                                          : Theme.of(context).indicatorColor,
                                     ),
                                     child: Slider(
                                       value: model.post.userReactionAmount,
@@ -169,13 +173,13 @@ class _PostWidgetState extends State<PostWidget> {
                                         model.updateUserSliderReaction(details);
                                       },
                                       onChangeEnd: (details) {
-                                        model.updateUserSliderReactionFinal(details);
+                                        model.updateUserSliderReactionFinal(
+                                            details);
                                       },
                                     ),
                                   ),
                                 ],
                               ),
-
                               Icon(Icons.thumb_up),
                               SizedBox(
                                 width: 10,
@@ -197,10 +201,82 @@ class _PostWidgetState extends State<PostWidget> {
                               SizedBox(
                                 width: 10,
                               ),
-                              Icon(
-                                Icons.circle,
-                                color: model.post.reactionColor
-                                    ,
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    colorPickerOpen = true;
+                                  });
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: SingleChildScrollView(
+                                          child: ColorPicker(
+                                            pickerColor: model.post.userSelectedColor,
+                                            onColorChanged: (Color color) {
+                                              HSVColor hsvColor = HSVColor.fromColor(color);
+                                              print('Color changed');
+                                              model.updateUserColorReaction(
+                                                hue: hsvColor.hue,
+                                                saturation: hsvColor.saturation,
+                                                lightness: hsvColor.value,
+                                                alpha: hsvColor.alpha,
+                                              );
+                                            },
+                                            colorPickerWidth: 300.0,
+                                            pickerAreaHeightPercent: 0.7,
+                                            enableAlpha: true,
+                                            displayThumbColor: true,
+                                            showLabel: true,
+                                            paletteType: PaletteType.hsv,
+                                            pickerAreaBorderRadius: const BorderRadius.only(
+                                              topLeft: const Radius.circular(2.0),
+                                              topRight: const Radius.circular(2.0),
+                                            ),
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('Got it'),
+                                            onPressed: () {
+//                                              model.updateUserColorReaction(
+//
+//                                              );
+                                              model.updateUserColorReactionFinal();
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+
+                                  print('Opening color picker');
+                                },
+                                child: Container(
+                                  width: 50,
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Icon(
+                                        Icons.circle,
+                                        color: model.post.reactionColor,
+                                      ),
+                                      Positioned(
+                                        left: 21,
+                                        child: Icon(
+                                          Icons.circle,
+                                          size: 10.0,
+                                          color: model.post.userSelectedColor,
+                                        ),
+                                      ),
+//                                      colorPickerOpen
+//                                          ?
+//                                            )
+//                                          : Container(),
+                                    ],
+                                  ),
+                                ),
                               ),
                               SizedBox(
                                 width: 10,
@@ -282,9 +358,10 @@ class _PostWidgetState extends State<PostWidget> {
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                     borderSide: BorderSide(
-                                        color: Theme.of(context).focusColor,
-                                        style: BorderStyle.solid,
-                                        width: 2),
+                                      color: Theme.of(context).focusColor,
+                                      style: BorderStyle.solid,
+                                      width: 2,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -322,7 +399,8 @@ class _PostWidgetState extends State<PostWidget> {
                             return CommentWidget(
                               text: model.comments[index].commentText,
                               username: model.comments[index].username,
-                              profilePhotoUrl: model.comments[index].authorProfilePhotoUrl,
+                              profilePhotoUrl:
+                                  model.comments[index].authorProfilePhotoUrl,
                             );
                           },
                           shrinkWrap: true,
@@ -339,6 +417,42 @@ class _PostWidgetState extends State<PostWidget> {
       },
       viewModelBuilder: () => PostWidgetModel(),
       onModelReady: (model) => model.init(widget.post),
+    );
+  }
+}
+
+class ColorPickerWidget extends StatelessWidget {
+  ColorPickerWidget({this.model});
+
+  final PostWidgetModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      content: SingleChildScrollView(
+        child: ColorPicker(
+          pickerColor: model.post.userSelectedColor,
+          onColorChanged: (Color color) {
+            HSVColor hsvColor = HSVColor.fromColor(color);
+            model.updateUserColorReaction(
+              hue: hsvColor.hue,
+              saturation: hsvColor.saturation,
+              lightness: hsvColor.value,
+              alpha: hsvColor.alpha,
+            );
+          },
+          colorPickerWidth: 300.0,
+          pickerAreaHeightPercent: 0.7,
+          enableAlpha: true,
+          displayThumbColor: true,
+          showLabel: true,
+          paletteType: PaletteType.hsv,
+          pickerAreaBorderRadius: const BorderRadius.only(
+            topLeft: const Radius.circular(2.0),
+            topRight: const Radius.circular(2.0),
+          ),
+        ),
+      ),
     );
   }
 }
