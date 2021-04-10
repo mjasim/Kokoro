@@ -5,7 +5,19 @@ import 'package:stacked/stacked.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart';
+
+import 'package:google_api_headers/google_api_headers.dart';
+import 'package:google_maps_webservice/places.dart';
+//import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+const kGoogleApiKey = "AIzaSyB4vwPM5fwg6M-LUoo6mqbflDtDNXodOKs";
+
+final homeScaffoldKey = GlobalKey<ScaffoldState>();
+final searchScaffoldKey = GlobalKey<ScaffoldState>();
 
 class SignUpView extends StatefulWidget {
   @override
@@ -20,6 +32,7 @@ class _SignUpViewState extends State<SignUpView> {
   TextEditingController _userNameController;
   TextEditingController _otherGenderController;
   TextEditingController _aboutMeController;
+  TextEditingController _postProfileController;
 
   void initState() {
     super.initState();
@@ -30,6 +43,7 @@ class _SignUpViewState extends State<SignUpView> {
     _userNameController = TextEditingController();
     _otherGenderController = TextEditingController();
     _aboutMeController = TextEditingController();
+    _postProfileController = TextEditingController();
   }
 
   void dispose() {
@@ -40,6 +54,7 @@ class _SignUpViewState extends State<SignUpView> {
     _userNameController.dispose();
     _otherGenderController.dispose();
     _aboutMeController.dispose();
+    _postProfileController.dispose();
     super.dispose();
   }
 
@@ -64,95 +79,10 @@ class _SignUpViewState extends State<SignUpView> {
       });
   }
 
-  // Get image for profile picture
-  PickedFile _imageFile;
-  dynamic _pickImageError;
-  String _retrieveDataError;
-
-  final ImagePicker _picker = ImagePicker();
-  final TextEditingController maxWidthController = TextEditingController();
-  final TextEditingController maxHeightController = TextEditingController();
-  final TextEditingController qualityController = TextEditingController();
-
-  void _onImageButtonPressed(ImageSource source, {BuildContext context}) async {
-    await _displayPickImageDialog(context,
-        (double maxWidth, double maxHeight, int quality) async {
-      try {
-        final pickedFile = await _picker.getImage(
-          source: source,
-          maxWidth: maxWidth,
-          maxHeight: maxHeight,
-          imageQuality: quality,
-        );
-        setState(() {
-          _imageFile = pickedFile;
-        });
-      } catch (e) {
-        setState(() {
-          _pickImageError = e;
-        });
-      }
-    });
-  }
-
-  Future<void> _displayPickImageDialog(
-      BuildContext context, OnPickImageCallback onPick) async {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Add optional parameters'),
-            content: Column(
-              children: <Widget>[
-                TextField(
-                  controller: maxWidthController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  decoration:
-                      InputDecoration(hintText: "Enter maxWidth if desired"),
-                ),
-                TextField(
-                  controller: maxHeightController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  decoration:
-                      InputDecoration(hintText: "Enter maxHeight if desired"),
-                ),
-                TextField(
-                  controller: qualityController,
-                  keyboardType: TextInputType.number,
-                  decoration:
-                      InputDecoration(hintText: "Enter quality if desired"),
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('CANCEL'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                  child: const Text('PICK'),
-                  onPressed: () {
-                    double width = maxWidthController.text.isNotEmpty
-                        ? double.parse(maxWidthController.text)
-                        : null;
-                    double height = maxHeightController.text.isNotEmpty
-                        ? double.parse(maxHeightController.text)
-                        : null;
-                    int quality = qualityController.text.isNotEmpty
-                        ? int.parse(qualityController.text)
-                        : null;
-                    onPick(width, height, quality);
-                    Navigator.of(context).pop();
-                  }),
-            ],
-          );
-        });
-  }
-
   String genderDropdownValue = 'Choose'; // Gets choice of gender
   bool otherTextFieldEnabled = false; // Enable/Disable text field for Gender input
+
+  Mode _mode = Mode.overlay;
 
   @override
   Widget build(BuildContext context) {
@@ -207,8 +137,15 @@ class _SignUpViewState extends State<SignUpView> {
                           SizedBox(
                             height: 15,
                           ),
-                          customTextInput(
-                              'Location', _locationController, false),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              ElevatedButton(
+                                onPressed: _handlePressButton,
+                                child: Text("Search places"),
+                              ),
+                            ],
+                          ),
                           SizedBox(
                             height: 20,
                           ),
@@ -423,15 +360,34 @@ class _SignUpViewState extends State<SignUpView> {
                     ),
                     Expanded(
                       flex: 3, // 30%
-                      child: Column(
+                      child: Column( // TODO: Need to find out how to add profile pic in textfield
                         children: [
                           SizedBox(
                             height: 80,
                           ),
-                          CircleAvatar(
-                            radius: 80,
-                            child: Icon(Icons.account_circle,
-                                size: 150, color: Colors.blue),
+                          ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(80.0),
+                              topRight: Radius.circular(80.0),
+                              bottomLeft: Radius.circular(80.0),
+                              bottomRight: Radius.circular(80.0),
+                            ),
+                            child: model.imageFile != null ?
+                              new Container(
+                                width: 200.0,
+                                height: 200.0,
+                                decoration: new BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: new DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: new NetworkImage(
+                                          model.imageFile.path,
+                                        )
+                                    )
+                                )
+                              ) :
+                              Icon(Icons.account_circle,
+                                  size: 200.0, color: Colors.blue),
                           ),
                           SizedBox(
                             height: 20,
@@ -442,8 +398,7 @@ class _SignUpViewState extends State<SignUpView> {
                             ),
                             color: Colors.blue,
                             onPressed: () {
-                              _onImageButtonPressed(ImageSource.gallery,
-                                  context: context);
+                              model.pickImage();
                             },
                             child: Icon(Icons.open_in_browser),
                           ),
@@ -502,6 +457,47 @@ class _SignUpViewState extends State<SignUpView> {
       ),
       viewModelBuilder: () => SignUpViewModel(),
     );
+  }
+
+  Widget _buildDropdownMenu() => DropdownButton(
+    value: _mode,
+    items: <DropdownMenuItem<Mode>>[
+      DropdownMenuItem<Mode>(
+        child: Text("Overlay"),
+        value: Mode.overlay,
+      ),
+      DropdownMenuItem<Mode>(
+        child: Text("Fullscreen"),
+        value: Mode.fullscreen,
+      ),
+    ],
+    onChanged: (m) {
+      setState(() {
+        _mode = m;
+      });
+    },
+  );
+
+  void onError(PlacesAutocompleteResponse response) {
+    homeScaffoldKey.currentState.showSnackBar(
+      SnackBar(content: Text(response.errorMessage)),
+    );
+  }
+
+  Future<void> _handlePressButton() async {
+    // show input autocomplete with selected mode
+    // then get the Prediction selected
+    Prediction p = await PlacesAutocomplete.show(
+      context: context,
+      apiKey: kGoogleApiKey,
+      proxyBaseUrl: "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api",
+      onError: onError,
+      mode: _mode,
+      language: "en",
+      components: [Component(Component.country, "en")],
+    );
+
+    displayPrediction(p, homeScaffoldKey.currentState);
   }
 }
 
@@ -623,3 +619,94 @@ class genderTextInput extends StatelessWidget {
 
 typedef void OnPickImageCallback(
     double maxWidth, double maxHeight, int quality);
+
+Future<Null> displayPrediction(Prediction p, ScaffoldState scaffold) async {
+  if (p != null) {
+    // get detail (lat/lng)
+    GoogleMapsPlaces _places = GoogleMapsPlaces(
+      apiKey: kGoogleApiKey,
+      apiHeaders: await GoogleApiHeaders().getHeaders(),
+    );
+    PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
+    final lat = detail.result.geometry.location.lat;
+    final lng = detail.result.geometry.location.lng;
+
+    scaffold.showSnackBar(
+      SnackBar(content: Text("${p.description} - $lat/$lng")),
+    );
+  }
+}
+
+// custom scaffold that handle search
+// basically your widget need to extends [GooglePlacesAutocompleteWidget]
+// and your state [GooglePlacesAutocompleteState]
+class CustomSearchScaffold extends PlacesAutocompleteWidget {
+  CustomSearchScaffold()
+      : super(
+    apiKey: kGoogleApiKey,
+    sessionToken: Uuid().generateV4(),
+    language: "en",
+    components: [Component(Component.country, "uk")],
+  );
+
+  @override
+  _CustomSearchScaffoldState createState() => _CustomSearchScaffoldState();
+}
+
+class _CustomSearchScaffoldState extends PlacesAutocompleteState {
+  @override
+  Widget build(BuildContext context) {
+    final appBar = AppBar(title: AppBarPlacesAutoCompleteTextField());
+    final body = PlacesAutocompleteResult(
+      onTap: (p) {
+        displayPrediction(p, searchScaffoldKey.currentState);
+      },
+      logo: Row(
+        children: [FlutterLogo()],
+        mainAxisAlignment: MainAxisAlignment.center,
+      ),
+    );
+    return Scaffold(key: searchScaffoldKey, appBar: appBar, body: body);
+  }
+
+  @override
+  void onResponseError(PlacesAutocompleteResponse response) {
+    super.onResponseError(response);
+    searchScaffoldKey.currentState.showSnackBar(
+      SnackBar(content: Text(response.errorMessage)),
+    );
+  }
+
+  @override
+  void onResponse(PlacesAutocompleteResponse response) {
+    super.onResponse(response);
+    if (response != null && response.predictions.isNotEmpty) {
+      searchScaffoldKey.currentState.showSnackBar(
+        SnackBar(content: Text("Got answer")),
+      );
+    }
+  }
+}
+
+class Uuid {
+  final Random _random = Random();
+
+  String generateV4() {
+    // Generate xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx / 8-4-4-4-12.
+    final int special = 8 + _random.nextInt(4);
+
+    return '${_bitsDigits(16, 4)}${_bitsDigits(16, 4)}-'
+        '${_bitsDigits(16, 4)}-'
+        '4${_bitsDigits(12, 3)}-'
+        '${_printDigits(special, 1)}${_bitsDigits(12, 3)}-'
+        '${_bitsDigits(16, 4)}${_bitsDigits(16, 4)}${_bitsDigits(16, 4)}';
+  }
+
+  String _bitsDigits(int bitCount, int digitCount) =>
+      _printDigits(_generateBits(bitCount), digitCount);
+
+  int _generateBits(int bitCount) => _random.nextInt(1 << bitCount);
+
+  String _printDigits(int value, int count) =>
+      value.toRadixString(16).padLeft(count, '0');
+}
