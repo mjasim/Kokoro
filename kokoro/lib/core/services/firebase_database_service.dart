@@ -22,7 +22,9 @@ class FirebaseDatabaseService {
       @required location,
       name,
       birthday,
-      gender}) {
+      gender,
+      photoUrl,
+      aboutMe}) {
     return users.doc(uid).set({
       'username': username,
       'email': email,
@@ -30,6 +32,8 @@ class FirebaseDatabaseService {
       'name': name,
       'birthday': birthday,
       'gender': gender,
+      'profilePhotoUrl': photoUrl,
+      'aboutMe': aboutMe,
     });
   }
 

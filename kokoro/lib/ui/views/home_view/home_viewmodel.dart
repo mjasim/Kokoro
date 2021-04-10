@@ -13,17 +13,16 @@ import 'package:video_player/video_player.dart';
 class HomeViewModel extends BaseViewModel {
   final _authService = locator<FirebaseAuthService>();
   final _databaseService = locator<FirebaseDatabaseService>();
+  final _nagivationService = locator<NavigationService>();
 
   List<PostModel> posts = [];
   Map<int, VideoPlayerController> videoControllers = {};
-  Map<int, String> comments = {};
 
   Future getPosts() async {
     var newPosts = await _databaseService.getPosts();
     newPosts.asMap().forEach((index, element) async {
       if (element.contentType == "video") {
-        videoControllers[posts.length + index] =
-            VideoPlayerController.network(element.contentUrl);
+        videoControllers[posts.length + index] = VideoPlayerController.network(element.contentUrl);
         await videoControllers[posts.length + index].initialize();
         notifyListeners();
       }
@@ -33,32 +32,14 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void commentOnChange(index, text) {
-    comments[index] = text;
-  }
-
-  void postComment(index) async {
-    String text = comments[index];
-    _databaseService.createComment(
-      uid: _authService.userUid,
-      username: await _databaseService.getUsername(uid: _authService.userUid),
-      commentText: text,
-      profilePhotoUrl: '',
-      postUid: posts[index].postUid,
-    );
-  }
-
   void updateUserSliderReaction(index, value) {
     posts[index].userReactionAmount = value;
     notifyListeners();
   }
 
-  void toggleComments(index) {
-    posts[index].commentsOpen = !posts[index].commentsOpen;
-    notifyListeners();
-  }
+  void disposeVideoControllers() {
 
-  void disposeVideoControllers() {}
+  }
 
   bool hasVideo(index) {
     return videoControllers.containsKey(index);
@@ -79,5 +60,9 @@ class HomeViewModel extends BaseViewModel {
     } else {
       return null;
     }
+  }
+
+  void navigateToPersonalView() {
+    _nagivationService.navigateTo(Routes.personalView);
   }
 }
