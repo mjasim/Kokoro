@@ -127,7 +127,7 @@ class FirebaseDatabaseService {
       'sumOfLightnessColorValue': FieldValue.increment(lightnessValue),
     });
 
-    return sliderReact.doc().set({
+    return colorReact.doc().set({
       'reactorUid': uid,
       'postUid': postUid,
       'postAuthorUid': postAuthorUid,
@@ -173,29 +173,29 @@ class FirebaseDatabaseService {
     @required saturationValue,
     @required lightnessValue,
   }) async {
-    QuerySnapshot sliderSnapshot = await sliderReact
+    QuerySnapshot colorSnapshot = await colorReact
         .limit(1)
         .where('postUid', isEqualTo: postUid)
         .where('reactorUid', isEqualTo: uid)
         .get();
 
-    if (sliderSnapshot.docs.isEmpty) {
+    if (colorSnapshot.docs.isEmpty) {
       return null;
     }
 
     double previousHueValue =
-    sliderSnapshot.docs.first.data()['hueValue'];
+    colorSnapshot.docs.first.data()['hueValue'];
     double previousSaturationValue =
-    sliderSnapshot.docs.first.data()['saturationValue'];
+    colorSnapshot.docs.first.data()['saturationValue'];
     double previousLightnessValue =
-    sliderSnapshot.docs.first.data()['lightnessValue'];
+    colorSnapshot.docs.first.data()['lightnessValue'];
     posts.doc(postUid).update({
       'sumOfHueColorValue': FieldValue.increment(hueValue - previousHueValue),
       'sumOfSaturationColorValue': FieldValue.increment(saturationValue - previousSaturationValue),
       'sumOfLightnessColorValue': FieldValue.increment(lightnessValue - previousLightnessValue),
     });
 
-    return sliderReact.doc(sliderSnapshot.docs.first.id).update({
+    return colorReact.doc(colorSnapshot.docs.first.id).update({
       'hueValue': hueValue,
       'saturationValue': saturationValue,
       'lightnessValue': lightnessValue,
@@ -233,10 +233,9 @@ class FirebaseDatabaseService {
     QueryDocumentSnapshot docSnapshot = colorSnapshot.docs.first;
     Map data = docSnapshot.data();
     return {
-      'hue': data['hue'],
-      'lightness': data['lightness'],
-      'saturation': data['saturation'],
-      'alpha': data['alpha'],
+      'hue': data['hueValue'],
+      'lightness': data['lightnessValue'],
+      'saturation': data['saturationValue'],
     };
   }
 

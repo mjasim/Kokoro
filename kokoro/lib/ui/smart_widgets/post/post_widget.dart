@@ -35,6 +35,7 @@ class _PostWidgetState extends State<PostWidget> {
   Widget build(BuildContext context) {
     return ViewModelBuilder<PostWidgetModel>.reactive(
       builder: (context, model, child) {
+//        print('model.post.userSelectedColor  ${model.post.userSelectedColor}');
         return Container(
           alignment: Alignment.center,
           margin: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
@@ -144,6 +145,7 @@ class _PostWidgetState extends State<PostWidget> {
                             children: [
                               Icon(Icons.thumb_down),
                               Stack(
+                                clipBehavior: Clip.none,
                                 children: [
                                   Positioned(
                                     child: Icon(
@@ -151,7 +153,10 @@ class _PostWidgetState extends State<PostWidget> {
                                       size: 40.0,
                                     ),
                                     top: -10,
-                                    left: (model.post.sliderAverage - 50) + 76,
+//                                    left: 76,
+                                    left: model.post.sliderAverage != null
+                                        ? (model.post.sliderAverage - 50) + 76
+                                        : 76,
                                   ),
                                   SliderTheme(
                                     data: SliderThemeData(
@@ -203,19 +208,22 @@ class _PostWidgetState extends State<PostWidget> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  setState(() {
-                                    colorPickerOpen = true;
-                                  });
+//                                  setState(() {
+//                                    colorPickerOpen = true;
+//                                  });
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
                                         content: SingleChildScrollView(
                                           child: ColorPicker(
-                                            pickerColor: model.post.userSelectedColor,
+                                            pickerColor:
+                                                model.post.userSelectedColor,
                                             onColorChanged: (Color color) {
-                                              HSVColor hsvColor = HSVColor.fromColor(color);
-                                              print('Color changed');
+//                                              print('onColorChange $color');
+                                              HSVColor hsvColor =
+                                                  HSVColor.fromColor(color);
+//                                              print('Color changed');
                                               model.updateUserColorReaction(
                                                 hue: hsvColor.hue,
                                                 saturation: hsvColor.saturation,
@@ -229,9 +237,12 @@ class _PostWidgetState extends State<PostWidget> {
                                             displayThumbColor: true,
                                             showLabel: true,
                                             paletteType: PaletteType.hsv,
-                                            pickerAreaBorderRadius: const BorderRadius.only(
-                                              topLeft: const Radius.circular(2.0),
-                                              topRight: const Radius.circular(2.0),
+                                            pickerAreaBorderRadius:
+                                                const BorderRadius.only(
+                                              topLeft:
+                                                  const Radius.circular(2.0),
+                                              topRight:
+                                                  const Radius.circular(2.0),
                                             ),
                                           ),
                                         ),
@@ -242,7 +253,8 @@ class _PostWidgetState extends State<PostWidget> {
 //                                              model.updateUserColorReaction(
 //
 //                                              );
-                                              model.updateUserColorReactionFinal();
+                                              model
+                                                  .updateUserColorReactionFinal();
                                               Navigator.of(context).pop();
                                             },
                                           ),
@@ -250,8 +262,6 @@ class _PostWidgetState extends State<PostWidget> {
                                       );
                                     },
                                   );
-
-                                  print('Opening color picker');
                                 },
                                 child: Container(
                                   width: 50,

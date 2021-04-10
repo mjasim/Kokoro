@@ -13,6 +13,7 @@ class PostWidgetModel extends BaseViewModel {
   List<CommentModel> comments = [];
   String comment;
   Map userPickedColorValues;
+  Map previousPickedColorValues;
   bool userHasInteractedWithSlider = false;
   bool userHasInteractedWithColor = false;
 
@@ -27,13 +28,20 @@ class PostWidgetModel extends BaseViewModel {
 
     if (colorData == null) {
       userHasInteractedWithColor = false;
+      previousPickedColorValues = {
+        'hue': 0,
+        'saturation': 0,
+        'lightness': 0,
+      };
     } else {
       userHasInteractedWithColor = true;
+      previousPickedColorValues = colorData;
     }
 
-    post.updateUserReactColor(colorData);
+//    print('serverColorData $colorData');
+    post.updateUserReactColor(data: colorData);
 
-    print('postuserReactionAmount ${post.userReactionAmount}');
+//    print('postuserReactionAmount ${post.userReactionAmount}');
     if (post.userReactionAmount == null) {
       userHasInteractedWithSlider = false;
       post.userReactionAmount = 50;
@@ -41,7 +49,7 @@ class PostWidgetModel extends BaseViewModel {
       userHasInteractedWithSlider = true;
     }
     comments += await _databaseService.getComments(post.postUid);
-    print('Comments: $comments');
+//    print('Comments: $comments');
     notifyListeners();
   }
 
@@ -59,22 +67,36 @@ class PostWidgetModel extends BaseViewModel {
   }
 
   void updateUserColorReaction({hue, saturation, lightness, alpha}) async {
-    print('updateUserColor $hue, $saturation, $lightness');
-    userPickedColorValues = {'hue': hue, 'saturation': saturation, 'lightness': lightness * 360};
-    post.updateUserReactColor(userPickedColorValues);
+    userPickedColorValues = {
+      'hue': hue,
+      'saturation': saturation,
+      'lightness': lightness
+    };
+    post.updateUserReactColor(data: userPickedColorValues);
+//    post.updateReactColorAverageWithUserChange();
     notifyListeners();
   }
 
   void updateUserColorReactionFinal() async {
     if (!userHasInteractedWithColor) {
       post.colorReactionCount += 1;
+    }
+    post.updateReactColorAverage(
+      userHueChange:
+      previousPickedColorValues['hue'] - userPickedColorValues['hue'],
+      userLightnessChange:
+      previousPickedColorValues['lightness'] - userPickedColorValues['lightness'],
+      userSaturationChange:
+      previousPickedColorValues['saturation'] - userPickedColorValues['saturation'],
+    );
+    if (!userHasInteractedWithColor) {
       await _databaseService.createColorReact(
         uid: _authService.userUid,
         postUid: post.postUid,
         postAuthorUid: post.authorUid,
         hueValue: userPickedColorValues['hue'],
         saturationValue: userPickedColorValues['saturation'],
-        lightnessValue: userPickedColorValues['lightness'] * 360,
+        lightnessValue: userPickedColorValues['lightness'],
         postType: post.contentType,
       );
     } else {
@@ -83,15 +105,16 @@ class PostWidgetModel extends BaseViewModel {
         postUid: post.postUid,
         hueValue: userPickedColorValues['hue'],
         saturationValue: userPickedColorValues['saturation'],
-        lightnessValue: userPickedColorValues['lightness'] * 360,
+        lightnessValue: userPickedColorValues['lightness'],
       );
     }
+    previousPickedColorValues = userPickedColorValues;
     userHasInteractedWithColor = true;
     notifyListeners();
   }
 
   void updateUserSliderReactionFinal(value) async {
-    print('updateSlider final $userHasInteractedWithSlider');
+//    print('updateSlider final $userHasInteractedWithSlider');
     post.userReactionAmount = value;
 
     if (!userHasInteractedWithSlider) {
@@ -119,7 +142,7 @@ class PostWidgetModel extends BaseViewModel {
   }
 
   void postComment() async {
-    print('Comment Text $comment');
+//    print('Comment Text $comment');
     String text = comment;
     _databaseService.createComment(
       uid: _authService.userUid,
