@@ -60,12 +60,13 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
                     Column(
                       children: [
-                        CircleAvatar(
-                          radius: MediaQuery.of(context).size.width < 700
-                              ? 50.0
-                              : 80.0,
-                          backgroundColor: Theme.of(context).indicatorColor,
-                          child: ClipRRect(
+
+                        MaterialButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(80.0),
+                          ),
+//                    color: Colors.blue,
+                          child:ClipRRect(
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(80.0),
                               topRight: Radius.circular(80.0),
@@ -79,6 +80,9 @@ class _PostWidgetState extends State<PostWidget> {
                               fit: BoxFit.fill,
                             ),
                           ),
+                          onPressed: () {
+                            model.navigateToPersonalView();
+                          },
                         ),
                         SizedBox(
                           height: 10,

@@ -1,6 +1,4 @@
 
-
-
 import 'package:flutter_map/flutter_map.dart';
 import 'package:kokoro/ui/views/personal_view/personal_viewmodel.dart';
 import 'package:stacked/stacked.dart';

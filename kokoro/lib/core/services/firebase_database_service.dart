@@ -48,6 +48,17 @@ class FirebaseDatabaseService {
     }
   }
 
+  Future<Map> getUserInfo({@required uid}) async {
+    DocumentReference docRef = users.doc(uid);
+    DocumentSnapshot doc = await docRef.get();
+    if (doc.exists) {
+      print('Document exists');
+      return doc.data();
+    } else {
+      return null;
+    }
+  }
+
   Future createPost(
       {@required uid,
       @required username,

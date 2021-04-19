@@ -1,13 +1,17 @@
 import 'package:kokoro/app/app.locator.dart';
+import 'package:kokoro/app/app.router.dart';
 import 'package:kokoro/core/models/comment_model.dart';
 import 'package:kokoro/core/models/post_model.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 import 'package:kokoro/core/services/firebase_auth_service.dart';
 import 'package:kokoro/core/services/firebase_database_service.dart';
+import 'package:kokoro/core/services/navigation_bar_service.dart';
 
 class PostWidgetModel extends BaseViewModel {
   final _authService = locator<FirebaseAuthService>();
   final _databaseService = locator<FirebaseDatabaseService>();
+  final _nagivationService = locator<NavigationService>();
 
   PostModel post;
   List<CommentModel> comments = [];
@@ -172,5 +176,10 @@ class PostWidgetModel extends BaseViewModel {
 
   void commentOnChange(text) {
     comment = text;
+  }
+
+  void navigateToPersonalView() {
+    _nagivationService.navigateTo(Routes.personalHomeView,
+        arguments: PersonalHomeViewArguments(uid: post.authorUid));
   }
 }
