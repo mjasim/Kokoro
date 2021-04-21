@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:kokoro/core/services/user_information_service.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:flutter/foundation.dart';
@@ -20,6 +21,8 @@ class MakePostViewModel extends BaseViewModel {
   final _authService = locator<FirebaseAuthService>();
   final _databaseService = locator<FirebaseDatabaseService>();
   final _storageService = locator<FirebaseStorageService>();
+  final _userInformationService = locator<UserInformationService>();
+
   final _uuid = Uuid();
 
   final ImagePicker _picker = ImagePicker();
@@ -29,6 +32,8 @@ class MakePostViewModel extends BaseViewModel {
 
   PickedFile imagePickedFile;
   PickedFile videoPickedFile;
+
+  List<String> planets = [];
 
   void makePost(String postText) async {
     if (_authService.hasUser) {
@@ -48,15 +53,26 @@ class MakePostViewModel extends BaseViewModel {
             videoData: videoData, fileName: _uuid.v4());
       }
 
+//      Map userInfo = await _userInformationService.getUserInfo();
+
       _databaseService.createPost(
           uid: uid,
           username: "PersonA",
           contentType: contentType,
           postText: postText,
-          contentUrl: contentUrl);
+          contentUrl: contentUrl,
+//          authorProfilePhotoUrl: userInfo['profileUserPhotoUrl'],
+          authorProfilePhotoUrl: 'https://images.generated.photos/ZO-Q3P2TwLgXvFyNOvKDhrpmuVeEQaiDb1dBoVR9kuU/rs:fit:256:256/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3NTE2MzAuanBn.jpg',
+          planets: planets,
+      );
     } else {
       print("does NOT have user");
     }
+  }
+
+  void onPlanetTextChange(String planetText) {
+    planets = planetText.split(',').map<String>((e) => e.trim()).toList();
+    notifyListeners();
   }
 
   void pickImage() async {

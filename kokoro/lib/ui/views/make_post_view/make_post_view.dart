@@ -14,14 +14,17 @@ class MakePostView extends StatefulWidget {
 
 class _MakePostViewState extends State<MakePostView> {
   TextEditingController _postTextController;
+  TextEditingController _planetTextController;
 
   void initState() {
     super.initState();
     _postTextController = TextEditingController();
+    _planetTextController = TextEditingController();
   }
 
   void dispose() {
     _postTextController.dispose();
+    _planetTextController.dispose();
     super.dispose();
   }
 
@@ -112,6 +115,54 @@ class _MakePostViewState extends State<MakePostView> {
                                 child: VideoPlayer(model.controller),
                               ))
                           : Container(),
+                      TextField(
+                        controller: _planetTextController,
+                        minLines: 1,
+                        maxLines: 3,
+                        onChanged: model.onPlanetTextChange,
+                        style: TextStyle(color: Colors.white, fontSize: 17.0),
+                        decoration: InputDecoration(
+                          hintText: "Planets",
+                          hintStyle: TextStyle(
+                              color: Theme.of(context).backgroundColor,
+                              fontSize: 17.0),
+                          fillColor: Theme.of(context).backgroundColor,
+                          filled: true,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                                color: Theme.of(context).indicatorColor,
+                                style: BorderStyle.solid,
+                                width: 3),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                                color: Theme.of(context).focusColor,
+                                style: BorderStyle.solid,
+                                width: 4),
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: model.planets
+                            .map<Widget>(
+                              (e) => Container(
+                                child: Text(e,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                                ),
+                                margin: EdgeInsets.only(left: 2, right: 2, top: 10, bottom: 10),
+                                padding: EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
                       Align(
                         alignment: Alignment.centerRight,
                         child: MaterialButton(
