@@ -91,8 +91,7 @@ class StackedRouter extends RouterBase {
     },
     HistoryView: (data) {
       return PageRouteBuilder<dynamic>(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const HistoryView(),
+        pageBuilder: (context, animation, secondaryAnimation) => HistoryView(),
         settings: data,
         transitionDuration: const Duration(milliseconds: 0),
       );
@@ -108,7 +107,7 @@ class StackedRouter extends RouterBase {
     PlanetDrillDownView: (data) {
       return PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const PlanetDrillDownView(),
+            PlanetDrillDownView(),
         settings: data,
         transitionDuration: const Duration(milliseconds: 0),
       );
