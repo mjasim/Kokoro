@@ -1,6 +1,15 @@
 import 'dart:math';
+import 'package:kokoro/app/app.locator.dart';
+import 'package:kokoro/app/app.router.dart';
+import 'package:kokoro/core/services/firebase_storage_service.dart';
 
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
+
+import 'package:kokoro/core/services/firebase_auth_service.dart';
+import 'package:kokoro/core/services/firebase_database_service.dart';
+import 'package:kokoro/core/services/firebase_storage_service.dart';
+import 'package:video_player/video_player.dart';
 import 'package:vector_math/vector_math.dart' hide Colors;
 
 class PlanetViewModel extends BaseViewModel {
@@ -13,6 +22,9 @@ class PlanetViewModel extends BaseViewModel {
 //      'name': 'Cats',
 //    },
 //  ];
+
+  final _nagivationService = locator<NavigationService>();
+
   List<Map> planetInfo = [];
   void init() {
     List<String> names = [
@@ -140,5 +152,9 @@ class PlanetViewModel extends BaseViewModel {
 
   double getSize(index) {
     return planetInfo[index]['size'];
+  }
+
+  void goToPlanetHomeViewModel() {
+    _nagivationService.navigateTo(Routes.planetHomeView);
   }
 }

@@ -21,6 +21,7 @@ class PersonalHomeViewModel extends BaseViewModel {
   String activeSinceDate = "";
   String uid = "";
   String aboutMe = "";
+  double sliderValue = 0.0;
 
   List<PostModel> posts = [];
   Map<int, VideoPlayerController> videoControllers = {};
@@ -42,7 +43,7 @@ class PersonalHomeViewModel extends BaseViewModel {
   }
 
   Future getPosts() async {
-    var newPosts = await _databaseService.getPosts();
+    var newPosts = await _databaseService.getUserPosts(uid);
     newPosts.asMap().forEach((index, element) async {
       if (element.contentType == "video") {
         videoControllers[posts.length + index] = VideoPlayerController.network(element.contentUrl);
@@ -52,6 +53,11 @@ class PersonalHomeViewModel extends BaseViewModel {
     });
 
     posts += newPosts;
+    notifyListeners();
+  }
+
+  void updateSliderValue(double value) {
+    sliderValue = value;
     notifyListeners();
   }
 
