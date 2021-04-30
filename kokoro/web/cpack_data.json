@@ -1,0 +1,514 @@
+{
+    "name": "variants",
+    "children": [{
+        "id": "zeus",
+        "name": "Zeus",
+        "img": "images/character/zeus.png",
+        "children": [{
+                "name": "Videos",
+                "children": [{
+                        "name": "VID1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "VID2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            },
+            {
+                "name": "Photos",
+                "children": [{
+                    "name": "PIC1",
+                    "size": 1,
+                    "link": "https://www.google.com"
+                }]
+            },
+            {
+                "name": "Text",
+                "children": [{
+                    "name": "TEXT1",
+                    "size": 1,
+                    "link": "https://www.google.com"
+                }]
+            }
+        ]
+    }, {
+        "id": "spiderman",
+        "name": "Peter Parker",
+        "img": "http://marvel-force-chart.surge.sh/marvel_force_chart_img/top_spiderman.png",
+        "children": [{
+                "name": "Videos",
+                "children": [{
+                        "name": "VID1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "VID2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "VID3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "VID4",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "VID5",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "VID6",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            },
+            {
+                "name": "Photos",
+                "children": [{
+                        "name": "PIC1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "PIC2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "PIC4",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            },
+            {
+                "name": "Text",
+                "children": [{
+                        "name": "TEXT1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "TEXT2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "TEXT4",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT5",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT6",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            }
+        ]
+    }, {
+        "id": "mirana",
+        "name": "Mirana",
+        "img": "images/character/mirana.png",
+        "children": [{
+                "name": "Videos",
+                "children": [{
+                        "name": "VID1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "VID2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "VID3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            },
+            {
+                "name": "Photos",
+                "children": [{
+                        "name": "PIC1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "PIC2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "PIC4",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC5",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC6",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC7",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC8",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            },
+            {
+                "name": "Text",
+                "children": [{
+                        "name": "TEXT1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "TEXT2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "TEXT4",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT5",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT6",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            }
+        ]
+    }, {
+        "id": "venge",
+        "name": "Shendelzare",
+        "img": "images/character/shendelzare.png",
+        "children": [{
+                "name": "Photos",
+                "children": [{
+                        "name": "PIC1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "PIC2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "PIC4",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC5",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC6",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC7",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC8",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC9",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC10",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC11",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC12",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC13",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC14",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC15",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC16",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC17",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC18",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC19",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC20",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC21",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC22",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            },
+            {
+                "name": "Text",
+                "children": [{
+                        "name": "TEXT1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "TEXT2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "TEXT4",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT5",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT6",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            }
+        ]
+    }, {
+        "id": "mars",
+        "name": "Mars",
+        "img": "images/character/mars.png",
+        "children": [{
+                "name": "Videos",
+                "children": [{
+                        "name": "VID1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "VID2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "VID3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            },
+            {
+                "name": "Photos",
+                "children": [{
+                        "name": "PIC1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "PIC2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            },
+            {
+                "name": "Text",
+                "children": [{
+                        "name": "TEXT1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "TEXT2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "TEXT4",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT5",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT6",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            }
+        ]
+    }, {
+        "id": "crystal",
+        "name": "Rylai",
+        "img": "images/character/rylai.png",
+        "children": [{
+                "name": "Videos",
+                "children": [{
+                    "name": "VID1",
+                    "size": 1,
+                    "link": "https://www.google.com"
+                }]
+            },
+            {
+                "name": "Photos",
+                "children": [{
+                        "name": "PIC1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "PIC2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "PIC4",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC5",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC6",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC7",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC8",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC9",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC10",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC11",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC12",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "PIC13",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            },
+            {
+                "name": "Text",
+                "children": [{
+                        "name": "TEXT1",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    },
+                    {
+                        "name": "TEXT2",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }, {
+                        "name": "TEXT3",
+                        "size": 1,
+                        "link": "https://www.google.com"
+                    }
+                ]
+            }
+        ]
+    }]
+}

@@ -2,8 +2,10 @@ import 'package:kokoro/core/services/firebase_auth_service.dart';
 import 'package:kokoro/core/services/firebase_database_service.dart';
 import 'package:kokoro/core/services/firebase_storage_service.dart';
 import 'package:kokoro/core/services/global_map_service.dart';
+import 'package:kokoro/core/services/google_location_service.dart';
 import 'package:kokoro/core/services/mock_auth_service.dart';
 import 'package:kokoro/core/services/navigation_bar_service.dart';
+import 'package:kokoro/core/services/user_information_service.dart';
 import 'package:kokoro/ui/auth/sign_in/signin_view.dart';
 import 'package:kokoro/ui/auth/sign_up/signup_view.dart';
 import 'package:kokoro/ui/views/global_view/global_view.dart';
@@ -11,6 +13,7 @@ import 'package:kokoro/ui/views/history_view/history_view.dart';
 import 'package:kokoro/ui/views/home_view/home_view.dart';
 import 'package:kokoro/ui/views/make_post_view/make_post_view.dart';
 import 'package:kokoro/ui/views/personal_view/personal_view.dart';
+import 'package:kokoro/ui/views/planet_drilldown_view/planet_drilldown_view.dart';
 import 'package:kokoro/ui/views/planet_view/planet_view.dart';
 import 'package:kokoro/ui/views/personal_home_view/personal_home_view.dart';
 import 'package:kokoro/ui/views/planet_home_view/planet_home_view.dart';
@@ -25,6 +28,7 @@ import 'package:stacked_services/stacked_services.dart';
     CustomRoute(page: HomeView, durationInMilliseconds: 0),
     CustomRoute(page: HistoryView, durationInMilliseconds: 0),
     CustomRoute(page: PersonalView, durationInMilliseconds: 0),
+    CustomRoute(page: PlanetDrillDownView, durationInMilliseconds: 0),
     CustomRoute(page: PersonalHomeView, durationInMilliseconds: 0),
     CustomRoute(page: PlanetHomeView, durationInMilliseconds: 0),
     MaterialRoute(page: SignInView, initial: true),
@@ -37,7 +41,9 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: FirebaseAuthService),
     LazySingleton(classType: GlobalMapService),
     LazySingleton(classType: FirebaseDatabaseService),
-    LazySingleton(classType: FirebaseStorageService)
+    LazySingleton(classType: FirebaseStorageService),
+    LazySingleton(classType: GoogleLocationService),
+    LazySingleton(classType: UserInformationService),
   ],
 )
 class AppSetup {

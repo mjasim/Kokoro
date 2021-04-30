@@ -18,6 +18,7 @@ import '../ui/views/home_view/home_view.dart';
 import '../ui/views/make_post_view/make_post_view.dart';
 import '../ui/views/personal_home_view/personal_home_view.dart';
 import '../ui/views/personal_view/personal_view.dart';
+import '../ui/views/planet_drilldown_view/planet_drilldown_view.dart';
 import '../ui/views/planet_view/planet_view.dart';
 import '../ui/views/planet_home_view/planet_home_view.dart';
 
@@ -41,6 +42,7 @@ class Routes {
     historyView,
     personalView,
     personalHomeView,
+    planetDrillDownView,
     signInView,
     signUpView,
   };
@@ -57,7 +59,6 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.historyView, page: HistoryView),
     RouteDef(Routes.personalView, page: PersonalView),
-    RouteDef(Routes.personalHomeView, page: PersonalHomeView),
     RouteDef(Routes.signInView, page: SignInView),
     RouteDef(Routes.signUpView, page: SignUpView),
   ];
@@ -110,8 +111,7 @@ class StackedRouter extends RouterBase {
     },
     HistoryView: (data) {
       return PageRouteBuilder<dynamic>(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const HistoryView(),
+        pageBuilder: (context, animation, secondaryAnimation) => HistoryView(),
         settings: data,
         transitionDuration: const Duration(milliseconds: 0),
       );
@@ -134,6 +134,14 @@ class StackedRouter extends RouterBase {
           key: args.key,
           uid: args.uid,
         ),
+        settings: data,
+        transitionDuration: const Duration(milliseconds: 0),
+      );
+    },
+    PlanetDrillDownView: (data) {
+      return PageRouteBuilder<dynamic>(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            PlanetDrillDownView(),
         settings: data,
         transitionDuration: const Duration(milliseconds: 0),
       );

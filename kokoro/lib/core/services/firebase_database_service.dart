@@ -59,16 +59,19 @@ class FirebaseDatabaseService {
     }
   }
 
-  Future createPost(
-      {@required uid,
-      @required username,
-      @required contentType,
-      @required postText,
-      contentUrl}) {
+  Future createPost({
+    @required uid,
+    @required username,
+    @required contentType,
+    @required postText,
+    contentUrl,
+    authorProfilePhotoUrl,
+    planets,
+  }) {
+    print('createPost');
     return posts.doc().set({
       'authorUid': uid,
-      'authorProfilePhotoUrl':
-          'https://images.generated.photos/0Ok6OTj1BHb-WO_vQAIO6A9VSUVeSdmKTmKZm28FO7E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3Njk5ODUuanBn.jpg',
+      'authorProfilePhotoUrl': authorProfilePhotoUrl,
       'authorUsername': username,
       'contentType': contentType,
       'contentUrl': contentUrl,
@@ -79,7 +82,7 @@ class FirebaseDatabaseService {
       'sumOfHueColorValue': 0,
       'sumOfSaturationColorValue': 0,
       'sumOfLightnessColorValue': 0,
-      'planets': [],
+      'planets': planets,
       'commentCount': 0,
       'dateCreated': FieldValue.serverTimestamp(),
     });
@@ -198,16 +201,17 @@ class FirebaseDatabaseService {
       return null;
     }
 
-    double previousHueValue =
-    colorSnapshot.docs.first.data()['hueValue'];
+    double previousHueValue = colorSnapshot.docs.first.data()['hueValue'];
     double previousSaturationValue =
-    colorSnapshot.docs.first.data()['saturationValue'];
+        colorSnapshot.docs.first.data()['saturationValue'];
     double previousLightnessValue =
-    colorSnapshot.docs.first.data()['lightnessValue'];
+        colorSnapshot.docs.first.data()['lightnessValue'];
     posts.doc(postUid).update({
       'sumOfHueColorValue': FieldValue.increment(hueValue - previousHueValue),
-      'sumOfSaturationColorValue': FieldValue.increment(saturationValue - previousSaturationValue),
-      'sumOfLightnessColorValue': FieldValue.increment(lightnessValue - previousLightnessValue),
+      'sumOfSaturationColorValue':
+          FieldValue.increment(saturationValue - previousSaturationValue),
+      'sumOfLightnessColorValue':
+          FieldValue.increment(lightnessValue - previousLightnessValue),
     });
 
     return colorReact.doc(colorSnapshot.docs.first.id).update({

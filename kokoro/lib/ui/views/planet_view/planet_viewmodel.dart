@@ -11,6 +11,14 @@ import 'package:kokoro/core/services/firebase_database_service.dart';
 import 'package:kokoro/core/services/firebase_storage_service.dart';
 import 'package:video_player/video_player.dart';
 import 'package:vector_math/vector_math.dart' hide Colors;
+import 'package:kokoro/app/app.locator.dart';
+import 'package:kokoro/app/app.router.dart';
+
+import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
+
+import 'package:kokoro/core/services/firebase_auth_service.dart';
+import 'package:kokoro/core/services/firebase_database_service.dart';
 
 class PlanetViewModel extends BaseViewModel {
 //  List<Map> planetInfo = [
@@ -26,6 +34,7 @@ class PlanetViewModel extends BaseViewModel {
   final _nagivationService = locator<NavigationService>();
 
   List<Map> planetInfo = [];
+  final _nagivationService = locator<NavigationService>();
   void init() {
     List<String> names = [
       'Cat',
@@ -132,7 +141,9 @@ class PlanetViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void planetClicked(index) {}
+  void planetClicked(index) {
+    _nagivationService.navigateTo(Routes.planetDrillDownView);
+  }
 
   String getPlanetName(index) {
     return planetInfo[index]['name'];

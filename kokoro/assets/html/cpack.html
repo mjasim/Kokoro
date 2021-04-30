@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    .node {
+        cursor: pointer;
+    }
+
+    .node:hover {
+        stroke: #000;
+        stroke-width: 1.5px;
+    }
+
+    .node--leaf {
+        fill: white;
+    }
+
+    .label {
+        font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+        text-anchor: middle;
+        font-weight: bold;
+        text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
+    }
+
+    .label {
+        cursor: pointer;
+    }
+
+    /* .label,
+    .node--root,
+    .node--leaf {
+        pointer-events: none;
+    } */
+
+    .node--root {
+        pointer-events: none;
+    }
+</style>
+
+<body style="background-color:;">
+    <svg width="600" height="600"></svg>
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+<script>
+
+    // @julian This function does not take any parameters, but reads the JSON data and planet image location from the localStorage
+    function draw_planet(){
+
+        root = JSON.parse(localStorage.getItem("planet_data"));
+
+        console.log(`Paresed planet_data in js ${JSON.stringify(root)}`);
+
+        var svg = d3.select("svg"),
+        margin = 20,
+        diameter = +svg.attr("width"),
+        g = svg.append("g").attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+
+        var pack = d3.pack()
+            .size([diameter - margin, diameter - margin])
+            .padding(2);
+
+        node_data = [];
+
+        for (var i in root.children){
+            console.log(root.children[i].img)
+            node_data.push({
+                "id": root.children[i].id,
+                "name": root.children[i].name,
+                "img": root.children[i].img,
+            })
+        }
+
+        var defs = svg.append("defs")
+
+        defs.append("pattern")
+            .attr("id", "bimage")
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("patternContentUnits", "objectBoundingBox")
+            .append("image")
+            .attr("height", 1)
+            .attr("width", 1)
+            .attr("preserveAspectRatio", "none")
+            .attr("xlink:href", function () {
+                // return localStorage.group
+                return JSON.parse(localStorage.getItem("planet_pic"))
+            })
+            .attr("x", 0)
+            .attr("y", 0)
+
+        var defs = svg.selectAll("usernode-pattern")
+            .data(node_data)
+            .enter().append("pattern")
+            .attr("class", "usernode-pattern")
+            .attr("id", function (d) {
+                return d.id
+            })
+            .attr("height", "100%")
+            .attr("width", "100%")
+            .attr("patternContentUnits", "objectBoundingBox")
+            .append("image")
+            .attr("height", "1")
+            .attr("width", "1")
+            .attr("preserveAspectRatio", "none")
+            .attr("xlink:href", function (d) {
+                return d.img
+            })
+            .attr("x", 0)
+            .attr("y", 0)
+
+        root = d3.hierarchy(root)
+            .sum(function (d) {
+                return d.size;
+            })
+            .sort(function (a, b) {
+                return b.value - a.value;
+            });
+
+        var focus = root,
+            nodes = pack(root).descendants(),
+            view;
+
+        // @Julian I am using a random endpoint for color range. Having a fixed color is difficult
+        // get prominant color palette and create range using a random endpoint
+        const colorThief = new ColorThief();
+        var image = document.createElement("img");
+        image.src = JSON.parse(localStorage.getItem("planet_pic"));
+
+        if (image.complete) {
+            colors = colorThief.getColor(image);
+        } else {
+            image.addEventListener('load', function() {
+                colors = colorThief.getPalette(image);
+                localStorage.setItem("colors", JSON.stringify(colors))
+            });
+        }
+
+        var colors = (JSON.parse(localStorage.getItem("colors")))
+
+        randidx = Math.floor(Math.random() * colors.length) + 1;
+
+        var starting_color = "rgb(" + colors[0][0] + "," + colors[0][1] + "," +colors[0][2] + ")";
+        var ending_color = "rgb(" + colors[randidx][0] + "," + colors[randidx][1] + "," + colors[randidx][2] + ")";
+        console.log(colors, starting_color, ending_color)
+
+        var color = d3.scaleLinear()
+            .domain([1, 5])
+            .range([starting_color, ending_color])
+            .interpolate(d3.interpolateHcl);
+
+        var circle = g.selectAll("circle")
+            .data(nodes)
+            .enter().append("circle")
+            .attr("class", function (d) {
+                if (d.parent) {
+                    if (d.children && d.depth != 2) {
+                        return "node"
+                    } else if (d.children && d.depth == 2) {
+                        return "node node--set"
+                    } else {
+                        return "node node--leaf"
+                    }
+                } else {
+                    return "node node--root"
+                }
+                // return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root";
+            })
+            .style("fill", function (d) {
+                if (d.depth == 0) {
+                    return 'url(#bimage)'
+                } else if (d.depth == 1) {
+                    return 'url(#' + d.data.id + ')'
+                } else
+                    return color(d.depth)
+            })
+            // .style("fill", function (d) {
+            //     console.log(d)
+            //     return d.children ? color(d.depth) : null;
+            // })
+            .style("display", function (d) {
+                if (d.depth == 1 || d.depth == 0) {
+                    return "block"
+                } else
+                    return "none"
+            })
+            .on("click", function (d) {
+                console.log(d3.select(this).classed("label"))
+                if (d3.select(this).classed("node--leaf")) {
+                    window.parent.postMessage(`MODAL_CLOSED ${d.data.name}`,"*");
+                    window.open(d.data.link, "_blank")
+                    d3.event.stopPropagation()
+                } else {
+                    if (focus !== d) {
+                        zoom(d)
+                        cc = d3.selectAll(".node")
+                        cc.style("display", "block")
+                        d3.event.stopPropagation()
+                    } else {
+                        console.log(d)
+                        cc = d3.selectAll(".node--leaf")
+                        cc.style("display", "none")
+
+                        cc = d3.selectAll(".node--set")
+                        cc.style("display", "none")
+                    }
+                }
+            });
+
+        var text = g.selectAll("text")
+            .data(nodes)
+            .enter().append("text")
+            .attr("class", "label")
+            .style("fill-opacity", function (d) {
+                return d.parent === root ? 1 : 0;
+            })
+            .style("display", function (d) {
+                return d.parent === root ? "inline" : "none";
+            })
+            .text(function (d) {
+                return d.data.name;
+            });
+
+        var node = g.selectAll("circle,text");
+
+        svg
+            .style("background-color", "")
+            .on("click", function () {
+                zoom(root)
+                cc = d3.selectAll(".node--leaf")
+                cc.style("display", "none")
+                cc = d3.selectAll(".node--set")
+                cc.style("display", "none")
+            });
+
+        zoomTo([root.x, root.y, root.r * 2 + margin]);
+
+        function zoom(d) {
+            var focus0 = focus;
+            focus = d;
+
+            var transition = d3.transition()
+                .duration(d3.event.altKey ? 7500 : 750)
+                .tween("zoom", function (d) {
+                    var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
+                    return function (t) {
+                        zoomTo(i(t));
+                    };
+                });
+
+            transition.selectAll("text")
+                .filter(function (d) {
+                    return d.parent === focus || this.style.display === "inline";
+                })
+                .style("fill-opacity", function (d) {
+                    return d.parent === focus ? 1 : 0;
+                })
+                .on("start", function (d) {
+                    if (d.parent === focus) this.style.display = "inline";
+                })
+                .on("end", function (d) {
+                    if (d.parent !== focus) this.style.display = "none";
+                });
+        }
+
+        function zoomTo(v) {
+            var k = diameter / v[2];
+            view = v;
+            node.attr("transform", function (d) {
+                return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")";
+            });
+            circle.attr("r", function (d) {
+                return d.r * k;
+            });
+        }
+    }
+    draw_planet();
+</script>
+
+<!-- <script>
+    // @julian Example script to load data and then store it in locaStorage alongside planet asset image location.
+    // The draw_planet() function then reads the stored data and also the asset image location.
+
+    mydata = null;
+    d3.json("cpack_data.json", function (error, root) {
+        if (error) throw error;
+        mydata = JSON.parse(JSON.stringify(root))
+        console.log(mydata)
+        localStorage.setItem("planet_data", JSON.stringify(root))
+        localStorage.setItem("planet_pic", JSON.stringify("images/circle-cropped (25).png"))
+        draw_planet()
+    })
+</script> -->

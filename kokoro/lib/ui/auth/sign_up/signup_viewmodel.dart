@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:kokoro/core/services/google_location_service.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:flutter/foundation.dart';
@@ -20,6 +21,8 @@ class SignUpViewModel extends BaseViewModel {
   final _authService = locator<FirebaseAuthService>();
   final _databaseService = locator<FirebaseDatabaseService>();
   final _storageService = locator<FirebaseStorageService>();
+  final _googleLocationService = locator<GoogleLocationService>();
+
   final _uuid = Uuid();
 
   final ImagePicker _picker = ImagePicker();
@@ -69,6 +72,10 @@ class SignUpViewModel extends BaseViewModel {
     // TODO get the result back from the auth service and check it worked
     // TODO then take the id and make a user in the database using the auth id for the user uid
 //    print();
+  }
+
+  void getSuggestedLocations(String text) {
+    _googleLocationService.getSuggestedLocations(text);
   }
 
   void goToLogIn() {

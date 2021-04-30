@@ -141,11 +141,13 @@ class _SignUpViewState extends State<SignUpView> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               ElevatedButton(
-                                onPressed: _handlePressButton,
+                                onPressed: () => model.getSuggestedLocations(_locationController.text),
                                 child: Text("Search places"),
                               ),
                             ],
                           ),
+                          customTextInput(
+                              'Location', _locationController, false),
                           SizedBox(
                             height: 20,
                           ),
