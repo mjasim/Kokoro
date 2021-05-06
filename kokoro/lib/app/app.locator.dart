@@ -11,6 +11,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../core/services/firebase_auth_service.dart';
 import '../core/services/firebase_database_service.dart';
+import '../core/services/firebase_functions_service.dart';
 import '../core/services/firebase_storage_service.dart';
 import '../core/services/global_map_service.dart';
 import '../core/services/google_location_service.dart';
@@ -30,4 +31,5 @@ void setupLocator() {
   locator.registerLazySingleton(() => FirebaseStorageService());
   locator.registerLazySingleton(() => GoogleLocationService());
   locator.registerLazySingleton(() => UserInformationService());
+  locator.registerLazySingleton(() => FirebaseFunctionsService());
 }

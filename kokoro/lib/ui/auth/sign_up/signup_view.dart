@@ -80,7 +80,8 @@ class _SignUpViewState extends State<SignUpView> {
   }
 
   String genderDropdownValue = 'Choose'; // Gets choice of gender
-  bool otherTextFieldEnabled = false; // Enable/Disable text field for Gender input
+  bool otherTextFieldEnabled =
+      false; // Enable/Disable text field for Gender input
 
   Mode _mode = Mode.overlay;
 
@@ -88,294 +89,308 @@ class _SignUpViewState extends State<SignUpView> {
   Widget build(BuildContext context) {
     return ViewModelBuilder<SignUpViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
+        appBar: AppBar(
+          title: Text('KOKORO',
+              style: TextStyle(color: Colors.black, fontSize: 20.0)),
+        ),
         backgroundColor: Colors.black,
-        body: ListView(
+        body: Container(
           padding: const EdgeInsets.all(8),
-          children: [
-            Column(children: [
-              AppBar(
-                title: Text('KOKORO',
-                    style: TextStyle(color: Colors.black, fontSize: 20.0)),
+          child: Container(
+            // Creating a box
+            height: 800.0,
+            width: 1100.0,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.blue,
+                width: 8,
               ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                // Creating a box
-                height: 800.0,
-                width: 1100.0,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.blue,
-                    width: 8,
-                  ),
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 7, // 70%
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text('Create a new account', // Title
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  color: Colors.blue, fontSize: 25.0)),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          customTextInput('Email *', _emailController, false),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          customTextInput(
-                              'Password *', _passwordController, true),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              ElevatedButton(
-                                onPressed: () => model.getSuggestedLocations(_locationController.text),
-                                child: Text("Search places"),
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 7, // 70%
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text('Create a new account', // Title
+                            textAlign: TextAlign.left,
+                            style:
+                                TextStyle(color: Colors.blue, fontSize: 25.0)),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        customTextInput('Email *', _emailController, false),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        customTextInput(
+                            'Password *', _passwordController, true),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            ElevatedButton(
+                              onPressed: () => model.getSuggestedLocations(
+                                  _locationController.text),
+                              child: Text("Search places"),
+                            ),
+                          ],
+                        ),
+                        customTextInput('Location', _locationController, false),
+                        Container(
+                          child: Column(
+                            children: model.suggestedLocations
+                                .map<Widget>((locationInfo) => GestureDetector(
+                              child: Container(
+                                padding: EdgeInsets.all(5.0),
+                                child: Text(locationInfo['fullName']),
                               ),
-                            ],
+                              onTap: () {
+                                _locationController.text = locationInfo['fullName'];
+                                model.selectedLocation = locationInfo;
+                              },
+                            ))
+                                .toList(),
                           ),
-                          customTextInput(
-                              'Location', _locationController, false),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 120,
-                              ),
-                              Image.asset(
-                                'images/information-icon.png',
-                                height: 25,
-                                width: 25,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                'All information except the password will be public',
-                                style: TextStyle(
-                                    color: Colors.blue, fontSize: 17.0),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          customTextInput('Name', _nameController, false),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          customTextInput(
-                              'Username *', _userNameController, false),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            // Birthday
-                            children: [
-                              Expanded(
-                                  flex: 2,
-                                  child: Column(children: [
-                                    Text(
-                                      'Birthday',
-                                      style: TextStyle(
-                                          color: Colors.blue, fontSize: 17.0),
-                                    ),
-                                  ])),
-                              Expanded(
-                                  flex: 8,
-                                  child: Column(children: [
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: Container(
-                                        // Type in Birthday
-                                        width: 400,
-                                        child: TextField(
-                                          onTap: () => _selectDate(context),
-                                          controller: _date,
-                                          keyboardType: TextInputType.datetime,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 17.0),
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            fillColor: Colors.black,
-                                            filled: true,
-                                            enabledBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                borderSide: BorderSide(
-                                                    color: Colors.blue,
-                                                    style: BorderStyle.solid,
-                                                    width: 2.5)),
-                                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 120,
+                            ),
+                            Image.asset(
+                              'images/information-icon.png',
+                              height: 25,
+                              width: 25,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'All information except the password will be public',
+                              style:
+                                  TextStyle(color: Colors.blue, fontSize: 17.0),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        customTextInput('Name', _nameController, false),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        customTextInput(
+                            'Username *', _userNameController, false),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          // Birthday
+                          children: [
+                            Expanded(
+                                flex: 2,
+                                child: Column(children: [
+                                  Text(
+                                    'Birthday',
+                                    style: TextStyle(
+                                        color: Colors.blue, fontSize: 17.0),
+                                  ),
+                                ])),
+                            Expanded(
+                                flex: 8,
+                                child: Column(children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Container(
+                                      // Type in Birthday
+                                      width: 400,
+                                      child: TextField(
+                                        onTap: () => _selectDate(context),
+                                        controller: _date,
+                                        keyboardType: TextInputType.datetime,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 17.0),
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          fillColor: Colors.black,
+                                          filled: true,
+                                          enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              borderSide: BorderSide(
+                                                  color: Colors.blue,
+                                                  style: BorderStyle.solid,
+                                                  width: 2.5)),
                                         ),
                                       ),
-                                    )
-                                  ]))
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            // Gender
-                            children: [
-                              Expanded(
-                                  flex: 2,
-                                  child: Column(children: [
-                                    Text(
-                                      'Gender',
-                                      style: TextStyle(
-                                          color: Colors.blue, fontSize: 17.0),
                                     ),
-                                  ])),
-                              Expanded(
-                                  flex: 8,
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        child: Container(
-                                            // Type in Gender
-                                            width: 400,
-                                            child: DropdownButton<String>(
-                                              value: genderDropdownValue,
-                                              icon: Icon(Icons.arrow_downward,
-                                                  color: Colors.blue),
-                                              iconSize: 28,
-                                              elevation: 16,
-                                              style:
-                                                  TextStyle(color: Colors.blue),
-                                              underline: Container(
-                                                height: 2,
-                                                color: Colors.blue,
-                                              ),
-                                              onChanged: (String newValue) {
-                                                setState(() {
-                                                  genderDropdownValue =
-                                                      newValue;
-                                                });
-
-                                                // Enable or disable "Other" gender input
-                                                if (newValue == 'Other') {
-                                                  otherTextFieldEnabled = true;
-                                                } else {
-                                                  otherTextFieldEnabled = false;
-                                                }
-                                              },
-                                              items: <String>[
-                                                'Choose',
-                                                'Male',
-                                                'Female',
-                                                'Other'
-                                              ].map<DropdownMenuItem<String>>(
-                                                  (String value) {
-                                                return DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Text(value),
-                                                );
-                                              }).toList(),
-                                            )),
-                                      ),
-                                    ],
-                                  ))
-                            ],
-                          ),
-                          // Add gender input box if "Other" is selected
-                          otherTextFieldEnabled
-                              ? genderTextInput(_otherGenderController)
-                              : Row(),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            // Location
-                            children: [
-                              Expanded(
-                                  flex: 2,
-                                  child: Column(children: [
-                                    Text(
-                                      'About Me',
-                                      style: TextStyle(
-                                          color: Colors.blue, fontSize: 17.0),
-                                    ),
-                                  ])),
-                              Expanded(
-                                  flex: 8,
-                                  child: Column(children: [
+                                  )
+                                ]))
+                          ],
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          // Gender
+                          children: [
+                            Expanded(
+                                flex: 2,
+                                child: Column(children: [
+                                  Text(
+                                    'Gender',
+                                    style: TextStyle(
+                                        color: Colors.blue, fontSize: 17.0),
+                                  ),
+                                ])),
+                            Expanded(
+                                flex: 8,
+                                child: Column(
+                                  children: [
                                     Container(
                                       alignment: Alignment.centerLeft,
                                       child: Container(
-                                        // Type in Other Gender
-                                        margin:
-                                            EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                        width: 400,
-                                        height: 100,
-                                        child: TextField(
-                                            minLines: 50,
-                                            maxLines: 100,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 17.0),
-                                            controller: _aboutMeController,
-                                            decoration: InputDecoration(
-                                              fillColor: Colors.black,
-                                              filled: true,
-                                              focusedBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
-                                                  borderSide: BorderSide(
-                                                      color: Colors.blue,
-                                                      style: BorderStyle.solid,
-                                                      width: 2.5)),
-                                              enabledBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
-                                                  borderSide: BorderSide(
-                                                      color: Colors.blue,
-                                                      style: BorderStyle.solid,
-                                                      width: 3)),
-                                            )),
+                                          // Type in Gender
+                                          width: 400,
+                                          child: DropdownButton<String>(
+                                            value: genderDropdownValue,
+                                            icon: Icon(Icons.arrow_downward,
+                                                color: Colors.blue),
+                                            iconSize: 28,
+                                            elevation: 16,
+                                            style:
+                                                TextStyle(color: Colors.blue),
+                                            underline: Container(
+                                              height: 2,
+                                              color: Colors.blue,
+                                            ),
+                                            onChanged: (String newValue) {
+                                              setState(() {
+                                                genderDropdownValue = newValue;
+                                              });
+
+                                              // Enable or disable "Other" gender input
+                                              if (newValue == 'Other') {
+                                                otherTextFieldEnabled = true;
+                                              } else {
+                                                otherTextFieldEnabled = false;
+                                              }
+                                            },
+                                            items: <String>[
+                                              'Choose',
+                                              'Male',
+                                              'Female',
+                                              'Other'
+                                            ].map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                          )),
+                                    ),
+                                  ],
+                                ))
+                          ],
+                        ),
+                        // Add gender input box if "Other" is selected
+                        otherTextFieldEnabled
+                            ? genderTextInput(_otherGenderController)
+                            : Row(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          // Location
+                          children: [
+                            Expanded(
+                                flex: 2,
+                                child: Column(children: [
+                                  Text(
+                                    'About Me',
+                                    style: TextStyle(
+                                        color: Colors.blue, fontSize: 17.0),
+                                  ),
+                                ])),
+                            Expanded(
+                              flex: 8,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Container(
+                                      // Type in Other Gender
+                                      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                      width: 400,
+                                      height: 100,
+                                      child: TextField(
+                                        minLines: 50,
+                                        maxLines: 100,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 17.0),
+                                        controller: _aboutMeController,
+                                        decoration: InputDecoration(
+                                          fillColor: Colors.black,
+                                          filled: true,
+                                          focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              borderSide: BorderSide(
+                                                  color: Colors.blue,
+                                                  style: BorderStyle.solid,
+                                                  width: 2.5)),
+                                          enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              borderSide: BorderSide(
+                                                  color: Colors.blue,
+                                                  style: BorderStyle.solid,
+                                                  width: 3)),
+                                        ),
                                       ),
-                                    )
-                                  ]))
-                            ],
-                          ),
-                        ],
-                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      flex: 3, // 30%
-                      child: Column( // TODO: Need to find out how to add profile pic in textfield
-                        children: [
-                          SizedBox(
-                            height: 80,
-                          ),
-                          ClipRRect(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(80.0),
-                              topRight: Radius.circular(80.0),
-                              bottomLeft: Radius.circular(80.0),
-                              bottomRight: Radius.circular(80.0),
-                            ),
-                            child: model.imageFile != null ?
-                              new Container(
+                  ),
+                ),
+                Expanded(
+                  flex: 3, // 30%
+                  child: Column(
+                    // TODO: Need to find out how to add profile pic in textfield
+                    children: [
+                      SizedBox(
+                        height: 80,
+                      ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(80.0),
+                          topRight: Radius.circular(80.0),
+                          bottomLeft: Radius.circular(80.0),
+                          bottomRight: Radius.circular(80.0),
+                        ),
+                        child: model.imageFile != null
+                            ? new Container(
                                 width: 200.0,
                                 height: 200.0,
                                 decoration: new BoxDecoration(
@@ -384,77 +399,72 @@ class _SignUpViewState extends State<SignUpView> {
                                         fit: BoxFit.fill,
                                         image: new NetworkImage(
                                           model.imageFile.path,
-                                        )
-                                    )
-                                )
-                              ) :
-                              Icon(Icons.account_circle,
-                                  size: 200.0, color: Colors.blue),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          MaterialButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            color: Colors.blue,
-                            onPressed: () {
-                              model.pickImage();
-                            },
-                            child: Icon(Icons.open_in_browser),
-                          ),
-                          SizedBox(
-                            height: 210,
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          MaterialButton(
-                            // Sign up button after submitting information
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            color: Colors.blue,
-                            child: Align(
-                              alignment: Alignment.center,
-                              widthFactor: 1.7,
-                              heightFactor: 1.2,
-                              child: Text(
-                                'Sign Up',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 17.0,
-                                  height: 1.7,
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              String email = _emailController.text;
-                              String password = _passwordController.text;
-                              String location = _locationController.text;
-                              String name = _nameController.text;
-                              String username = _userNameController.text;
-                              String birthday = _date.text;
-                              String gender = genderDropdownValue;
-                              if (genderDropdownValue == 'Other') {
-                                gender = _otherGenderController.text;
-                              }
-                              String aboutMe = _aboutMeController.text;
-
-                              model.makeAccount(email, password, location, name,
-                                  username, birthday, gender, aboutMe);
-                            },
-                          ),
-                        ],
+                                        ))))
+                            : Icon(Icons.account_circle,
+                                size: 200.0, color: Colors.blue),
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        height: 20,
+                      ),
+                      MaterialButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        color: Colors.blue,
+                        onPressed: () {
+                          model.pickImage();
+                        },
+                        child: Icon(Icons.open_in_browser),
+                      ),
+                      SizedBox(
+                        height: 210,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      MaterialButton(
+                        // Sign up button after submitting information
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        color: Colors.blue,
+                        child: Align(
+                          alignment: Alignment.center,
+                          widthFactor: 1.7,
+                          heightFactor: 1.2,
+                          child: Text(
+                            'Sign Up',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 17.0,
+                              height: 1.7,
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          String email = _emailController.text;
+                          String password = _passwordController.text;
+                          String location = _locationController.text;
+                          String name = _nameController.text;
+                          String username = _userNameController.text;
+                          String birthday = _date.text;
+                          String gender = genderDropdownValue;
+                          if (genderDropdownValue == 'Other') {
+                            gender = _otherGenderController.text;
+                          }
+                          String aboutMe = _aboutMeController.text;
+
+                          model.makeAccount(email, password, location, name,
+                              username, birthday, gender, aboutMe);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ]),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
       viewModelBuilder: () => SignUpViewModel(),
@@ -462,23 +472,23 @@ class _SignUpViewState extends State<SignUpView> {
   }
 
   Widget _buildDropdownMenu() => DropdownButton(
-    value: _mode,
-    items: <DropdownMenuItem<Mode>>[
-      DropdownMenuItem<Mode>(
-        child: Text("Overlay"),
-        value: Mode.overlay,
-      ),
-      DropdownMenuItem<Mode>(
-        child: Text("Fullscreen"),
-        value: Mode.fullscreen,
-      ),
-    ],
-    onChanged: (m) {
-      setState(() {
-        _mode = m;
-      });
-    },
-  );
+        value: _mode,
+        items: <DropdownMenuItem<Mode>>[
+          DropdownMenuItem<Mode>(
+            child: Text("Overlay"),
+            value: Mode.overlay,
+          ),
+          DropdownMenuItem<Mode>(
+            child: Text("Fullscreen"),
+            value: Mode.fullscreen,
+          ),
+        ],
+        onChanged: (m) {
+          setState(() {
+            _mode = m;
+          });
+        },
+      );
 
   void onError(PlacesAutocompleteResponse response) {
     homeScaffoldKey.currentState.showSnackBar(
@@ -492,7 +502,8 @@ class _SignUpViewState extends State<SignUpView> {
     Prediction p = await PlacesAutocomplete.show(
       context: context,
       apiKey: kGoogleApiKey,
-      proxyBaseUrl: "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api",
+      proxyBaseUrl:
+          "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api",
       onError: onError,
       mode: _mode,
       language: "en",
@@ -645,11 +656,11 @@ Future<Null> displayPrediction(Prediction p, ScaffoldState scaffold) async {
 class CustomSearchScaffold extends PlacesAutocompleteWidget {
   CustomSearchScaffold()
       : super(
-    apiKey: kGoogleApiKey,
-    sessionToken: Uuid().generateV4(),
-    language: "en",
-    components: [Component(Component.country, "uk")],
-  );
+          apiKey: kGoogleApiKey,
+          sessionToken: Uuid().generateV4(),
+          language: "en",
+          components: [Component(Component.country, "uk")],
+        );
 
   @override
   _CustomSearchScaffoldState createState() => _CustomSearchScaffoldState();

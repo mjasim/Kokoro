@@ -2,6 +2,9 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 
 var app = admin.initializeApp();
+var axios;
+
+const googleLocationApiKey = 'AIzaSyB4vwPM5fwg6M-LUoo6mqbflDtDNXodOKs';
 const db = admin.firestore();
 
 exports.updatePlanetOnPostCreated = functions.firestore
@@ -106,3 +109,102 @@ exports.updatePlanetRanking = functions.firestore
 
         return null;
     });
+
+
+exports.googleLocationAutoFill = functions.https.onCall(async (data, context) => {
+    axios = require('axios');
+
+    var url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${data.queryText}&types=(cities)&key=${googleLocationApiKey}`;
+
+    return axios.get(url).then((response) => {
+        console.log(`Returned data ${JSON.stringify(response.data)}`);
+        return JSON.stringify(response.data);
+    }).catch((e) => {
+        console.log(e);
+        return null;
+    });
+});
+
+exports.latLngFromPlaceId = functions.https.onCall(async (data, context) => {
+    return await db.collection('locationLatLngCache').limit(1).where('placeId', '==', data.placeId).get().then(async (querySnapshot) => {
+        if (querySnapshot.empty) {
+            axios = require('axios');
+
+            var url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${data.placeId}&key=${googleLocationApiKey}`;
+
+            return axios.get(url).then((response) => {
+                console.log(`Returned data ${JSON.stringify(response.data)}`);
+                var responseData = response.data;
+                var lat = responseData.result.geometry.location.lat;
+                var lng = responseData.result.geometry.location.lng;
+                console.log(`Response data lat long ${JSON.stringify()}`);
+                db.collection('locationLatLngCache').doc().set({
+                    'placeId': data.placeId,
+                    'name': responseData.result.address_components[0].long_name,
+                    'location': new admin.firestore.GeoPoint(lat, lng),
+                }).catch((error) => console.log(error));
+                return JSON.stringify({
+                    'lat': lat,
+                    'lng': lng,
+                });
+            }).catch((e) => {
+                console.log(e);
+                return null;
+            });
+        } else {
+            let doc = querySnapshot.docs[0];
+            let dbData = doc.data();
+            console.log(`Document did exist ${JSON.stringify(dbData)} placeId ${doc.placeId}`);
+            return JSON.stringify({
+                'lat': dbData.location._latitude,
+                'lng': dbData.location._longitude,
+            });
+        }
+    }).catch((error) => {
+        console.log(error);
+        return error;
+    });
+});
+
+
+exports.latLngFromName = functions.https.onCall(async (data, context) => {
+    return await db.collection('locationLatLngCache').limit(1).where('name', '==', data.name).get().then(async (querySnapshot) => {
+        if (querySnapshot.empty) {
+            axios = require('axios');
+
+            var url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${data.name}&key=${googleLocationApiKey}`
+
+            return axios.get(url).then((response) => {
+                console.log(`Returned data ${JSON.stringify(response.data)}`);
+
+                var responseData = response.data;
+                var lat = responseData.results[0].geometry.location.lat;
+                var lng = responseData.results[0].geometry.location.lng;
+                console.log(`latLngFromName ${data.name} responseData ${responseData.results[0].place_id}`);
+                db.collection('locationLatLngCache').doc().set({
+                    'placeId': responseData.results[0].place_id,
+                    'name': data.name,
+                    'location': new admin.firestore.GeoPoint(lat, lng),
+                }).catch((error) => console.log(error));
+                return JSON.stringify({
+                    'lat': lat,
+                    'lng': lng,
+                });
+            }).catch((e) => {
+                console.log(e);
+                return null;
+            });
+        } else {
+            let doc = querySnapshot.docs[0];
+            let dbData = doc.data();
+            console.log(`Document did exist ${JSON.stringify(dbData)} placeId ${doc.placeId}`);
+            return JSON.stringify({
+                'lat': dbData.location._latitude,
+                'lng': dbData.location._longitude,
+            });
+        }
+    }).catch((error) => {
+        console.log(error);
+        return error;
+    });
+});

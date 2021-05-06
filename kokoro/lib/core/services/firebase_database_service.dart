@@ -15,16 +15,17 @@ class FirebaseDatabaseService {
   CollectionReference colorReact =
       FirebaseFirestore.instance.collection('color-reactions');
 
-  Future createUser(
-      {@required uid,
-      @required username,
-      @required email,
-      @required location,
-      name,
-      birthday,
-      gender,
-      photoUrl,
-      aboutMe}) {
+  Future createUser({
+    @required uid,
+    @required username,
+    @required email,
+    @required location,
+    name,
+    birthday,
+    gender,
+    photoUrl,
+    aboutMe,
+  }) {
     return users.doc(uid).set({
       'username': username,
       'email': email,
@@ -33,6 +34,10 @@ class FirebaseDatabaseService {
       'birthday': birthday,
       'gender': gender,
       'profilePhotoUrl': photoUrl,
+      'recentConnections': [],
+      'planetAffiliation': [],
+      'recentMedia': [],
+      'numberOfPosts': 0,
       'aboutMe': aboutMe,
     });
   }
@@ -290,11 +295,11 @@ class FirebaseDatabaseService {
   }
 
   Future<List<PostModel>> getUserPosts(String userUid) async {
-    QuerySnapshot postSnapshot =
-    await posts.limit(20)
-               .where('authorUid', isEqualTo: userUid)
-               .orderBy('dateCreated', descending: true)
-               .get();
+    QuerySnapshot postSnapshot = await posts
+        .limit(20)
+        .where('authorUid', isEqualTo: userUid)
+        .orderBy('dateCreated', descending: true)
+        .get();
 
     return postSnapshot.docs.map((e) {
       var element = e.data();
@@ -318,17 +323,17 @@ class FirebaseDatabaseService {
         userReactionAmount: 0,
         userSelectedColor: null,
         authorProfilePhotoUrl:
-        'https://images.generated.photos/0Ok6OTj1BHb-WO_vQAIO6A9VSUVeSdmKTmKZm28FO7E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3Njk5ODUuanBn.jpg',
+            'https://images.generated.photos/0Ok6OTj1BHb-WO_vQAIO6A9VSUVeSdmKTmKZm28FO7E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3Njk5ODUuanBn.jpg',
       );
     }).toList();
   }
 
   Future<List<PostModel>> getPlanetPosts(String planetName) async {
-    QuerySnapshot postSnapshot =
-    await posts.limit(20)
-               .where('planets', arrayContains: planetName)
-               .orderBy('dateCreated', descending: true)
-               .get();
+    QuerySnapshot postSnapshot = await posts
+        .limit(20)
+        .where('planets', arrayContains: planetName)
+        .orderBy('dateCreated', descending: true)
+        .get();
 
     return postSnapshot.docs.map((e) {
       var element = e.data();
@@ -352,7 +357,7 @@ class FirebaseDatabaseService {
         userReactionAmount: 0,
         userSelectedColor: null,
         authorProfilePhotoUrl:
-        'https://images.generated.photos/0Ok6OTj1BHb-WO_vQAIO6A9VSUVeSdmKTmKZm28FO7E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3Njk5ODUuanBn.jpg',
+            'https://images.generated.photos/0Ok6OTj1BHb-WO_vQAIO6A9VSUVeSdmKTmKZm28FO7E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3Njk5ODUuanBn.jpg',
       );
     }).toList();
   }

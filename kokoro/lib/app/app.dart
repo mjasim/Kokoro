@@ -1,5 +1,6 @@
 import 'package:kokoro/core/services/firebase_auth_service.dart';
 import 'package:kokoro/core/services/firebase_database_service.dart';
+import 'package:kokoro/core/services/firebase_functions_service.dart';
 import 'package:kokoro/core/services/firebase_storage_service.dart';
 import 'package:kokoro/core/services/global_map_service.dart';
 import 'package:kokoro/core/services/google_location_service.dart';
@@ -44,6 +45,7 @@ import 'package:stacked_services/stacked_services.dart';
     LazySingleton(classType: FirebaseStorageService),
     LazySingleton(classType: GoogleLocationService),
     LazySingleton(classType: UserInformationService),
+    LazySingleton(classType: FirebaseFunctionsService),
   ],
 )
 class AppSetup {

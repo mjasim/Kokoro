@@ -31,7 +31,7 @@ class PlanetViewModel extends BaseViewModel {
 //    },
 //  ];
 
-  final _nagivationService = locator<NavigationService>();
+//  final _nagivationService = locator<NavigationService>();
 
   List<Map> planetInfo = [];
   final _nagivationService = locator<NavigationService>();

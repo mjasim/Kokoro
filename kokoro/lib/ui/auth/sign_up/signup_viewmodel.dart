@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:kokoro/core/services/firebase_functions_service.dart';
 import 'package:kokoro/core/services/google_location_service.dart';
 import 'package:uuid/uuid.dart';
 
@@ -22,8 +23,12 @@ class SignUpViewModel extends BaseViewModel {
   final _databaseService = locator<FirebaseDatabaseService>();
   final _storageService = locator<FirebaseStorageService>();
   final _googleLocationService = locator<GoogleLocationService>();
+  final _functionsService = locator<FirebaseFunctionsService>();
 
   final _uuid = Uuid();
+
+  List<Map> suggestedLocations = [];
+  Map selectedLocation;
 
   final ImagePicker _picker = ImagePicker();
   File imageFile;
@@ -51,12 +56,25 @@ class SignUpViewModel extends BaseViewModel {
         url = await _storageService.uploadProfilePhoto(
             fileName: _uuid.v4(), imageData: imageData);
       }
+
+      Map currLocation;
+      if (selectedLocation != null) {
+        String placeId = selectedLocation['placeId'];
+        String country = selectedLocation['country'];
+        currLocation = selectedLocation;
+        currLocation['cityLatLng'] = await _functionsService.latLngFromPlaceId(placeId);
+        currLocation['countryLatLng'] = await _functionsService.latLngFromName(country);
+
+        print('make Account ${currLocation}');
+      }
+
+
       print(authResult.uid);
       var databaseResult = await _databaseService.createUser(
         uid: uid,
         username: username,
         email: email,
-        location: location,
+        location: currLocation,
         name: name,
         birthday: birthday,
         gender: gender,
@@ -74,8 +92,11 @@ class SignUpViewModel extends BaseViewModel {
 //    print();
   }
 
-  void getSuggestedLocations(String text) {
-    _googleLocationService.getSuggestedLocations(text);
+  void getSuggestedLocations(String text) async {
+    print('getSuggestedLocations $text');
+    suggestedLocations = await _functionsService.locationAutoFill(text);
+    print('getSuggestedLocations suggestions $suggestedLocations');
+    notifyListeners();
   }
 
   void goToLogIn() {
