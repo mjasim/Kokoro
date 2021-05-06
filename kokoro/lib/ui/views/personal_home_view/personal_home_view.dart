@@ -10,7 +10,7 @@ class PersonalHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double _currentSliderValue = 20;
+    double _currentSliderValue = 0.0;
 
     return ViewModelBuilder<PersonalHomeViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
@@ -35,7 +35,7 @@ class PersonalHomeView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              customImageProfile(model.profileUserPhotoUrl, 160, 160),
+                              customImageProfile(model.profileUserPhotoUrl, 160),
                             ],
                           ),
                         ),
@@ -98,13 +98,13 @@ class PersonalHomeView extends StatelessWidget {
                       children: [
                         recentInterestsList(model.profileUserPhotoUrl,
                             model.profileUserPhotoUrl,
-                            model.profileUserPhotoUrl, 100, 100),
+                            model.profileUserPhotoUrl, 100),
                         SizedBox(
                           height: 10.0,
                         ),
                         recentConnectionsList(model.profileUserPhotoUrl,
                             model.profileUserPhotoUrl,
-                            model.profileUserPhotoUrl, 100, 100),
+                            model.profileUserPhotoUrl, 100),
                       ],
                     ),
                   ),
@@ -120,21 +120,22 @@ class PersonalHomeView extends StatelessWidget {
                     SizedBox(
                       height: 10.0,
                     ),
-                    Row(
+                    Row( // TODO: Get Slider to work!
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Big Bang"),
-                        Slider(
-                          value: _currentSliderValue,
-                          min: 0,
-                          max: 100,
-                          divisions: 5,
-                          label: _currentSliderValue.round().toString(),
-                          onChanged: (double value) {
-//                            setState(() {
+                        Container(
+                          width: 550,
+                          child: Slider(
+                            value: model.sliderValue,
+                            min: 0.0,
+                            max: 1000.0,
+                            label: _currentSliderValue.round().toString(),
+                            onChanged: (double value) {
+                              model.updateSliderValue(value);
                               _currentSliderValue = value;
-//                            });
-                          },
+                            },
+                          ),
                         ),
                         Text("Now"),
                       ],
@@ -164,10 +165,9 @@ class PersonalHomeView extends StatelessWidget {
 
 class customImageProfile extends StatelessWidget {
   final String profileUrl;
-  final double height;
-  final double width;
+  final double size;
 
-  customImageProfile(this.profileUrl, this.height, this.width);
+  customImageProfile(this.profileUrl, this.size);
 
   @override
   Widget build(BuildContext context) {
@@ -180,11 +180,11 @@ class customImageProfile extends StatelessWidget {
       ),
       child: profileUrl != null ? Image.network(
         profileUrl,
-        width: width,
-        height: height,
+        width: size,
+        height: size,
         fit: BoxFit.fill,
       ) :
-      Icon(Icons.account_circle, size: 10),
+      Icon(Icons.account_circle, size: size),
     );
   }
 }
@@ -193,11 +193,10 @@ class recentConnectionsList extends StatelessWidget {
   final String profileUrl1;
   final String profileUrl2;
   final String profileUrl3;
-  final double height;
-  final double width;
+  final double size;
 
   recentConnectionsList(this.profileUrl1, this.profileUrl2, this.profileUrl3,
-                        this.height, this.width);
+                        this.size);
 
   @override
   Widget build(BuildContext context) {
@@ -210,11 +209,11 @@ class recentConnectionsList extends StatelessWidget {
         ),
         Row(
           children: [
-            customImageProfile(profileUrl1, height, width),
+            customImageProfile(profileUrl1, size),
             SizedBox(width: 10.0),
-            customImageProfile(profileUrl2, height, width),
+            customImageProfile(profileUrl2, size),
             SizedBox(width: 10.0),
-            customImageProfile(profileUrl3, height, width),
+            customImageProfile(profileUrl3, size),
           ],
         ),
       ],
@@ -226,11 +225,10 @@ class recentInterestsList extends StatelessWidget {
   final String profileUrl1;
   final String profileUrl2;
   final String profileUrl3;
-  final double height;
-  final double width;
+  final double size;
 
   recentInterestsList(this.profileUrl1, this.profileUrl2, this.profileUrl3,
-                      this.height, this.width);
+                      this.size);
 
   @override
   Widget build(BuildContext context) {
@@ -243,11 +241,11 @@ class recentInterestsList extends StatelessWidget {
         ),
         Row(
           children: [
-            customImageProfile(profileUrl1, height, width),
+            customImageProfile(profileUrl1, size),
             SizedBox(width: 10.0),
-            customImageProfile(profileUrl2, height, width),
+            customImageProfile(profileUrl2, size),
             SizedBox(width: 10.0),
-            customImageProfile(profileUrl3, height, width),
+            customImageProfile(profileUrl3, size),
           ],
         ),
       ],

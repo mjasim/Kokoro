@@ -16,6 +16,7 @@ import 'package:kokoro/ui/views/personal_view/personal_view.dart';
 import 'package:kokoro/ui/views/planet_drilldown_view/planet_drilldown_view.dart';
 import 'package:kokoro/ui/views/planet_view/planet_view.dart';
 import 'package:kokoro/ui/views/personal_home_view/personal_home_view.dart';
+import 'package:kokoro/ui/views/planet_home_view/planet_home_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -29,6 +30,7 @@ import 'package:stacked_services/stacked_services.dart';
     CustomRoute(page: PersonalView, durationInMilliseconds: 0),
     CustomRoute(page: PlanetDrillDownView, durationInMilliseconds: 0),
     CustomRoute(page: PersonalHomeView, durationInMilliseconds: 0),
+    CustomRoute(page: PlanetHomeView, durationInMilliseconds: 0),
     MaterialRoute(page: SignInView, initial: true),
     MaterialRoute(page: SignUpView),
   ],

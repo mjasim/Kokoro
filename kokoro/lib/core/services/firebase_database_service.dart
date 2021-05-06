@@ -262,7 +262,6 @@ class FirebaseDatabaseService {
     QuerySnapshot postSnapshot =
         await posts.limit(20).orderBy('dateCreated', descending: true).get();
 
-    var random = Random();
     return postSnapshot.docs.map((e) {
       var element = e.data();
       return PostModel(
@@ -286,6 +285,74 @@ class FirebaseDatabaseService {
         userSelectedColor: null,
         authorProfilePhotoUrl:
             'https://images.generated.photos/0Ok6OTj1BHb-WO_vQAIO6A9VSUVeSdmKTmKZm28FO7E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3Njk5ODUuanBn.jpg',
+      );
+    }).toList();
+  }
+
+  Future<List<PostModel>> getUserPosts(String userUid) async {
+    QuerySnapshot postSnapshot =
+    await posts.limit(20)
+               .where('authorUid', isEqualTo: userUid)
+               .orderBy('dateCreated', descending: true)
+               .get();
+
+    return postSnapshot.docs.map((e) {
+      var element = e.data();
+      return PostModel(
+        postUid: e.id,
+        authorUid: element['authorUid'],
+        authorUsername: element['authorUsername'],
+        postText: element['postText'],
+        dateCreated: element['dateCreated'],
+        contentType: element['contentType'],
+        contentUrl: element['contentUrl'],
+        commentCount: element['commentCount'],
+        planets: element['planets'],
+        sumOfHueColorValue: element['sumOfHueColorValue'],
+        sumOfLightnessColorValue: element['sumOfLightnessColorValue'],
+        sumOfSaturationColorValue: element['sumOfSaturationColorValue'],
+        sliderReactionCount: element['sliderReactionCount'],
+        sumOfSliderReactions: element['sumOfSliderReactions'],
+        colorReactionCount: element['colorReactionCount'],
+        commentsOpen: false,
+        userReactionAmount: 0,
+        userSelectedColor: null,
+        authorProfilePhotoUrl:
+        'https://images.generated.photos/0Ok6OTj1BHb-WO_vQAIO6A9VSUVeSdmKTmKZm28FO7E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3Njk5ODUuanBn.jpg',
+      );
+    }).toList();
+  }
+
+  Future<List<PostModel>> getPlanetPosts(String planetName) async {
+    QuerySnapshot postSnapshot =
+    await posts.limit(20)
+               .where('planets', arrayContains: planetName)
+               .orderBy('dateCreated', descending: true)
+               .get();
+
+    return postSnapshot.docs.map((e) {
+      var element = e.data();
+      return PostModel(
+        postUid: e.id,
+        authorUid: element['authorUid'],
+        authorUsername: element['authorUsername'],
+        postText: element['postText'],
+        dateCreated: element['dateCreated'],
+        contentType: element['contentType'],
+        contentUrl: element['contentUrl'],
+        commentCount: element['commentCount'],
+        planets: element['planets'],
+        sumOfHueColorValue: element['sumOfHueColorValue'],
+        sumOfLightnessColorValue: element['sumOfLightnessColorValue'],
+        sumOfSaturationColorValue: element['sumOfSaturationColorValue'],
+        sliderReactionCount: element['sliderReactionCount'],
+        sumOfSliderReactions: element['sumOfSliderReactions'],
+        colorReactionCount: element['colorReactionCount'],
+        commentsOpen: false,
+        userReactionAmount: 0,
+        userSelectedColor: null,
+        authorProfilePhotoUrl:
+        'https://images.generated.photos/0Ok6OTj1BHb-WO_vQAIO6A9VSUVeSdmKTmKZm28FO7E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3Njk5ODUuanBn.jpg',
       );
     }).toList();
   }

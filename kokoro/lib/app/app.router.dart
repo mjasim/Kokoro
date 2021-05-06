@@ -7,6 +7,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
+import 'package:kokoro/ui/views/planet_home_view/planet_home_view.dart';
 import 'package:stacked/stacked.dart';
 
 import '../ui/auth/sign_in/signin_view.dart';
@@ -19,9 +20,11 @@ import '../ui/views/personal_home_view/personal_home_view.dart';
 import '../ui/views/personal_view/personal_view.dart';
 import '../ui/views/planet_drilldown_view/planet_drilldown_view.dart';
 import '../ui/views/planet_view/planet_view.dart';
+import '../ui/views/planet_home_view/planet_home_view.dart';
 
 class Routes {
   static const String planetView = '/planet-view';
+  static const String planetHomeView = '/planet-home-view';
   static const String globalView = '/global-view';
   static const String makePostView = '/make-post-view';
   static const String homeView = '/home-view';
@@ -33,6 +36,7 @@ class Routes {
   static const String signUpView = '/sign-up-view';
   static const all = <String>{
     planetView,
+    planetHomeView,
     globalView,
     makePostView,
     homeView,
@@ -50,6 +54,7 @@ class StackedRouter extends RouterBase {
   List<RouteDef> get routes => _routes;
   final _routes = <RouteDef>[
     RouteDef(Routes.planetView, page: PlanetView),
+    RouteDef(Routes.planetHomeView, page: PlanetHomeView),
     RouteDef(Routes.globalView, page: GlobalView),
     RouteDef(Routes.makePostView, page: MakePostView),
     RouteDef(Routes.homeView, page: HomeView),
@@ -67,6 +72,20 @@ class StackedRouter extends RouterBase {
       return PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const PlanetView(),
+        settings: data,
+        transitionDuration: const Duration(milliseconds: 0),
+      );
+    },
+    PlanetHomeView: (data) {
+      var args = data.getArgs<PlanetHomeViewArguments>(
+        orElse: () => PlanetHomeViewArguments(),
+      );
+      return PageRouteBuilder<dynamic>(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            PlanetHomeView(
+              key: args.key,
+              uid: args.uid,
+            ),
         settings: data,
         transitionDuration: const Duration(milliseconds: 0),
       );
@@ -154,4 +173,11 @@ class PersonalHomeViewArguments {
   final Key key;
   final String uid;
   PersonalHomeViewArguments({this.key, this.uid});
+}
+
+/// PlanetHomeView arguments holder class
+ class PlanetHomeViewArguments {
+  final Key key;
+  final String uid;
+  PlanetHomeViewArguments({this.key, this.uid});
 }

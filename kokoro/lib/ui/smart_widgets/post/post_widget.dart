@@ -60,7 +60,6 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
                     Column(
                       children: [
-
                         MaterialButton(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(80.0),
