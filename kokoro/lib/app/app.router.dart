@@ -27,6 +27,7 @@ class Routes {
   static const String homeView = '/home-view';
   static const String historyView = '/history-view';
   static const String personalView = '/personal-view';
+  static const String planetDrillDownView = '/planet-drill-down-view';
   static const String personalHomeView = '/personal-home-view';
   static const String signInView = '/';
   static const String signUpView = '/sign-up-view';
@@ -37,8 +38,8 @@ class Routes {
     homeView,
     historyView,
     personalView,
-    personalHomeView,
     planetDrillDownView,
+    personalHomeView,
     signInView,
     signUpView,
   };
@@ -54,6 +55,8 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.historyView, page: HistoryView),
     RouteDef(Routes.personalView, page: PersonalView),
+    RouteDef(Routes.planetDrillDownView, page: PlanetDrillDownView),
+    RouteDef(Routes.personalHomeView, page: PersonalHomeView),
     RouteDef(Routes.signInView, page: SignInView),
     RouteDef(Routes.signUpView, page: SignUpView),
   ];
@@ -105,6 +108,14 @@ class StackedRouter extends RouterBase {
         transitionDuration: const Duration(milliseconds: 0),
       );
     },
+    PlanetDrillDownView: (data) {
+      return PageRouteBuilder<dynamic>(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            PlanetDrillDownView(),
+        settings: data,
+        transitionDuration: const Duration(milliseconds: 0),
+      );
+    },
     PersonalHomeView: (data) {
       var args = data.getArgs<PersonalHomeViewArguments>(
         orElse: () => PersonalHomeViewArguments(),
@@ -115,14 +126,6 @@ class StackedRouter extends RouterBase {
           key: args.key,
           uid: args.uid,
         ),
-        settings: data,
-        transitionDuration: const Duration(milliseconds: 0),
-      );
-    },
-    PlanetDrillDownView: (data) {
-      return PageRouteBuilder<dynamic>(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            PlanetDrillDownView(),
         settings: data,
         transitionDuration: const Duration(milliseconds: 0),
       );
