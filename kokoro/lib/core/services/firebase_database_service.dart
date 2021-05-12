@@ -14,6 +14,8 @@ class FirebaseDatabaseService {
       FirebaseFirestore.instance.collection('slider-reactions');
   CollectionReference colorReact =
       FirebaseFirestore.instance.collection('color-reactions');
+  CollectionReference globalViewData =
+      FirebaseFirestore.instance.collection('globalViewData');
 
   Future createUser({
     @required uid,
@@ -62,6 +64,13 @@ class FirebaseDatabaseService {
     } else {
       return null;
     }
+  }
+
+  Future<List> getGlobalViewData({placeId: 'world'}) async {
+    return globalViewData
+        .doc(placeId)
+        .get()
+        .then((value) => value.data()['data']);
   }
 
   Future createPost({

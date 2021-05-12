@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kokoro/ui/smart_widgets/global_map/global_map_view.dart';
 import 'package:kokoro/ui/smart_widgets/top_navigation_bar/top_navigation_bar.dart';
+import 'package:kokoro/ui/views/global_view/global_map_view.dart';
 import 'package:kokoro/ui/views/global_view/global_viewmodel.dart';
 import 'package:kokoro/ui/widgets/side_navigation_widget.dart';
 
-import 'package:stacked/stacked.dart';
-
-
-import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
 class GlobalView extends StatefulWidget {
@@ -31,6 +27,7 @@ class _GlobalViewState extends State<GlobalView> with AutomaticKeepAliveClientMi
         ),
       ),
       viewModelBuilder: () => GlobalViewModel(),
+      onModelReady: (model) => model.init(),
     );
   }
 

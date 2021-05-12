@@ -194,8 +194,8 @@ class _GlobalMapViewState extends State<GlobalMapView>
         builder: (ctx) => Container(
           child: GlobalLocationItemView(
             intensity: element['activity'],
-            zoom: _zoom,
-            location: element['location'],
+            zoom: zoom,
+            location: element['placeId'],
             mapCallback: () {
 //              print(element['location']);
               setState(() {

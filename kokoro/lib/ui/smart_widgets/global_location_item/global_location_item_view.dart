@@ -31,7 +31,7 @@ class GlobalLocationItemView extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color:
-                          HSVColor.fromAHSV(1.0, 211.0, intensity / 100.0, 1.0)
+                          HSVColor.fromAHSV(1.0, 211.0, intensity, 1.0)
                               .toColor(),
                     ),
                   ),
@@ -87,7 +87,7 @@ class GlobalLocationItemView extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color:
-                HSVColor.fromAHSV(1.0, 211.0, intensity / 100.0, 1.0).toColor(),
+                HSVColor.fromAHSV(1.0, 211.0, intensity, 1.0).toColor(),
           ),
         ),
       ),

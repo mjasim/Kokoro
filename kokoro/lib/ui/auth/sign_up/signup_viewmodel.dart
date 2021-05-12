@@ -47,7 +47,7 @@ class SignUpViewModel extends BaseViewModel {
 
     FirebaseAuthenticationResult authResult = await _authService
         .createAccountWithEmail(email: email, password: password);
-    if (!authResult.hasError) {
+    if (!authResult.hasError || true) {
       String uid = authResult.uid;
       String url;
       if (imageFile != null) {
