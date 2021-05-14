@@ -297,8 +297,7 @@ class FirebaseDatabaseService {
         commentsOpen: false,
         userReactionAmount: 0,
         userSelectedColor: null,
-        authorProfilePhotoUrl:
-            'https://images.generated.photos/0Ok6OTj1BHb-WO_vQAIO6A9VSUVeSdmKTmKZm28FO7E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3Njk5ODUuanBn.jpg',
+        authorProfilePhotoUrl: element['authorProfilePhotoUrl'] != null ? element['authorProfilePhotoUrl'] : 'https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1214428300?k=6&m=1214428300&s=170667a&w=0&h=hMQs-822xLWFz66z3Xfd8vPog333rNFHU6Q_kc9Sues='
       );
     }).toList();
   }

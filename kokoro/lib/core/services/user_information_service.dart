@@ -10,7 +10,8 @@ import 'package:kokoro/core/services/firebase_database_service.dart';
 class UserInformationService {
   String profileUserPhotoUrl;
   String name;
-  String location;
+  String username;
+  Map location;
   String activeSinceDate;
   String uid;
 
@@ -21,8 +22,10 @@ class UserInformationService {
   Future<Map> getUserInfo() async {
     if (!alreadyRetrieved) {
       uid = _authService.userUid;
+      print('getUserInfo $uid');
       Map userInfo = await _databaseService.getUserInfo(uid: uid);
-
+      print('getUserInfo userInfo $userInfo');
+      username = userInfo["username"];
       profileUserPhotoUrl = userInfo["profilePhotoUrl"];
       name = userInfo["name"];
       location = userInfo["location"];
@@ -31,6 +34,8 @@ class UserInformationService {
 
     return {
       "profileUserPhotoUrl": profileUserPhotoUrl,
+      "username": username,
+      "uid": uid,
       "name": name,
       "location": location,
       "activeSinceDate": activeSinceDate,

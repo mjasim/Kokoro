@@ -30,4 +30,20 @@ class FirebaseFunctionsService {
     print('latLngFromName ${results.data}');
     return json.decode(results.data);
   }
+
+  Future<Map> getPersonalMapData(String uid) async {
+    HttpsCallable callable = functions.httpsCallable('getPersonalMapData');
+
+    dynamic startDate = DateTime.utc(2021, 4, 10);
+    dynamic stopDate = DateTime.utc(2021, 4, 20);
+    
+    String dateToString(date) {
+      return "${date.day}-${date.month}-${date.year}";
+    }
+
+    print('getPersonalMapData $uid');
+    final results = await callable({'userUid': uid, 'startDate':  dateToString(startDate), 'stopDate': dateToString(stopDate)});
+    print(results.data);
+  }
+  
 }

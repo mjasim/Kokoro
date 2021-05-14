@@ -146,8 +146,8 @@ class _SignInViewState extends State<SignInView> {
                           String username = _usernameController.text;
                           String password = _passwordController.text;
                           print("Username: ${username} Password: ${password}");
-//                          model.signInButtonPressed(username, password);
-                          model.signInButtonPressed('jfk@real.com', '123456hd');
+                          model.signInButtonPressed(username, password);
+//                          model.signInButtonPressed('jfk@real.com', '123456hd');
                           model.navigateToGlobalView();
                         }
                     ),

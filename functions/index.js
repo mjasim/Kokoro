@@ -194,10 +194,28 @@ exports.createGlobalViewData = functions.firestore
     });
 
 
+exports.storeHistoricPlanetSize = functions.firestore
+    .document('planets/{docId}')
+    .onWrite((snapshot, context) => {
+        return db.collection('planets').get()
+            .then(async res => {
+                let planetInfo = res.docs.map(element => element.data());
+                console.log(`planetInfo ${JSON.stringify(planetInfo)}`);
+                for (let i = 0; i < planetInfo.length; i++) {
+                    await db.collection('historicPlanetSize').doc().set({
+                        'date': admin.firestore.FieldValue.serverTimestamp(),
+                        'planetName': planetInfo[i].planetName,
+                        'numberOfPosts': planetInfo[i].numberOfPosts,
+                    });
+                }
+                return null;
+            }).catch((error) => console.log(error));
+    });
+
 exports.updatePlanetRanking = functions.firestore
     .document('planets/{docId}')
     .onWrite((snapshot, context) => {
-        db.collection('topPlanets').get()
+        return db.collection('topPlanets').get()
             .then(res => {
                 res.forEach(element => {
                     element.ref.delete();
@@ -206,27 +224,67 @@ exports.updatePlanetRanking = functions.firestore
                 if (!querySnapshot.empty) {
                     let docs = querySnapshot.docs;
                     for (let i = 0; i < docs.length; i++) {
-
                         let doc = docs[i];
                         let data = doc.data();
                         console.log(`Doc ${JSON.stringify(data)}`);
                         console.log(`Got planet: ${data.planetName}`);
-                        let topContributorData = await db.collection('planetUserCount').limit(10)
+                        let topContributors = [];
+                        await db.collection('planetUserCount').limit(10)
                             .where('planetName', '==', data.planetName)
                             .orderBy('numberOfPosts', 'desc')
-                            .get().catch((error) => console.log(error));
+                            .get().then(async (topContributorData) => {
+                                for (let j = 0; j < topContributorData.docs.length; j++) {
+                                    let _data = topContributorData.docs[j].data();
+                                    console.log(`topContributorData ${JSON.stringify(_data)}`);
+                                    await db.collection('users').doc(_data.userUid).get().then((userInfo) => {
+                                        if (userInfo.exists) {
+                                            userInfo = userInfo.data();
+                                            userInfo['numberOfPosts'] = _data['numberOfPosts'];
+                                            userInfo['userUid'] = _data.userUid;
+                                            topContributors.push(userInfo);
+                                        }
+                                    });
+                                }
+                            }).then(async () => {
+                                for (let j = 0; j < topContributors.length; j++) {
+                                    let currContributor = topContributors[j];
+                                    // console.log(`currContributor ${JSON.stringify(currContributor)}, ${currContributor.userUid}, ${data.planetName}`);
+                                    await db.collection('posts').limit(10)
+                                        .where('authorUid', '==', currContributor.userUid)
+                                        .where('planets', 'array-contains', data.planetName)
+                                        .orderBy('dateCreated', 'desc').get().then((querySnapshotPosts) => {
+                                            if (!querySnapshotPosts.empty) {
+                                                let postStore = new Map();
+                                                querySnapshotPosts.forEach((element) => {
+                                                    let postData = element.data();
+                                                    if (postData.contentType === null) {
+                                                        if (postStore.has('text')) {
+                                                            postStore['text'].push(element.id);
+                                                        } else {
+                                                            postStore['text'] = [element.id];
+                                                        }
+                                                    } else if (postData.contentType === 'video') {
+                                                        if (postStore.has('video')) {
+                                                            postStore['video'].push(element.id);
+                                                        } else {
+                                                            postStore['video'] = [element.id];
+                                                        }
+                                                    } else if (postData.contentType === 'image') {
+                                                        if (postStore.has('image')) {
+                                                            postStore['image'].push(element.id);
+                                                        } else {
+                                                            postStore['image'] = [element.id];
+                                                        }
+                                                    }
+                                                    // console.log(`posts ${element.data()}`);
+                                                });
+                                                currContributor['posts'] = JSON.parse(JSON.stringify(postStore));
+                                            }
+                                        });
+                                }
+                            }).catch((error) => console.log(error));
 
-                        let topContributors = [];
-                        for (let j = 0; j < docs.length; j++) {
-                            let _data = topContributorData.docs[j].data();
-                            console.log(`topContributorData ${JSON.stringify(_data)}`);
-                            let userInfo = await db.collection('users').doc(_data.userUid).get();
-                            userInfo = userInfo.data();
-                            userInfo['numberOfPosts'] = _data['numberOfPosts'];
-                            topContributors.push(userInfo);
-                        }
-
-                        console.log(`topContributors ${JSON.stringify(topContributors)}`);
+                        // console.log(`topContributors ${JSON.stringify(topContributors)}`);
                         db.collection('topPlanets').doc(doc.id).set({
                             'planetName': data.planetName,
                             'dateCreated': data.dateCreated,
@@ -234,12 +292,107 @@ exports.updatePlanetRanking = functions.firestore
                             'topContributors': topContributors,
                         }).catch((error) => console.log(error));
                     }
-                    console.log(`querySnapshot empty`);
+
+                    console.log(`querySnapshot not empty`);
+                    return null;
                 }
             }).catch((e) => console.log(e))).catch((e) => console.log(e));
-
-        return null;
     });
+
+
+exports.getPersonalMapData = functions.https.onCall(async (data, context) => {
+    let startDate = data.startDate;
+    let stopDate = data.stopDate;
+
+    let userUid = data.userUid;
+
+    async function getUserInfo(uid) {
+        return await db.collection('users').doc(uid).get().then((userInfo) => {
+            if (userInfo.exists) {
+                let userData = userInfo.data();
+                userData['uid'] = userInfo.id;
+                return userData;
+            } else {
+                return null;
+            }
+        }).catch((e) => console.log(e));
+    }
+
+    let incoming = new Map();
+    let outgoing = new Map();
+
+    let userInfoStore = new Map();
+    let locationInfoStore = new Map();
+
+    function addToMap(userInfo, map) {
+        let placeId = userInfo.location.placeId;
+        if (placeId in map) {
+            if (userInfo['uid'] in map[placeId]) {
+                map[placeId][userInfo['uid']] += 1;
+            } else {
+                userInfoStore[userInfo['uid']] = userInfo;
+                map[placeId][userInfo['uid']] = 1;
+            }
+        } else {
+            locationInfoStore[placeId] = userInfo.location;
+            map[placeId] = new Map();
+            userInfoStore[userInfo['uid']] = userInfo;
+            map[placeId][userInfo['uid']] = 1;
+        }
+    }
+
+    async function collectionDataForTimeWindow(collection, isComments = false) {
+        let userInfoArray = new Array();
+        console.log(`collectionDataForTimeWindow ${new Date(...(startDate.split('-').reverse()))}, ${new Date(...(stopDate.split('-').reverse()))}, ${userUid}`);
+        collection.where('dateCreated', '>=', new Date(...(startDate.split('-').reverse())))
+            .where('dateCreated', '<', new Date(...(stopDate.split('-').reverse())))
+            .where('postAuthorUid', '==', userUid).get()
+            .then(async (querySnapshot) => {
+                console.log(`querySnapshot ${querySnapshot.docs.length}`);
+                for (let i = 0; i < querySnapshot.docs.length; i++) {
+                    let _data = querySnapshot.docs[i].data();
+                    console.log(`_data has ${'reactorUid' in _data}`);
+                    if ('reactorUid' in _data) {
+                        let userInfo = await getUserInfo(_data.reactorUid).catch((e) => console.log(e));
+                        addToMap(userInfo, incoming);
+                    } else if ('authorUid' in _data) {
+                        console.log(`authorUid in data`);
+                        let userInfo = await getUserInfo(_data.authorUidUid).catch((e) => console.log(e));
+                        addToMap(userInfo, incoming);
+                    }
+                }
+                console.log(`getPersonalMapData userInfoArray ${JSON.stringify(incoming)}`);
+            }).catch((e) => console.log(e));
+
+        let searchBy = 'reactorUid';
+        if (isComments) {
+            searchBy = 'authorUid';
+        }
+
+
+        return collection.where('dateCreated', '>=', new Date(...(startDate.split('-').reverse())))
+            .where('dateCreated', '<', new Date(...(stopDate.split('-').reverse())))
+            .where(searchBy, '==', userUid).get()
+            .then(async (querySnapshot) => {
+                console.log(`querySnapshot ${querySnapshot.docs.length}`);
+                for (let i = 0; i < querySnapshot.docs.length; i++) {
+                    let _data = querySnapshot.docs[i].data();
+                    console.log(`_data has ${'reactorUid' in _data}`);
+                    let userInfo = await getUserInfo(_data.postAuthorUid).catch((e) => console.log(e));
+                    addToMap(userInfo, outgoing);
+                }
+                console.log(`getPersonalMapData outgoing ${JSON.stringify(outgoing)}`);
+            }).catch((e) => console.log(e));
+    }
+
+    await collectionDataForTimeWindow(db.collection('comments'), true);
+    await collectionDataForTimeWindow(db.collection('color-reactions'));
+    await collectionDataForTimeWindow(db.collection('slider-reactions'));
+
+    console.log(`getPersonalMapData ${JSON.stringify(data)}`);
+
+    return { 'userInfo': userInfoStore, 'incoming': incoming, 'outgoing': outgoing, 'locationInfo': locationInfoStore, };
+});
 
 
 exports.googleLocationAutoFill = functions.https.onCall(async (data, context) => {

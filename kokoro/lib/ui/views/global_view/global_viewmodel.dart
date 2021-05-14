@@ -2,6 +2,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:kokoro/app/app.router.dart';
 import 'package:kokoro/app/app.locator.dart';
 import 'package:kokoro/core/services/firebase_database_service.dart';
+import 'package:kokoro/core/services/firebase_functions_service.dart';
+import 'package:kokoro/core/services/user_information_service.dart';
 import 'package:kokoro/ui/smart_widgets/global_location_item/global_location_item_view.dart';
 
 import 'package:stacked/stacked.dart';
@@ -16,6 +18,8 @@ class GlobalViewModel extends BaseViewModel {
   int sideNavIndex = 0;
   NavigationService _navigationService = locator<NavigationService>();
   FirebaseDatabaseService _databaseService = locator<FirebaseDatabaseService>();
+  FirebaseFunctionsService _functionsService = locator<FirebaseFunctionsService>();
+  UserInformationService _userInformationService = locator<UserInformationService>();
 
   MapController mapController;
   List<Marker> markers = [];
@@ -192,13 +196,13 @@ class GlobalViewModel extends BaseViewModel {
     return localPoint;
   }
 
-  void buttonPressed(int index) {
+  void buttonPressed(int index) async {
     if(index == 0) {
       _navigationService.navigateTo(Routes.planetView);
     } else if(index == 1) {
-      _navigationService.navigateTo(Routes.personalView);
+      dynamic userInfo = await _userInformationService.getUserInfo();
+      _functionsService.getPersonalMapData(userInfo["uid"]);
+//      _navigationService.navigateTo(Routes.personalView);
     }
   }
-
-
 }

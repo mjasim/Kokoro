@@ -53,16 +53,15 @@ class MakePostViewModel extends BaseViewModel {
             videoData: videoData, fileName: _uuid.v4());
       }
 
-//      Map userInfo = await _userInformationService.getUserInfo();
+      Map userInfo = await _userInformationService.getUserInfo();
 
       _databaseService.createPost(
           uid: uid,
-          username: "PersonA",
+          username: userInfo['username'],
           contentType: contentType,
           postText: postText,
           contentUrl: contentUrl,
-//          authorProfilePhotoUrl: userInfo['profileUserPhotoUrl'],
-          authorProfilePhotoUrl: 'https://images.generated.photos/ZO-Q3P2TwLgXvFyNOvKDhrpmuVeEQaiDb1dBoVR9kuU/rs:fit:256:256/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzA3NTE2MzAuanBn.jpg',
+          authorProfilePhotoUrl: userInfo['profileUserPhotoUrl'],
           planets: planets,
       );
     } else {
