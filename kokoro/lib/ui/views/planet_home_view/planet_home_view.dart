@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+//import 'package:intl/intl.dart';
 import 'package:kokoro/ui/smart_widgets/post/post_widget.dart';
 import 'package:kokoro/ui/smart_widgets/top_navigation_bar/top_navigation_bar.dart';
 import 'package:kokoro/ui/views/planet_home_view/planet_home_viewmodel.dart';
@@ -12,7 +14,18 @@ class PlanetHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double _currentSliderValue = 0.0;
+
+    DateTime dateToday = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day);
+
+    print(dateToday);
+    String valueInTime = "";
+    double _currentSliderValue = dateToday.millisecondsSinceEpoch.toDouble();
+    double dateTodayDoubleVal = _currentSliderValue;
+    DateTime dtValue = dateToday;
+    print(_currentSliderValue);
 
     return ViewModelBuilder<PlanetHomeViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
@@ -51,8 +64,10 @@ class PlanetHomeView extends StatelessWidget {
                                 SizedBox(
                                   height: 10.0,
                                 ),
-                                Text("Active Since: ${model.activeSinceDate}"),
-                                Text("Population: ${model.population}"),
+                                Text("Active Since: " +
+                                    "${model.activeSinceDate.year.toString()}-"+
+                                    "${model.activeSinceDate.month.toString()}-"+
+                                    "${model.activeSinceDate.day.toString()}"),
                                 Text("Number of Posts: ${model.numPosts}"),
                               ],
                             ),
@@ -79,11 +94,15 @@ class PlanetHomeView extends StatelessWidget {
                               width: 380,
                               child: Slider(
                                 value: model.sliderValue,
-                                min: 0.0,
-                                max: 100.0,
-                                label: _currentSliderValue.round().toString(),
+                                min: model.activeSinceDate.millisecondsSinceEpoch.toDouble(),
+                                max: dateToday.millisecondsSinceEpoch.toDouble(),
+
+                                label: valueInTime,
                                 onChanged: (double value) {
-                                  model.updateSliderValue(value);
+                                  dtValue = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+                                  valueInTime = dtValue.year.toString() + '-' + dtValue.month.toString() + '-' + dtValue.day.toString();
+
+                                  model.updateSliderValue(dtValue.millisecondsSinceEpoch.toDouble());
                                   _currentSliderValue = value;
                                 },
                               ),
@@ -95,12 +114,12 @@ class PlanetHomeView extends StatelessWidget {
                           child: CustomPaint(
                               painter: DrawCircle(
                                   Colors.blue,
+                                  model.activeSinceDate.millisecondsSinceEpoch.toDouble(),
+                                  dateTodayDoubleVal,
                                   _currentSliderValue,
+                                  dtValue,
                                   115.0,
                                   140.0
-                              ),
-                              child: Text("${_currentSliderValue.floor()}",
-                                textAlign: TextAlign.center,
                               ),
                           ),
                         ),
@@ -160,23 +179,36 @@ class PlanetHomeView extends StatelessWidget {
 
 class DrawCircle extends CustomPainter {
   Paint _paint;
-  double radius;
+  double circleMax = 100;
+  double circleMin = 0;
+  double dateMax;
+  double dateMin;
+  double sliderDate;
+  DateTime printDate;
   double dx;
   double dy;
+  double outputRadius;
 
-  DrawCircle(Color color, double inputRadius, double inputX, double inputY) {
+  DrawCircle(Color color, double inputDateMin, double inputDateMax, double inputDate, DateTime date, double inputX, double inputY) {
     _paint = Paint()
       ..color = color
       ..strokeWidth = 10.0
       ..style = PaintingStyle.fill;
-    radius = inputRadius;
+    dateMax = inputDateMax;
+    dateMin = inputDateMin;
+    sliderDate = inputDate;
+    printDate = date;
     dx = inputX;
     dy = inputY;
+
+    double percent = (sliderDate - dateMin) / (dateMax - dateMin);
+    outputRadius = percent * (circleMax - circleMin) + circleMin;
   }
+
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawCircle(Offset(dx, dy), radius, _paint);
+    canvas.drawCircle(Offset(dx, dy), outputRadius, _paint);
 
     var horizontalBaseLine = Paint();
     horizontalBaseLine.color = Colors.amber;
@@ -200,8 +232,8 @@ class DrawCircle extends CustomPainter {
     topRadiusLine.color = Colors.red;
     topRadiusLine.strokeWidth = 3;
     canvas.drawLine(
-      Offset(dx, dy-radius),
-      Offset(dx-250, dy-radius),
+      Offset(dx, dy-outputRadius),
+      Offset(dx-250, dy-outputRadius),
       topRadiusLine,
     );
 
@@ -209,9 +241,30 @@ class DrawCircle extends CustomPainter {
       ..color = Colors.red
       ..strokeWidth = 10;
     //list of points
-    var points = [Offset(dx, dy-radius)];
+    var points = [Offset(dx, dy-outputRadius)];
     //draw points on canvas
     canvas.drawPoints(PointMode.points, points, topRadiusPoint);
+
+    final textStyle = TextStyle(
+      color: Colors.white,
+      fontSize: 16,
+    );
+    final textSpan = TextSpan(
+      text: "${printDate.year.toString()}-"+
+            "${printDate.month.toString()}-"+
+            "${printDate.day.toString()}",
+      style: textStyle,
+    );
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout(
+      minWidth: 0,
+      maxWidth: 80,
+    );
+    final offset = Offset(dx-240, dy-outputRadius-20);
+    textPainter.paint(canvas, offset);
   }
 
   @override
@@ -235,7 +288,7 @@ class customImageProfile extends StatelessWidget {
         bottomLeft: Radius.circular(80.0),
         bottomRight: Radius.circular(80.0),
       ),
-      child: (profileUrl != null || profileUrl != "") ? Image.network(
+      child: (profileUrl != null) ? Image.network(
         profileUrl,
         width: size,
         height: size,

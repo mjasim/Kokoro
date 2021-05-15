@@ -34,7 +34,6 @@ class PlanetViewModel extends BaseViewModel {
   final _nagivationService = locator<NavigationService>();
 
   List<Map> planetInfo = [];
-  final _nagivationService = locator<NavigationService>();
   void init() {
     List<String> names = [
       'Cat',
