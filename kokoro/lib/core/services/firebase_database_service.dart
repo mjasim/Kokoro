@@ -16,6 +16,8 @@ class FirebaseDatabaseService {
       FirebaseFirestore.instance.collection('color-reactions');
   CollectionReference globalViewData =
       FirebaseFirestore.instance.collection('globalViewData');
+  CollectionReference topPlanets =
+    FirebaseFirestore.instance.collection('topPlanets');
 
   Future createUser({
     @required uid,
@@ -102,13 +104,15 @@ class FirebaseDatabaseService {
     });
   }
 
-  Future createComment(
-      {@required uid,
-      @required username,
-      @required commentText,
-      @required profilePhotoUrl,
-      @required postUid,
-      @required postAuthorUid}) {
+  Future createComment({
+    @required uid,
+    @required username,
+    @required commentText,
+    @required profilePhotoUrl,
+    @required postUid,
+    @required postAuthorUid,
+    @required postType,
+  }) {
     posts.doc(postUid).update({'commentCount': FieldValue.increment(1)});
 
     return comments.doc().set({
@@ -118,6 +122,7 @@ class FirebaseDatabaseService {
       'authorUsername': username,
       'commentText': commentText,
       'postAuthorUid': postAuthorUid,
+      'postType': postType,
       'dateCreated': FieldValue.serverTimestamp(),
     });
   }
@@ -127,6 +132,7 @@ class FirebaseDatabaseService {
     @required postUid,
     @required postAuthorUid,
     @required sliderValue,
+    @required postType,
   }) {
     posts.doc(postUid).update({'sliderReactionCount': FieldValue.increment(1)});
     posts
@@ -138,6 +144,7 @@ class FirebaseDatabaseService {
       'postUid': postUid,
       'postAuthorUid': postAuthorUid,
       'sliderValue': sliderValue,
+      'postType': postType,
       'dateCreated': FieldValue.serverTimestamp(),
     });
   }
@@ -272,6 +279,14 @@ class FirebaseDatabaseService {
     };
   }
 
+  Future<dynamic> getTopPlanets() async {
+    QuerySnapshot topPlanetSnapshot = await topPlanets.get();
+
+    return topPlanetSnapshot.docs.map((element) {
+      return element.data();
+    });
+  }
+
   Future<List<PostModel>> getPosts() async {
     QuerySnapshot postSnapshot =
         await posts.limit(20).orderBy('dateCreated', descending: true).get();
@@ -279,26 +294,27 @@ class FirebaseDatabaseService {
     return postSnapshot.docs.map((e) {
       var element = e.data();
       return PostModel(
-        postUid: e.id,
-        authorUid: element['authorUid'],
-        authorUsername: element['authorUsername'],
-        postText: element['postText'],
-        dateCreated: element['dateCreated'],
-        contentType: element['contentType'],
-        contentUrl: element['contentUrl'],
-        commentCount: element['commentCount'],
-        planets: element['planets'],
-        sumOfHueColorValue: element['sumOfHueColorValue'],
-        sumOfLightnessColorValue: element['sumOfLightnessColorValue'],
-        sumOfSaturationColorValue: element['sumOfSaturationColorValue'],
-        sliderReactionCount: element['sliderReactionCount'],
-        sumOfSliderReactions: element['sumOfSliderReactions'],
-        colorReactionCount: element['colorReactionCount'],
-        commentsOpen: false,
-        userReactionAmount: 0,
-        userSelectedColor: null,
-        authorProfilePhotoUrl: element['authorProfilePhotoUrl'] != null ? element['authorProfilePhotoUrl'] : 'https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1214428300?k=6&m=1214428300&s=170667a&w=0&h=hMQs-822xLWFz66z3Xfd8vPog333rNFHU6Q_kc9Sues='
-      );
+          postUid: e.id,
+          authorUid: element['authorUid'],
+          authorUsername: element['authorUsername'],
+          postText: element['postText'],
+          dateCreated: element['dateCreated'],
+          contentType: element['contentType'],
+          contentUrl: element['contentUrl'],
+          commentCount: element['commentCount'],
+          planets: element['planets'],
+          sumOfHueColorValue: element['sumOfHueColorValue'],
+          sumOfLightnessColorValue: element['sumOfLightnessColorValue'],
+          sumOfSaturationColorValue: element['sumOfSaturationColorValue'],
+          sliderReactionCount: element['sliderReactionCount'],
+          sumOfSliderReactions: element['sumOfSliderReactions'],
+          colorReactionCount: element['colorReactionCount'],
+          commentsOpen: false,
+          userReactionAmount: 0,
+          userSelectedColor: null,
+          authorProfilePhotoUrl: element['authorProfilePhotoUrl'] != null
+              ? element['authorProfilePhotoUrl']
+              : 'https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1214428300?k=6&m=1214428300&s=170667a&w=0&h=hMQs-822xLWFz66z3Xfd8vPog333rNFHU6Q_kc9Sues=');
     }).toList();
   }
 

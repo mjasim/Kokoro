@@ -21,34 +21,31 @@ import 'package:kokoro/core/services/firebase_auth_service.dart';
 import 'package:kokoro/core/services/firebase_database_service.dart';
 
 class PlanetViewModel extends BaseViewModel {
-//  List<Map> planetInfo = [
-//    {
-//      'imageUrl': 'images/circle-cropped(1).png',
-//      'top': 50.0,
-//      'left': 50.0,
-//      'size': 50.0,
-//      'name': 'Cats',
-//    },
-//  ];
-
-//  final _nagivationService = locator<NavigationService>();
-
   List<Map> planetInfo = [];
   final _nagivationService = locator<NavigationService>();
-  void init() {
-    List<String> names = [
-      'Cat',
-      'Dog',
-      'HCI',
-      'Web Design',
-      'Travel',
-      'Coffee',
-      'Nissan',
-      'Viola',
-      'Bridgerton',
-      'Drones',
-    ];
-    planetInfo = makeMockPlanetData(names);
+  final _databaseService = locator<FirebaseDatabaseService>();
+
+  void init() async {
+    dynamic tempPlanetInfo = await _databaseService.getTopPlanets();
+    int i = 0;
+    planetInfo = tempPlanetInfo.map<Map>((element) {
+      String planetName = element['planetName'];
+      if (planetName == null || planetName == "") {
+        planetName = "undefined";
+      }
+
+      i++;
+      return {
+        'top': element['y_coord'],
+        'left': element['x_coord'],
+        'size': element['radius'],
+        'name': planetName,
+        'imageUrl': 'images/circle-cropped($i).png',
+      };
+    }).toList();
+
+    print('planetInfo $planetInfo');
+    notifyListeners();
   }
 
   double scrWidth = 500;

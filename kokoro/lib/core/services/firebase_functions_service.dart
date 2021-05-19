@@ -44,6 +44,27 @@ class FirebaseFunctionsService {
     print('getPersonalMapData $uid');
     final results = await callable({'userUid': uid, 'startDate':  dateToString(startDate), 'stopDate': dateToString(stopDate)});
     print(results.data);
+    return results.data;
   }
-  
+
+  Future<Map> getPersonalHistoryData(String senderUid, String receiverUid) async {
+    HttpsCallable callable = functions.httpsCallable('getPersonalHistoryData');
+
+    dynamic startDate = DateTime.utc(2021, 4, 10);
+    dynamic stopDate = DateTime.utc(2021, 4, 20);
+
+    String dateToString(date) {
+      return "${date.day}-${date.month}-${date.year}";
+    }
+
+    print('getPersonalHistoryData $senderUid, $receiverUid');
+    final results = await callable({'senderUid': senderUid, 'receiverUid': receiverUid, 'startDate':  dateToString(startDate), 'stopDate': dateToString(stopDate)});
+    print(results.data);
+    return results.data;
+  }
+
+  Future<void> makePlanetUsedImagesCollection() async {
+    HttpsCallable callable = functions.httpsCallable('makePlanetUsedImagesCollection');
+    final results = await callable();
+  }
 }

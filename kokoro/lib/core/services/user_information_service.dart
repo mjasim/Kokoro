@@ -29,6 +29,10 @@ class UserInformationService {
       profileUserPhotoUrl = userInfo["profilePhotoUrl"];
       name = userInfo["name"];
       location = userInfo["location"];
+      print('location is String ${location is String}');
+      if (location is String) {
+        location = {'stringLocation': location};
+      }
       activeSinceDate = ""; // TODO: Need to create date
     }
 

@@ -20,7 +20,7 @@ class PostModel {
       this.sumOfHueColorValue,
       this.sumOfLightnessColorValue,
       this.sumOfSaturationColorValue,
-      this.sumOfSliderReactions}) {
+      this.sumOfSliderReactions,}) {
     updateSliderAverage();
     updateReactColorAverage();
     updateUserReactColor();
