@@ -31,11 +31,8 @@ class FirebaseFunctionsService {
     return json.decode(results.data);
   }
 
-  Future<Map> getPersonalMapData(String uid) async {
+  Future<Map> getPersonalMapData(String uid, startDate, stopDate) async {
     HttpsCallable callable = functions.httpsCallable('getPersonalMapData');
-
-    dynamic startDate = DateTime.utc(2021, 4, 10);
-    dynamic stopDate = DateTime.utc(2021, 4, 20);
     
     String dateToString(date) {
       return "${date.day}-${date.month}-${date.year}";
@@ -47,11 +44,8 @@ class FirebaseFunctionsService {
     return results.data;
   }
 
-  Future<Map> getPersonalHistoryData(String senderUid, String receiverUid) async {
+  Future<Map> getPersonalHistoryData(String senderUid, String receiverUid, startDate, stopDate) async {
     HttpsCallable callable = functions.httpsCallable('getPersonalHistoryData');
-
-    dynamic startDate = DateTime.utc(2021, 4, 10);
-    dynamic stopDate = DateTime.utc(2021, 4, 20);
 
     String dateToString(date) {
       return "${date.day}-${date.month}-${date.year}";

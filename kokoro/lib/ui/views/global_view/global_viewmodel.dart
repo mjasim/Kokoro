@@ -202,7 +202,7 @@ class GlobalViewModel extends BaseViewModel {
       _navigationService.navigateTo(Routes.planetView);
     } else if(index == 1) {
       dynamic userInfo = await _userInformationService.getUserInfo();
-      print('personalMapData ${await _functionsService.getPersonalMapData(userInfo["uid"])}');
+      print('personalMapData ${await _functionsService.getPersonalMapData(userInfo["uid"], DateTime.utc(2021, 4, 1), DateTime.utc(2021, 4, 20))}');
 //      _functionsService.makePlanetUsedImagesCollection();
 //      _navigationService.navigateTo(Routes.personalView);
     }

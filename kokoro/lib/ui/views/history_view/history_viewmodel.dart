@@ -29,7 +29,7 @@ class HistoryViewModel extends BaseViewModel {
 
     Map _userInfo = await _userInformationService.getUserInfo();
 
-    _functionsService.getPersonalHistoryData(_userInfo['uid'], 'kYlCxhFZcur1FGxXp5zA3WLx3nPm');
+    _functionsService.getPersonalHistoryData(_userInfo['uid'], 'kYlCxhFZcur1FGxXp5zA3WLx3nPm', DateTime.utc(2021, 4, 1), DateTime.utc(2021, 4, 20));
     notifyListeners();
   }
 
