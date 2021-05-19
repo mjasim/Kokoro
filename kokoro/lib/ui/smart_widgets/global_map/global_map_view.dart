@@ -26,7 +26,7 @@ class _GlobalMapViewState extends State<GlobalMapView>
   CustomPoint leftCorner;
   final Epsg3857 projection = Epsg3857();
 
-  List<Marker> markers;
+  List<Marker> markers; // List of markers placed on the map
   StreamSubscription<MapEvent> subscription;
 
   @override
@@ -37,7 +37,7 @@ class _GlobalMapViewState extends State<GlobalMapView>
     super.initState();
     mapController = MapController();
     subscription = mapController.mapEventStream.listen(onMapEvent);
-    markers = [];
+    markers = []; // Marker initialized to be empty
   }
 
   @override
@@ -96,7 +96,7 @@ class _GlobalMapViewState extends State<GlobalMapView>
                 print('Prev center: ${mapController.center}, Prev Zoom: ${mapController.zoom}');
 
 
-                mapController.move(projected, mapController.zoom + .4);
+                mapController.move(projected, mapController.zoom + .4); // Moves center of map; allows to zoom in and zoom out
                 print('center: ${mapController.center}, Zoom: ${mapController.zoom}');
                 setState(() {
                   zoom = mapController.zoom;
@@ -155,23 +155,23 @@ class _GlobalMapViewState extends State<GlobalMapView>
               }
             }
           },
-          child: FlutterMap(
+          child: FlutterMap( // Library that gets the map itself
             mapController: mapController,
             options: MapOptions(
               center: center,
               zoom: zoom,
               interactiveFlags: flags,
             ),
-            layers: [
-              TileLayerOptions(
+            layers: [ // Tiles of images of map in the form of a grid
+              TileLayerOptions( // Tiles from a grid map; each tile is an image that rep. map
                 updateInterval: 0,
                 keepBuffer: 100,
                 backgroundColor: Color.fromRGBO(38, 38, 38, 255),
                 urlTemplate:
-                    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+                    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", // image of tile from a specific location
                 subdomains: ['a', 'b', 'c'],
               ),
-              MarkerLayerOptions(
+              MarkerLayerOptions( // Markers on the map (Ex: blue dots) IMPORTANT: This is where you make marks on the map
                 markers: markers,
               ),
             ],

@@ -55,6 +55,7 @@ class PersonalViewModel extends BaseViewModel {
     animatedZoomIn(finalCenterLatLng, 6, renderBox);
   }
 
+  // Animated zoom in from current center of map to new center of map
   void animatedZoomIn(LatLng finalCenterLatLng, double finalZoom, RenderBox renderBox) async {
     Offset currentCenter = localOffsetFromLatLng(renderBox, mapController.center, zoom);
     Offset finalCenter = localOffsetFromLatLng(renderBox, finalCenterLatLng, zoom);

@@ -18,10 +18,13 @@ class PersonalHomeViewModel extends BaseViewModel {
   String profileUserPhotoUrl;
   String name = "";
   String location = "";
-  String activeSinceDate = "";
+  DateTime activeSinceDate = DateTime(2021, 1, 23, 0, 0, 0, 0, 0); // TODO: Need to set date
   String uid = "";
   String aboutMe = "";
-  double sliderValue = 0.0;
+  double sliderValue = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day, 0, 0, 0, 0, 0).millisecondsSinceEpoch.toDouble();
 
   List<PostModel> posts = [];
   Map<int, VideoPlayerController> videoControllers = {};
@@ -35,7 +38,6 @@ class PersonalHomeViewModel extends BaseViewModel {
     profileUserPhotoUrl = userInfo["profilePhotoUrl"];
     name = userInfo["name"];
     location = userInfo["location"];
-    activeSinceDate = ""; // TODO: Need to create date
     aboutMe = userInfo["aboutMe"];
 
     getPosts();

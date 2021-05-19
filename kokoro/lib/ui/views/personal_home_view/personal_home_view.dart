@@ -10,7 +10,19 @@ class PersonalHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double _currentSliderValue = 0.0;
+    DateTime dateToday = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day);
+
+    print(dateToday);
+    String valueInTime =
+        dateToday.year.toString() + "-" +
+        dateToday.month.toString() + "-" +
+        dateToday.day.toString();
+    double _currentSliderValue = dateToday.millisecondsSinceEpoch.toDouble();
+    double dateTodayDoubleVal = _currentSliderValue;
+    DateTime dtValue = dateToday;
 
     return ViewModelBuilder<PersonalHomeViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
@@ -50,8 +62,10 @@ class PersonalHomeView extends StatelessWidget {
                                   height: 10.0,
                                 ),
                                 Text("Location: ${model.location}"),
-                                Text("Active Since: ${model.activeSinceDate}"),
-//                                  Text("Rank: "),
+                                Text("Active Since: " +
+                                    "${model.activeSinceDate.year.toString()}-"+
+                                    "${model.activeSinceDate.month.toString()}-"+
+                                    "${model.activeSinceDate.day.toString()}"),
                               ],
                             ),
                           ),
@@ -72,7 +86,6 @@ class PersonalHomeView extends StatelessWidget {
                         color: Colors.white70,
                         width: 2,
                       ),
-//                      color: Colors.black,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -128,11 +141,14 @@ class PersonalHomeView extends StatelessWidget {
                           width: 550,
                           child: Slider(
                             value: model.sliderValue,
-                            min: 0.0,
-                            max: 1000.0,
-                            label: _currentSliderValue.round().toString(),
+                            min: model.activeSinceDate.millisecondsSinceEpoch.toDouble(),
+                            max: dateToday.millisecondsSinceEpoch.toDouble(),
+                            label: valueInTime,
                             onChanged: (double value) {
-                              model.updateSliderValue(value);
+                              dtValue = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+                              valueInTime = dtValue.year.toString() + '-' + dtValue.month.toString() + '-' + dtValue.day.toString();
+
+                              model.updateSliderValue(dtValue.millisecondsSinceEpoch.toDouble());
                               _currentSliderValue = value;
                             },
                           ),
@@ -140,6 +156,10 @@ class PersonalHomeView extends StatelessWidget {
                         Text("Now"),
                       ],
                     ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Text(valueInTime.toString(), style: TextStyle(fontSize: 12)),
                     SizedBox(
                       child: ListView.builder(
                         shrinkWrap: true,

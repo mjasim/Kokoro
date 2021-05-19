@@ -318,6 +318,7 @@ class FirebaseDatabaseService {
     }).toList();
   }
 
+  // TODO: get list of userPosts from beginning to date set.
   Future<List<PostModel>> getUserPosts(String userUid) async {
     QuerySnapshot postSnapshot = await posts
         .limit(20)

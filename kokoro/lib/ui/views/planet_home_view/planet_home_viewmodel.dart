@@ -18,10 +18,13 @@ class PlanetHomeViewModel extends BaseViewModel {
   String planetPhotoUrl;
   String name = "";
   String uid = "";
-  String activeSinceDate = "";
-  String population = "";
-  String numPosts = "";
-  double sliderValue = 0.0;
+  DateTime activeSinceDate = DateTime(2021, 1, 23, 0, 0, 0, 0, 0); // TODO: Need to set date
+  int population = 0;
+  int numPosts = 0;
+  double sliderValue = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day, 0, 0, 0, 0, 0).millisecondsSinceEpoch.toDouble();
 
   List<PostModel> posts = [];
   Map<int, VideoPlayerController> videoControllers = {};
@@ -32,11 +35,11 @@ class PlanetHomeViewModel extends BaseViewModel {
 
 //    print(userInfo); // Print userInfo (to check that it does work)
 
-    planetPhotoUrl = "";
+    planetPhotoUrl = null;
     name = "coffee";
-    activeSinceDate = ""; // TODO: Need to create date
-    population = "";      // TODO: Need to create population
-    numPosts = "";        // TODO: Need to create number of posts (numPosts)
+//    activeSinceDate;      // TODO: Need to create date
+    population = 1000;      // TODO: Need to create population
+    numPosts = 100;         // TODO: Need to create number of posts (numPosts)
 
     getPosts();
     notifyListeners();
