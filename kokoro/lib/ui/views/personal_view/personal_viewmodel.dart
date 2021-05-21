@@ -1,12 +1,17 @@
 import 'dart:math';
-
+import 'package:kokoro/app/app.router.dart';
+import 'package:kokoro/app/app.locator.dart';
+import 'package:kokoro/core/services/firebase_functions_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:stacked/stacked.dart';
 import 'package:latlong/latlong.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class PersonalViewModel extends BaseViewModel {
+  NavigationService _navigationService = locator<NavigationService>();
+  FirebaseFunctionsService _functionsService = locator<FirebaseFunctionsService>();
   MapController mapController;
   List<Marker> markers = [];
 
@@ -45,6 +50,8 @@ class PersonalViewModel extends BaseViewModel {
         LatLng newCenter = centerFromLocalOffsetAndLatLng(renderBox, localOffset, projected, zoom);
         mapController.move(newCenter, mapController.zoom - .4);
       }
+
+      // If center is too far away, lock center at a certain boundary
     }
   }
 

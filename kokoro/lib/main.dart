@@ -11,10 +11,10 @@ import 'app/app.router.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseFirestore.instance.settings = Settings(host: 'localhost:8080', sslEnabled: false);
-  FirebaseAuth.instance.useEmulator('http://localhost:9099');
-  FirebaseFunctions.instance
-      .useFunctionsEmulator(origin: 'http://localhost:5001');
+//  FirebaseFirestore.instance.settings = Settings(host: 'localhost:8080', sslEnabled: false);
+//  FirebaseAuth.instance.useEmulator('http://localhost:9099');
+//  FirebaseFunctions.instance
+//      .useFunctionsEmulator(origin: 'http://localhost:5001');
   setupLocator();
 
   runApp(MyApp());

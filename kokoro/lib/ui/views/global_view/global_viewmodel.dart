@@ -200,9 +200,11 @@ class GlobalViewModel extends BaseViewModel {
     if(index == 0) {
       _navigationService.navigateTo(Routes.planetView);
     } else if(index == 1) {
+
+      // TODO: Get user info not working... client offline...need to find out
       dynamic userInfo = await _userInformationService.getUserInfo();
-      _functionsService.getPersonalMapData(userInfo["uid"]);
-//      _navigationService.navigateTo(Routes.personalView);
+//      _functionsService.getPersonalMapData(userInfo["uid"]);
+      _navigationService.navigateTo(Routes.personalView);
     }
   }
 }
