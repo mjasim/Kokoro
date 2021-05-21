@@ -126,6 +126,7 @@ class PostWidgetModel extends BaseViewModel {
       await _databaseService.createSliderReact(
         uid: _authService.userUid,
         postUid: post.postUid,
+        postType: post.contentType,
         postAuthorUid: post.authorUid,
         sliderValue: value,
       );
@@ -152,6 +153,7 @@ class PostWidgetModel extends BaseViewModel {
       uid: _authService.userUid,
       username: await _databaseService.getUsername(uid: _authService.userUid),
       commentText: text,
+      postType: post.contentType,
       profilePhotoUrl: '',
       postAuthorUid: post.authorUid,
       postUid: post.postUid,

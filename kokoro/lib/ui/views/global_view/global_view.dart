@@ -21,8 +21,8 @@ class _GlobalViewState extends State<GlobalView> with AutomaticKeepAliveClientMi
         backgroundColor: Color.fromRGBO(38,38,38,255),
         body: Stack(
           children: [
-            GlobalMapView(),
-            SideNavigation(),
+            GlobalMapView(), // Actual Map
+            SideNavigation(), // Icons on the side that allow for navigation
           ],
         ),
       ),

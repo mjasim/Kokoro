@@ -22,16 +22,16 @@ class GlobalLocationItemView extends StatelessWidget {
         if (zoom < 5 && model.isClicked) {
           model.isClicked = false;
         }
-        return !model.isClicked
-            ? GestureDetector(
+        return !model.isClicked // Checks if point has been clicked
+            ? GestureDetector( // If it hasn't show circle
                 child: Center(
                   child: Container(
-                    width: (1 - ((16.0 - zoom) / 15)) * 100.0,
+                    width: (1 - ((16.0 - zoom) / 15)) * 100.0, // Height and width are scaled by zoom
                     height: (1 - ((16.0 - zoom) / 15)) * 100.0,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color:
-                          HSVColor.fromAHSV(1.0, 211.0, intensity, 1.0)
+                          HSVColor.fromAHSV(1.0, 211.0, intensity, 1.0) // Sets color by intensity
                               .toColor(),
                     ),
                   ),
@@ -39,10 +39,9 @@ class GlobalLocationItemView extends StatelessWidget {
                 onTap: () {
                   print('In item, location:${location}');
                   model.clicked(mapCallback);
-
                 },
               )
-            : Stack(
+            : Stack( // If clicked shows photos around point
                 children: getChildren(model, location),
               );
       },
@@ -50,11 +49,17 @@ class GlobalLocationItemView extends StatelessWidget {
     );
   }
 
+  // This widget needs to be updated so that the actual data is pulled for a location
+  // To do this call the  _databaseService.getGlobalViewData(placeId: placeId) with the placeId of this dot
+  // do this in the viewmodel not the view. Just change model.getProfileData to get the real data
+  // Also need to add hovering support.
   List<Widget> getChildren(model, location) {
     int n = 1;
     double alpha = 137.5;
     double c = 1.0;
     List<Widget> children = model.getProfileData(location).map<Widget>((element) {
+      // The math done below is following a sunflower seed pattern
+      // that determines the x, y coordinates of each profile photo
       double rad = c * sqrt(n);
       double angle = n * alpha;
 

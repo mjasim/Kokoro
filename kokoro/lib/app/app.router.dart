@@ -16,7 +16,6 @@ import '../ui/views/history_view/history_view.dart';
 import '../ui/views/home_view/home_view.dart';
 import '../ui/views/make_post_view/make_post_view.dart';
 import '../ui/views/personal_home_view/personal_home_view.dart';
-import '../ui/views/personal_view/personal_map_view.dart';
 import '../ui/views/personal_view/personal_view.dart';
 import '../ui/views/planet_drilldown_view/planet_drilldown_view.dart';
 import '../ui/views/planet_home_view/planet_home_view.dart';
@@ -31,7 +30,6 @@ class Routes {
   static const String personalView = '/personal-view';
   static const String planetDrillDownView = '/planet-drill-down-view';
   static const String personalHomeView = '/personal-home-view';
-  static const String personalMapView = '/personal-map-view';
   static const String planetHomeView = '/planet-home-view';
   static const String signInView = '/';
   static const String signUpView = '/sign-up-view';
@@ -44,7 +42,6 @@ class Routes {
     personalView,
     planetDrillDownView,
     personalHomeView,
-    personalMapView,
     planetHomeView,
     signInView,
     signUpView,
@@ -63,7 +60,6 @@ class StackedRouter extends RouterBase {
     RouteDef(Routes.personalView, page: PersonalView),
     RouteDef(Routes.planetDrillDownView, page: PlanetDrillDownView),
     RouteDef(Routes.personalHomeView, page: PersonalHomeView),
-    RouteDef(Routes.personalMapView, page: PersonalMapView),
     RouteDef(Routes.planetHomeView, page: PlanetHomeView),
     RouteDef(Routes.signInView, page: SignInView),
     RouteDef(Routes.signUpView, page: SignUpView),
@@ -134,14 +130,6 @@ class StackedRouter extends RouterBase {
           key: args.key,
           uid: args.uid,
         ),
-        settings: data,
-        transitionDuration: const Duration(milliseconds: 0),
-      );
-    },
-    PersonalMapView: (data) {
-      return PageRouteBuilder<dynamic>(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            PersonalMapView(),
         settings: data,
         transitionDuration: const Duration(milliseconds: 0),
       );

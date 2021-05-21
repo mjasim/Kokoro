@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:kokoro/ui/views/planet_view/planet_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -14,6 +15,7 @@ class PlanetWidget extends ViewModelWidget<PlanetViewModel> {
       left: model.getPlanetLeft(index),
       duration: Duration(milliseconds: 200),
       child: MouseRegion(
+        cursor: SystemMouseCursors.click,
         onEnter: (details) {
           model.planetHover(index);
         },

@@ -40,30 +40,31 @@ class GlobalViewModel extends BaseViewModel {
   }
 
   void getInitialData() async {
-    dynamic data = await _databaseService.getGlobalViewData();
-    data = data.map<Map>((element) => element as Map).toList();
+    dynamic data = await _databaseService.getGlobalViewData(); // Gets all country data
+    data = data.map<Map>((element) => element as Map).toList(); // Turns data into map format
     print(data);
     markerData = data;
-    markers = getMarkers();
-    notifyListeners();
+    markers = getMarkers(); // Gets map marker widgets for initial data
+    notifyListeners(); // Re-draws map with new markers
   }
 
   void pointClicked(placeId) async {
-    markers = [];
+    markers = []; // removes all previous markers
     notifyListeners();
-    dynamic data = await _databaseService.getGlobalViewData(placeId: placeId);
+    dynamic data = await _databaseService.getGlobalViewData(placeId: placeId); // Gets new data for clicked location
     data = data.map<Map>((element) => element as Map).toList();
     print(data);
     markerData = data;
-    markers = getMarkers();
+    markers = getMarkers(); // Gets new markers for updated data
     print('pointClicked ${markerData}');
     notifyListeners();
   }
 
+  // Returns marker widgets that show the dots on the map
   List<Marker> getMarkers() {
-    return markerData.map<Marker>((element) {
+    return markerData.map<Marker>((element) { // Loops through markerData
       print('getMarkers ${element}');
-      LatLng point = LatLng(element['lat'], element['lng']);
+      LatLng point = LatLng(element['lat'], element['lng']); // Gets point where marker will be placed
       return Marker(
         width: 500.0,
         height: 500.0,
@@ -73,11 +74,11 @@ class GlobalViewModel extends BaseViewModel {
             intensity: element['normalizedUserCount'],
             zoom: zoom,
             location: element['placeId'],
-            mapCallback: () {
+            mapCallback: () { // When a point is clicked this function is called
                 zoom = 5;
-                mapController.move(point, 5);
-                pointClicked(element['placeId']);
-                notifyListeners();
+                mapController.move(point, 5); // Centers map on clicked point
+                pointClicked(element['placeId']); // Updates markers
+                notifyListeners(); // Re-draws with updated markers
             },
           ),
         ),
@@ -203,8 +204,9 @@ class GlobalViewModel extends BaseViewModel {
 
       // TODO: Get user info not working... client offline...need to find out
       dynamic userInfo = await _userInformationService.getUserInfo();
-//      _functionsService.getPersonalMapData(userInfo["uid"]);
-      _navigationService.navigateTo(Routes.personalView);
+      print('personalMapData ${await _functionsService.getPersonalMapData(userInfo["uid"], DateTime.utc(2021, 4, 1), DateTime.utc(2021, 4, 20))}');
+//      _functionsService.makePlanetUsedImagesCollection();
+//      _navigationService.navigateTo(Routes.personalView);
     }
   }
 }
