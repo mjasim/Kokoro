@@ -2,18 +2,33 @@ import 'dart:math';
 import 'package:kokoro/app/app.router.dart';
 import 'package:kokoro/app/app.locator.dart';
 import 'package:kokoro/core/services/firebase_functions_service.dart';
+import 'package:kokoro/core/services/firebase_database_service.dart';
+import 'package:kokoro/core/services/user_information_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:kokoro/ui/smart_widgets/personal_location_item/personal_location_item_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:latlong/latlong.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class PersonalViewModel extends BaseViewModel {
   NavigationService _navigationService = locator<NavigationService>();
+  FirebaseDatabaseService _databaseService = locator<FirebaseDatabaseService>();
   FirebaseFunctionsService _functionsService = locator<FirebaseFunctionsService>();
+  UserInformationService _userInformationService = locator<UserInformationService>();
+
   MapController mapController;
-  List<Marker> markers = [];
+  List<Marker> markers = []; // List of markers on the map
+  List<Map> markerData = []; // List of marker's data
+  List<LatLng> latLngListData = []; // List of location lat/lng of points
+  List<LatLng> lines = []; // List of lines between points (current user to other user)
+  List<double> lineWidths = []; // List of line widths between points
+  final double maxLineWidth = 5.0; // Max width of line on map between points
+
+  int totalPopulation = 0;
+  String userPlaceId;
+  LatLng userLocation = null;
 
   int flags = InteractiveFlag.all;
   double zoom = 2.4;
@@ -21,11 +36,166 @@ class PersonalViewModel extends BaseViewModel {
   double y = 0.0;
   LatLng center = LatLng(0.0, -30.0);
   LatLng prevCenter = LatLng(0.0, -30.0);
+  double userColor = 360.0;
+  double otherUserColor = 211.0;
 
   final Epsg3857 projection = Epsg3857();
 
   void init() {
     mapController = MapController();
+    getInitialData();
+  }
+
+  void getInitialData() async {
+
+    // Get outgoing data
+    dynamic outGoingData = await getAllCityLatLogAndInteractCounts(
+        "outgoing",
+        DateTime.utc(2020, 1, 1),
+        DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day));
+
+    // Get incoming data
+    dynamic incomingData = await getAllCityLatLogAndInteractCounts(
+        "incoming",
+        DateTime.utc(2020, 1, 1),
+        DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day));
+
+    // Map that will get all interactions from both outgoing and incoming data
+    Map mergeData = {};
+
+    // Gather outgoing data and add to mergeData
+    outGoingData.forEach((placeId, placeData) {
+      mergeData[placeId] = placeData;
+    });
+
+    // Gather incoming data and add to mergeData
+    incomingData.forEach((placeId, placeData) {
+      if (mergeData.containsKey(placeId)) {
+        mergeData[placeId]["count"] += placeData["count"];
+      } else {
+        mergeData[placeId] = placeData;
+      }
+    });
+
+    markerData = mergeData.values.map<Map>((element) => element as Map).toList();
+
+    // Get the total count of population for scaling point intensity
+    for (int i = 0; i < markerData.length; i++) {
+      totalPopulation += markerData[i]['count'];
+    }
+
+    // Get user's placeId for comparison and mapping purposes
+    dynamic userInfo = await _userInformationService.getUserInfo();
+    dynamic personalInfo = await _databaseService.getUserInfo(uid: userInfo["uid"]);
+    userPlaceId = personalInfo['location']['placeId'];
+
+    markers = getMarkers(); // Gets map marker widgets for initial data
+    notifyListeners();      // Re-draws map with new markers
+  }
+
+  void pointClicked(placeId) async {
+    markers = []; // removes all previous markers
+    notifyListeners();
+    dynamic data = await _databaseService.getGlobalViewData(placeId: placeId); // Gets new data for clicked location
+    data = data.map<Map>((element) => element as Map).toList();
+    print(data);
+    markerData = data;
+    markers = getMarkers(); // Gets new markers for updated data
+    print('pointClicked ${markerData}');
+    notifyListeners();
+  }
+
+  // Returns marker widgets that show the dots on the map
+  List<Marker> getMarkers() {
+    // Clear lists to ensure fresh start
+    latLngListData.clear();
+    lineWidths.clear();
+
+    return markerData.map<Marker>((placeData) { // Loops through markerData
+
+      print('Place Data: ${placeData}');
+      LatLng point = LatLng(placeData['latLngData']['lat'], placeData['latLngData']['lng']); // Gets point where marker will be placed
+
+      if (placeData['placeId'] != userPlaceId) { // If the point is NOT the user's,
+        // Add point coordinates to list that is NOT personal location
+        latLngListData.add(point);
+
+        // Add line width between point and user
+        lineWidths.add((placeData['count']/totalPopulation) * maxLineWidth);
+
+        print('latLngListData: ${latLngListData}');
+
+        return Marker(
+          width: 100.0,
+          height: 100.0,
+          point: point,
+          builder: (ctx) => Container(
+            child: PersonalLocationItemView(
+              intensity: (placeData['count']/totalPopulation),
+              zoom: zoom,
+              location: placeData['placeId'],
+              mapCallback: () { // When a point is clicked this function is called
+                zoom = 5;
+                mapController.move(point, 5); // Centers map on clicked point
+                pointClicked(placeData['placeId']); // Updates markers
+                notifyListeners(); // Re-draws with updated markers
+              },
+              hasClickedOnLine: true,
+              hueColor: otherUserColor,
+            ),
+          ),
+        );
+      } else { // If user's point is found in set,
+        userLocation = point; // Save user's location
+
+        // Set user's marker on map (unique red color from other points)
+        return Marker(
+          width: 100.0,
+          height: 100.0,
+          point: point,
+          builder: (ctx) => Container(
+            child: PersonalLocationItemView(
+              intensity: (placeData['count']/totalPopulation),
+              zoom: zoom,
+              location: placeData['placeId'],
+              mapCallback: () { // When a point is clicked this function is called
+                zoom = 5;
+                mapController.move(point, 5); // Centers map on clicked point
+                pointClicked(placeData['placeId']); // Updates markers
+                notifyListeners(); // Re-draws with updated markers
+              },
+              hasClickedOnLine: true,
+              hueColor: userColor,
+            ),
+          ),
+        );
+      }
+
+    }).toList(); // Converts map to list
+  }
+
+  // Return list of line pairs on the map (excluding current user's location)
+  List<LatLng> getLines() {
+    if (latLngListData == null) { // If list is empty, get markers to fill up data
+      getMarkers();
+    }
+    return latLngListData;
+  }
+
+  // Return list of line widths on the map (excluding current user's location)
+  List<double> getLinesWidths() {
+    if (lineWidths == null) { // If list is empty, get markers to fill up data
+      getMarkers();
+    }
+    return lineWidths;
+  }
+
+  // Get current user's LatLng location
+  LatLng getUserLocation() {
+    if (userLocation == null) { // If list is empty, get markers to fill up data
+      getMarkers();
+    }
+    return userLocation;
   }
 
   void dispose() {}
@@ -35,8 +205,7 @@ class PersonalViewModel extends BaseViewModel {
     y = pointerHoverEvent.position.dy;
   }
 
-  void onPointerSignal(
-      PointerSignalEvent pointerSignalEvent, RenderBox renderBox) {
+  void onPointerSignal(PointerSignalEvent pointerSignalEvent, RenderBox renderBox) {
     if (pointerSignalEvent is PointerScrollEvent) {
       Offset localOffset = renderBox.globalToLocal(Offset(x, y));
       LatLng projected = latLngFromLocalOffset(renderBox, localOffset, zoom);
@@ -140,5 +309,39 @@ class PersonalViewModel extends BaseViewModel {
     CustomPoint localPointCenterDistance = mapCenter - point;
     Offset localPoint = Offset((width / 2) - localPointCenterDistance.x, (height / 2) - localPointCenterDistance.y);
     return localPoint;
+  }
+
+  // Get personalMapData (note: startDate & stopdate = DateTime.utc(yyyy, mm, dd))
+  Future<Map> userPersonalMapData(startDate, stopDate) async {
+    dynamic userInfo = await _userInformationService.getUserInfo();
+    return await _functionsService.getPersonalMapData(
+        userInfo["uid"], startDate, stopDate);
+  }
+
+  // Example:
+  // personalMapData["userInfo"].map((key, value) { return MapEntry(key, value["username"]) });
+
+  // Gets list of cities with their latitude, longitude, placeId,
+  // population count, and whether it is opened or not by click of cursor.
+  Future<Map> getAllCityLatLogAndInteractCounts(String inOut, startDate, stopDate) async {
+    dynamic personalMapData = await userPersonalMapData(startDate, stopDate);
+    Map cityMapLocationAndCount = personalMapData[inOut].map((placeId, placeData) {
+      int totalCount = 0;
+      placeData.forEach((userId, count) {
+        totalCount += count;
+      });
+
+      dynamic cityLatLngData = personalMapData["locationInfo"][placeId]["cityLatLng"];
+
+      // Map placeID with its lat/lng, and total count of interactions
+      return MapEntry(placeId,
+          {"latLngData": cityLatLngData,
+            "count": totalCount,
+            "placeId": placeId,
+            "isOpened": false
+          });
+    });
+
+    return cityMapLocationAndCount;
   }
 }

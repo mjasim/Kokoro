@@ -1,6 +1,6 @@
 import 'package:stacked/stacked.dart';
 
-class GlobalLocationItemViewModel extends BaseViewModel {
+class PersonalLocationItemViewModel extends BaseViewModel {
   bool isClicked = false;
   double zoom;
 

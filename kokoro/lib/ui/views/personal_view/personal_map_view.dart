@@ -1,12 +1,13 @@
-
+import 'package:flutter_map_tappable_polyline/flutter_map_tappable_polyline.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:kokoro/ui/views/personal_view/personal_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong/latlong.dart';
 
 class PersonalMapView extends ViewModelWidget<PersonalViewModel> {
   @override
-  bool get reactive => false;
+  bool get reactive => true;
 
   @override
   Widget build(BuildContext context, PersonalViewModel model) {
@@ -36,6 +37,18 @@ class PersonalMapView extends ViewModelWidget<PersonalViewModel> {
             "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
             subdomains: ['a', 'b', 'c'],
           ),
+          TappablePolylineLayerOptions(
+            // Will only render visible polylines, increasing performance
+              polylineCulling: true,
+              pointerDistanceTolerance: 20,
+              polylines: _getPolylines(
+                  model.getLines(),
+                  model.getLinesWidths(),
+                  model.getUserLocation()),
+              onTap: (TaggedPolyline polyline) => print(polyline.tag),
+              onMiss: () {
+                print('No polyline was tapped');
+              }),
           MarkerLayerOptions(
             markers: model.markers,
           ),
@@ -43,4 +56,32 @@ class PersonalMapView extends ViewModelWidget<PersonalViewModel> {
       ),
     );
   }
+}
+
+// Get list of lines from current user to all other users
+List<TaggedPolyline> _getPolylines(
+    List<LatLng> latLngListData, List<double> lineWidths, LatLng userLocation) {
+  List<TaggedPolyline> polylines = [];
+
+  // Get the list of all possible pairs of lines from current user to other users
+  List<List<LatLng>> lineList = [];
+  latLngListData.forEach((element) {
+    List<LatLng> line = [];
+    line.add(userLocation);
+    line.add(element);
+    lineList.add(line);
+  });
+
+  // Get each pair of lines from current user to all other users
+  for (var i = 0; i < lineList.length; i++) {
+    polylines.add(
+      TaggedPolyline(
+        points: lineList[i],
+        color: Colors.red,
+        strokeWidth: lineWidths[i],
+      ),
+    );
+  }
+
+  return polylines;
 }

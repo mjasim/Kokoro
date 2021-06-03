@@ -18,7 +18,7 @@ import 'package:kokoro/core/services/firebase_storage_service.dart';
 import 'package:video_player/video_player.dart';
 
 class SignUpViewModel extends BaseViewModel {
-  final _nagivationService = locator<NavigationService>();
+  final _navigationService = locator<NavigationService>();
   final _authService = locator<FirebaseAuthService>();
   final _databaseService = locator<FirebaseDatabaseService>();
   final _storageService = locator<FirebaseStorageService>();
@@ -68,7 +68,6 @@ class SignUpViewModel extends BaseViewModel {
         print('make Account ${currLocation}');
       }
 
-
       print(authResult.uid);
       var databaseResult = await _databaseService.createUser(
         uid: uid,
@@ -83,13 +82,19 @@ class SignUpViewModel extends BaseViewModel {
       );
       print(databaseResult.runtimeType);
       print(databaseResult);
+
+      // Log in as the new, created user
+//      await _authService.loginWithEmail(email: email, password: password);
+
+      // Go to global view
+      _navigationService.navigateTo(Routes.globalView);
+
     } else {
       print('Auth Error');
       print(authResult.errorMessage);
     }
     // TODO get the result back from the auth service and check it worked
     // TODO then take the id and make a user in the database using the auth id for the user uid
-//    print();
   }
 
   void getSuggestedLocations(String text) async {
@@ -97,10 +102,6 @@ class SignUpViewModel extends BaseViewModel {
     suggestedLocations = await _functionsService.locationAutoFill(text);
     print('getSuggestedLocations suggestions $suggestedLocations');
     notifyListeners();
-  }
-
-  void goToLogIn() {
-    _nagivationService.navigateTo(Routes.signInView);
   }
 
   void makePost(String postText) async {

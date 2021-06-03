@@ -29,7 +29,8 @@ class UserInformationService {
       profileUserPhotoUrl = userInfo["profilePhotoUrl"];
       name = userInfo["name"];
       location = userInfo["location"];
-      print('location is String ${location is String}');
+      print('location: ${location}');
+      print('location is String: ${location is String}');
       if (location is String) {
         location = {'stringLocation': location};
       }

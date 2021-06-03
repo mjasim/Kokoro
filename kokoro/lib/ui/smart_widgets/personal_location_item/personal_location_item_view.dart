@@ -1,24 +1,27 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:kokoro/ui/smart_widgets/global_location_item/global_location_item_viewmodel.dart';
+import 'package:kokoro/ui/smart_widgets/personal_location_item/personal_location_item_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:vector_math/vector_math.dart' hide Colors;
 
-class GlobalLocationItemView extends StatelessWidget {
-  const GlobalLocationItemView(
-      {Key key, this.intensity, this.zoom, this.location, this.mapCallback})
+class PersonalLocationItemView extends StatelessWidget {
+  const PersonalLocationItemView({Key key,
+    this.intensity, this.zoom, this.location,
+    this.mapCallback, this.hasClickedOnLine, this.hueColor})
       : super(key: key);
 
   final double intensity;
   final double zoom;
   final String location;
   final Function mapCallback;
+  final bool hasClickedOnLine; // "Boolean" parameter to identify clicking a dot vs. line
+  final double hueColor; // Color of point on map
 
   @override
   Widget build(BuildContext context) {
 //    print('In location zoom: ${zoom} ${(1 - ((16.0 - zoom) / 15)) * 300.0}');
-    return ViewModelBuilder<GlobalLocationItemViewModel>.reactive(
+    return ViewModelBuilder<PersonalLocationItemViewModel>.reactive(
       builder: (context, model, child) {
         if (zoom < 5 && model.isClicked) {
           model.isClicked = false;
@@ -32,7 +35,7 @@ class GlobalLocationItemView extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle, // Create circular container
                       color:
-                          HSVColor.fromAHSV(1.0, 211.0, intensity, 1.0) // Sets color by intensity
+                          HSVColor.fromAHSV(1.0, hueColor, intensity, 1.0) // Sets color by intensity
                               .toColor(), // Different textures for each city
                     ),
                   ),
@@ -46,7 +49,7 @@ class GlobalLocationItemView extends StatelessWidget {
                 children: getChildren(model, location),
               );
       },
-      viewModelBuilder: () => GlobalLocationItemViewModel()..setZoom(zoom),
+      viewModelBuilder: () => PersonalLocationItemViewModel()..setZoom(zoom),
     );
   }
 

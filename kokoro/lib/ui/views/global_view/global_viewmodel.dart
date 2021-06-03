@@ -13,7 +13,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 
-
 class GlobalViewModel extends BaseViewModel {
   int sideNavIndex = 0;
   NavigationService _navigationService = locator<NavigationService>();
@@ -83,7 +82,7 @@ class GlobalViewModel extends BaseViewModel {
           ),
         ),
       );
-    }).toList();
+    }).toList(); // Converts map to list
   }
 
   void dispose() {}
@@ -201,12 +200,13 @@ class GlobalViewModel extends BaseViewModel {
     if(index == 0) {
       _navigationService.navigateTo(Routes.planetView);
     } else if(index == 1) {
-
       // TODO: Get user info not working... client offline...need to find out
-      dynamic userInfo = await _userInformationService.getUserInfo();
-      print('personalMapData ${await _functionsService.getPersonalMapData(userInfo["uid"], DateTime.utc(2021, 4, 1), DateTime.utc(2021, 4, 20))}');
+//      dynamic userInfo = await _userInformationService.getUserInfo();
+//      print('PERSONAL MAP DATA: '
+//          '${await _functionsService.getPersonalMapData(userInfo["uid"],
+//          DateTime.utc(2020, 1, 1), DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day))}');
 //      _functionsService.makePlanetUsedImagesCollection();
-//      _navigationService.navigateTo(Routes.personalView);
+      _navigationService.navigateTo(Routes.personalView);
     }
   }
 }
