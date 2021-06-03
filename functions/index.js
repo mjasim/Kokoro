@@ -106,6 +106,137 @@ exports.updatePlanetOnPostCreated = functions.firestore
         return await runForAllPlanets();
     });
 
+// Helper function for all updateRecentConnections functions
+// Takes the user whose document will be updated as [uid] and the user who will
+// be added to recentConnections as [connectionUid]
+async function updateRecentConnections(uid, connectionUid) {
+    // Gets the current user document's recentConnection array for [userUid]
+    async function getUserRecentConnections(userUid) {
+        return await db.collection('users').doc(userUid).get().then(async (documentSnapshot) => {
+            if (!documentSnapshot.exists) {
+                return null;
+            } else {
+                return documentSnapshot.data().recentConnections;
+            }
+        }).catch((error) => console.log(error));
+    }
+
+    // Sets user document's recentConnections array
+    async function setUserRecentConnections(userUid, recentConnections) {
+        return await db.collection('users').doc(userUid).update({
+            'recentConnections': recentConnections,
+        });
+    }
+
+    let currRecentConnections = await getUserRecentConnections(uid);
+
+    // Removes the [connectionUid] from existing [recentConnections] array if it is in it.
+    const index = currRecentConnections.indexOf(connectionUid);
+    if (index > -1) {
+        currRecentConnections.splice(index, 1);
+    }
+
+    // Adds [connectionUid] to start of [currRecentConnections] array
+    currRecentConnections.splice(0, 0, connectionUid);
+    // Checks if [currRecentConnections] array length is > 20 and removes last item if it is
+    if (currRecentConnections.length > 20) {
+        currRecentConnections.pop();
+    }
+
+    // Sets document field [recentConnections] to the modified array [currRecentConnections]
+    return await setUserRecentConnections(uid, currRecentConnections);
+}
+
+// updates recentConnections field on user document when a user comments on another persons post
+exports.updateRecentConnectionsOnComment = functions.firestore
+    .document('comments/{docId}')
+    .onCreate(async (snapshot, context) => {
+        let data = snapshot.data();
+        // console.log(`updateRecentConnectionsOnComment ${data}`);
+        return await updateRecentConnections(data.authorUid, data.postAuthorUid);
+    });
+
+// updates recentConnections field on user document when a user slider reacts to another persons post
+exports.updateRecentConnectionsOnSliderReaction = functions.firestore
+    .document('slider-reactions/{docId}')
+    .onCreate(async (snapshot, context) => {
+        let data = snapshot.data();
+        // console.log(`.updateRecentConnectionsOnSliderReaction ${data}`);
+        return await updateRecentConnections(data.reactorUid, data.postAuthorUid);
+    });
+
+// updates recentConnections field on user document when a user color reacts to another persons post
+exports.updateRecentConnectionsOnColorReaction = functions.firestore
+    .document('color-reactions/{docId}')
+    .onCreate(async (snapshot, context) => {
+        let data = snapshot.data();
+        // console.log(`updateRecentConnectionsOnColorReaction ${data}`);
+        return await updateRecentConnections(data.reactorUid, data.postAuthorUid);
+    });
+
+
+exports.updateUserPlanetAffiliation = functions.firestore
+    .document('planetUserCount/{docId}')
+    .onWrite(async (snapshot, context) => {
+
+        // console.log(`updateUserPlanetAffiliation context: ${JSON.stringify(context)} ${JSON.stringify(snapshot.after.id)}`);
+
+        let data = await db.collection('planetUserCount').doc(snapshot.after.id).get().then(async (documentSnapshot) => {
+            return documentSnapshot.data();
+        }).catch((error) => console.log(error));
+
+
+        // console.log(`updateUserPlanetAffiliation ${JSON.stringify(data)}`);
+
+        async function getPlanetUidByName(planetName) {
+            return await db.collection('planets').limit(1).where('planetName', '==', planetName).get().then(async (querySnapshot) => {
+                if (querySnapshot.empty) {
+                    return null;
+                } else {
+                    return querySnapshot.docs[0].id;
+                }
+            }).catch((error) => console.log(error));
+        }
+
+        async function getUserPlanetAffiliation(userUid) {
+            return await db.collection('users').doc(userUid).get().then(async (documentSnapshot) => {
+                if (!documentSnapshot.exists) {
+                    return null;
+                } else {
+                    return documentSnapshot.data().planetAffiliation;
+                }
+            }).catch((error) => console.log(error));;
+        }
+
+        async function setUserPlanetAffiliation(userUid, planetAffiliation) {
+            return await db.collection('users').doc(userUid).update({
+                'planetAffiliation': planetAffiliation,
+            });
+        }
+
+        let docPlanetName = data.planetName;
+        let docUserUid = data.userUid;
+
+        let docPlanetUid = await getPlanetUidByName(docPlanetName);
+
+        let currPlanetAffiliation = await getUserPlanetAffiliation(docUserUid);
+        // console.log(`currPlanetAffiliation before update ${currPlanetAffiliation}`);
+
+        const index = currPlanetAffiliation.indexOf(docPlanetUid);
+        if (index > -1) {
+            currPlanetAffiliation.splice(index, 1);
+        }
+
+        currPlanetAffiliation.splice(0, 0, docPlanetUid);
+        if (currPlanetAffiliation.length > 5) {
+            currPlanetAffiliation.pop();
+        }
+
+        // console.log(`currPlanetAffiliation after update ${currPlanetAffiliation}`);
+        return await setUserPlanetAffiliation(docUserUid, currPlanetAffiliation);
+    });
+
+
 /*
 This function updates the location count for the country and city when a user creates
 an account. This function is called when ever a new account is made.
@@ -869,7 +1000,6 @@ exports.getPersonalMapData = functions.https.onCall(async (data, context) => {
                 console.log(`querySnapshot ${querySnapshot.docs.length}`);
                 for (let i = 0; i < querySnapshot.docs.length; i++) {
                     let _data = querySnapshot.docs[i].data();
-                    console.log(`_data has ${'reactorUid' in _data}`);
                     if ('reactorUid' in _data) {
                         let userInfo = await getUserInfo(_data.reactorUid).catch((e) => console.log(e));
                         addToMap(userInfo, incoming);
