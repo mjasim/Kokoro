@@ -7,13 +7,16 @@ import 'package:vector_math/vector_math.dart' hide Colors;
 
 class GlobalLocationItemView extends StatelessWidget {
   const GlobalLocationItemView(
-      {Key key, this.intensity, this.zoom, this.location, this.mapCallback})
+      {Key key,
+        this.intensity, this.zoom, this.location,
+        this.mapCallback, this.hueColor})
       : super(key: key);
 
   final double intensity;
   final double zoom;
   final String location;
   final Function mapCallback;
+  final double hueColor;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,7 @@ class GlobalLocationItemView extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle, // Create circular container
                       color:
-                          HSVColor.fromAHSV(1.0, 211.0, intensity, 1.0) // Sets color by intensity
+                          HSVColor.fromAHSV(1.0, hueColor, intensity, 1.0) // Sets color by intensity
                               .toColor(), // Different textures for each city
                     ),
                   ),

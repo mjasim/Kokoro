@@ -23,6 +23,7 @@ class GlobalViewModel extends BaseViewModel {
   MapController mapController;
   List<Marker> markers = [];
   List<Map> markerData = [];
+  String userPlaceId;
 
   int flags = InteractiveFlag.all;
   double zoom = 2.4;
@@ -30,6 +31,8 @@ class GlobalViewModel extends BaseViewModel {
   double y = 0.0;
   LatLng center = LatLng(0.0, -30.0);
   LatLng prevCenter = LatLng(0.0, -30.0);
+  double userColor = 360.0;
+  double otherUserColor = 211.0;
 
   final Epsg3857 projection = Epsg3857();
 
@@ -43,6 +46,12 @@ class GlobalViewModel extends BaseViewModel {
     data = data.map<Map>((element) => element as Map).toList(); // Turns data into map format
     print(data);
     markerData = data;
+
+    // Get user's placeId for comparison and mapping purposes
+    dynamic userInfo = await _userInformationService.getUserInfo();
+    dynamic personalInfo = await _databaseService.getUserInfo(uid: userInfo["uid"]);
+    userPlaceId = personalInfo['location']['placeId'];
+
     markers = getMarkers(); // Gets map marker widgets for initial data
     notifyListeners(); // Re-draws map with new markers
   }
@@ -64,24 +73,50 @@ class GlobalViewModel extends BaseViewModel {
     return markerData.map<Marker>((element) { // Loops through markerData
       print('getMarkers ${element}');
       LatLng point = LatLng(element['lat'], element['lng']); // Gets point where marker will be placed
-      return Marker(
-        width: 500.0,
-        height: 500.0,
-        point: point,
-        builder: (ctx) => Container(
-          child: GlobalLocationItemView(
-            intensity: element['normalizedUserCount'],
-            zoom: zoom,
-            location: element['placeId'],
-            mapCallback: () { // When a point is clicked this function is called
+
+      if (element['placeId'] != userPlaceId) { // If the point is NOT the user's,
+        return Marker(
+          width: 500.0,
+          height: 500.0,
+          point: point,
+          builder: (ctx) => Container(
+            child: GlobalLocationItemView(
+              intensity: element['normalizedUserCount'],
+              zoom: zoom,
+              location: element['placeId'],
+              mapCallback: () { // When a point is clicked this function is called
                 zoom = 5;
                 mapController.move(point, 5); // Centers map on clicked point
                 pointClicked(element['placeId']); // Updates markers
                 notifyListeners(); // Re-draws with updated markers
-            },
+              },
+              hueColor: otherUserColor,
+            ),
           ),
-        ),
-      );
+        );
+
+      } else { // If user's point is found in set,
+        // Set user's marker on map (unique red color from other points)
+        return Marker(
+          width: 500.0,
+          height: 500.0,
+          point: point,
+          builder: (ctx) => Container(
+            child: GlobalLocationItemView(
+              intensity: element['normalizedUserCount'],
+              zoom: zoom,
+              location: element['placeId'],
+              mapCallback: () { // When a point is clicked this function is called
+                zoom = 5;
+                mapController.move(point, 5); // Centers map on clicked point
+                pointClicked(element['placeId']); // Updates markers
+                notifyListeners(); // Re-draws with updated markers
+              },
+              hueColor: userColor,
+            ),
+          ),
+        );
+      }
     }).toList(); // Converts map to list
   }
 
