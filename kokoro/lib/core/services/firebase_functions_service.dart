@@ -38,9 +38,9 @@ class FirebaseFunctionsService {
       return "${date.day}-${date.month}-${date.year}";
     }
 
-    print('getPersonalMapData $uid');
+//    print('getPersonalMapData $uid');
     final results = await callable({'userUid': uid, 'startDate':  dateToString(startDate), 'stopDate': dateToString(stopDate)});
-    print(results.data);
+//    print(results.data);
     return results.data;
   }
 

@@ -6,7 +6,7 @@ class GlobalLocationItemViewModel extends BaseViewModel {
 
   void clicked(mapCallback) {
     isClicked = !isClicked;
-    print('clicked${isClicked}, zoom:${zoom}');
+    print('clicked: {isClicked}, zoom:${zoom}');
     if(zoom < 5 && isClicked) {
       print('clicked Callback');
       mapCallback();

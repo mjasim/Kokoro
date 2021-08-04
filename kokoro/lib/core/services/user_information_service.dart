@@ -23,6 +23,7 @@ class UserInformationService {
     if (!alreadyRetrieved) {
       uid = _authService.userUid;
       print('getUserInfo $uid');
+      print('await databaseService: ${await _databaseService.getUserInfo(uid: uid)}');
       Map userInfo = await _databaseService.getUserInfo(uid: uid);
       print('getUserInfo userInfo $userInfo');
       username = userInfo["username"];

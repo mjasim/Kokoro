@@ -21,13 +21,15 @@ class PersonalViewModel extends BaseViewModel {
   MapController mapController;
   List<Marker> markers = []; // List of markers on the map
   List<Map> markerData = []; // List of marker's data
+  List<Map> profileUrlData = []; // List of marker's profile pic url data
   List<LatLng> latLngListData = []; // List of location lat/lng of points
   List<LatLng> lines = []; // List of lines between points (current user to other user)
   List<double> lineWidths = []; // List of line widths between points
   final double maxLineWidth = 5.0; // Max width of line on map between points
+  String clickedPlaceId = "";
 
   int totalPopulation = 0;
-  String userPlaceId;
+  String userPlaceId; // User's location placeId
   LatLng userLocation = null;
 
   int flags = InteractiveFlag.all;
@@ -89,19 +91,40 @@ class PersonalViewModel extends BaseViewModel {
     dynamic personalInfo = await _databaseService.getUserInfo(uid: userInfo["uid"]);
     userPlaceId = personalInfo['location']['placeId'];
 
-    markers = getMarkers(); // Gets map marker widgets for initial data
+    //markers = getMarkers(); // Gets map marker widgets for initial data
     notifyListeners();      // Re-draws map with new markers
   }
 
   void pointClicked(placeId) async {
-    markers = []; // removes all previous markers
-    notifyListeners();
-    dynamic data = await _databaseService.getGlobalViewData(placeId: placeId); // Gets new data for clicked location
-    data = data.map<Map>((element) => element as Map).toList();
-    print(data);
-    markerData = data;
-    markers = getMarkers(); // Gets new markers for updated data
-    print('pointClicked ${markerData}');
+    clickedPlaceId = placeId;
+
+
+
+//    markers = []; // removes all previous markers
+//    markerData = []; // removes any markerData
+//    notifyListeners();
+//    dynamic data = await _databaseService.getGlobalViewData(placeId: placeId); // Gets new data for clicked location
+//    data = data.map<Map>((element) => element as Map).toList();
+//    print(data);
+//    markerData = data;
+//    //markers = getMarkers(); // Gets new markers for updated data
+//    print('pointClicked ${markerData}');
+//    notifyListeners();
+  }
+
+  void getListOfProfileUrls(placeId) async {
+    profileUrlData = [];
+
+    dynamic urlData = await getProfileData(
+        placeId,
+        DateTime.utc(2020, 1, 1),
+        DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day));
+
+    // Populate profileUrlData with list of profile photo urls from location
+    urlData.forEach((element) {
+      profileUrlData.add(element['profilePhotoUrl']); // TODO: Need to find out how to get list of urls
+    });
+
     notifyListeners();
   }
 
@@ -112,18 +135,13 @@ class PersonalViewModel extends BaseViewModel {
     lineWidths.clear();
 
     return markerData.map<Marker>((placeData) { // Loops through markerData
-
-      print('Place Data: ${placeData}');
       LatLng point = LatLng(placeData['latLngData']['lat'], placeData['latLngData']['lng']); // Gets point where marker will be placed
-
       if (placeData['placeId'] != userPlaceId) { // If the point is NOT the user's,
         // Add point coordinates to list that is NOT personal location
         latLngListData.add(point);
 
         // Add line width between point and user
         lineWidths.add((placeData['count']/totalPopulation) * maxLineWidth);
-
-        print('latLngListData: ${latLngListData}');
 
         return Marker(
           width: 100.0,
@@ -174,30 +192,6 @@ class PersonalViewModel extends BaseViewModel {
     }).toList(); // Converts map to list
   }
 
-  // Return list of line pairs on the map (excluding current user's location)
-  List<LatLng> getLines() {
-    if (latLngListData == null) { // If list is empty, get markers to fill up data
-      getMarkers();
-    }
-    return latLngListData;
-  }
-
-  // Return list of line widths on the map (excluding current user's location)
-  List<double> getLinesWidths() {
-    if (lineWidths == null) { // If list is empty, get markers to fill up data
-      getMarkers();
-    }
-    return lineWidths;
-  }
-
-  // Get current user's LatLng location
-  LatLng getUserLocation() {
-    if (userLocation == null) { // If list is empty, get markers to fill up data
-      getMarkers();
-    }
-    return userLocation;
-  }
-
   void dispose() {}
 
   void onPointerHover(PointerHoverEvent pointerHoverEvent) {
@@ -225,10 +219,10 @@ class PersonalViewModel extends BaseViewModel {
   }
 
   void onPointerDown(PointerDownEvent pointerDownEvent, RenderBox renderBox) {
-    print('PointerDown');
-    Offset localOffset = renderBox.globalToLocal(Offset(x, y));
-    LatLng finalCenterLatLng = latLngFromLocalOffset(renderBox, localOffset, zoom);
-    animatedZoomIn(finalCenterLatLng, 6, renderBox);
+//    print('PointerDown');
+//    Offset localOffset = renderBox.globalToLocal(Offset(x, y));
+//    LatLng finalCenterLatLng = latLngFromLocalOffset(renderBox, localOffset, zoom);
+//    animatedZoomIn(finalCenterLatLng, 6, renderBox);
   }
 
   // Animated zoom in from current center of map to new center of map
@@ -344,4 +338,57 @@ class PersonalViewModel extends BaseViewModel {
 
     return cityMapLocationAndCount;
   }
+
+  bool isClicked = false;
+
+  void clicked(mapCallback) {
+    isClicked = !isClicked;
+    print('clicked: ${isClicked}, zoom: ${zoom}');
+    if(zoom < 5 && isClicked) {
+      print('clicked Callback');
+      mapCallback();
+    }
+    notifyListeners();
+  }
+
+  void setZoom(z) {
+    zoom = z;
+  }
+
+  // Call the backend to access profileUrls for the accounts at the given location.
+  Future<List<Map>> getProfileData(String locationId, startDate, stopDate) async {
+
+    List<Map> profileUrlList = [];
+
+    dynamic personalMapData = await userPersonalMapData(startDate, stopDate);
+    dynamic incomingProfileList = personalMapData["incoming"][locationId];
+    dynamic outgoingProfileList = personalMapData["outgoing"][locationId];
+    dynamic userInfoData = personalMapData["userInfo"];
+
+    print('Incoming: ${incomingProfileList}');
+    print('Outgoing: ${outgoingProfileList}');
+
+    if (incomingProfileList != null) {
+      incomingProfileList.forEach((userId, count) { // Go through all profiles for that location
+        // Get user's profile url
+        //print('userInfoData[userId]: ${userInfoData[userId]}');
+        profileUrlList.add(userInfoData[userId]);
+      });
+    }
+
+    if (outgoingProfileList != null) {
+      outgoingProfileList.forEach((userId, count) { // Go through all profiles for that location
+        // Get user's profile url
+        if (!profileUrlList.contains(userId)){
+          //print('userInfoData[userId]: ${userInfoData[userId]}');
+          profileUrlList.add(userInfoData[userId]);
+        }
+      });
+    }
+
+    print('PROFILE URL LIST: ${profileUrlList}');
+
+    return profileUrlList;
+  }
+
 }

@@ -57,7 +57,7 @@ class GlobalLocationItemView extends StatelessWidget {
   // To do this call the  _databaseService.getGlobalViewData(placeId: placeId) with the placeId of this dot
   // do this in the viewmodel not the view. Just change model.getProfileData to get the real data
   // Also need to add hovering support.
-  List<Widget> getChildren(model, location) {
+  List<Widget> getChildren(GlobalLocationItemViewModel model, location) {
     int n = 1;
     double alpha = 137.5;
     double c = 1.0;
@@ -71,6 +71,9 @@ class GlobalLocationItemView extends StatelessWidget {
       double y = degrees(sin(radians(angle))) * rad + 320;
 
       n++;
+
+      print("In getChildren() of global map, top-position : ${(((16.0 - zoom) / 15)) * y}");
+      print("In getChildren() of global map, left-position: ${(((16.0 - zoom) / 15)) * x}");
       return Positioned(
         top: (((16.0 - zoom) / 15)) * y,
         left: (((16.0 - zoom) / 15)) * x,

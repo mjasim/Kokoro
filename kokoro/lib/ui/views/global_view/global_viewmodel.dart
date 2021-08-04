@@ -127,8 +127,7 @@ class GlobalViewModel extends BaseViewModel {
     y = pointerHoverEvent.position.dy;
   }
 
-  void onPointerSignal(
-      PointerSignalEvent pointerSignalEvent, RenderBox renderBox) {
+  void onPointerSignal(PointerSignalEvent pointerSignalEvent, RenderBox renderBox) {
     if (pointerSignalEvent is PointerScrollEvent) {
       Offset localOffset = renderBox.globalToLocal(Offset(x, y));
       LatLng projected = latLngFromLocalOffset(renderBox, localOffset, zoom);
@@ -146,7 +145,7 @@ class GlobalViewModel extends BaseViewModel {
   }
 
   void onPointerDown(PointerDownEvent pointerDownEvent, RenderBox renderBox) {
-    print('PointerDown');
+//    print('PointerDown');
 //    Offset localOffset = renderBox.globalToLocal(Offset(x, y));
 //    LatLng finalCenterLatLng = latLngFromLocalOffset(renderBox, localOffset, zoom);
 //    animatedZoomIn(finalCenterLatLng, 6, renderBox);

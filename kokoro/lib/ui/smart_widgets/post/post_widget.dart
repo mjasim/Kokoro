@@ -441,7 +441,7 @@ class ColorPickerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+     return AlertDialog(
       content: SingleChildScrollView(
         child: ColorPicker(
           pickerColor: model.post.userSelectedColor,
