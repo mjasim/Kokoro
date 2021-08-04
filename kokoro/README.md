@@ -25,3 +25,12 @@ flutter run -d chrome --web-renderer html
 Sometimes you want to be able to deploy a site, but do not want to alter the main site. For example, providing a specific site for testers or IRB review. Firebase hosting makes this possible by altering the deploy command slightly. In step 5 above replace the existing command with the following command`firebase hosting:channel:deploy [CHANNEL NAME] --expires 7d`, where `[CHANNEL NAME]` is whatever you want to call the channel. The `--expires` flag is optional, but useful to not have something deployed that isn't in use.
 
 For more information on Firebase Hosting check their quickstart guide [here](https://firebase.google.com/docs/hosting/quickstart). 
+
+
+## How to have a loading screen for data
+To make a simple loading screen you can use the `setBusy` method in the view model. For example, before loading data from the web call ` setBusy(true);`, once the data is loaded call ` setBusy(false);`. In the view add a switch statement that shows a loading icon if `model.isBusy` is true.
+
+For more information look at the stacked documentation [here](https://github.com/FilledStacks/stacked/tree/master/packages/stacked) under the section "BaseViewModel functionality."
+
+## Recent connections and recent intrests data
+Both are stored in the user document and are arrays. For recent connections the array is of the user uids' of the recent connections. The reason for this is if all the needed information was stored it would take a lot of room in the users document, and also the recent connection's information might change. Similarly, the recent intrests array stores the uid of the planet the user interacted with. 
