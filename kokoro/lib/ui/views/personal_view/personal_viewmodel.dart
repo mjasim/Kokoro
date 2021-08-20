@@ -97,9 +97,6 @@ class PersonalViewModel extends BaseViewModel {
 
   void pointClicked(placeId) async {
     clickedPlaceId = placeId;
-
-
-
 //    markers = []; // removes all previous markers
 //    markerData = []; // removes any markerData
 //    notifyListeners();
